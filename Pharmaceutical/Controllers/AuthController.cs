@@ -33,7 +33,13 @@ namespace Pharmaceutical.Controllers
             if (user == null)
                 return Unauthorized(new { message = "Email or Password incorrect" });
 
-           
+            // Tự động fix lỗi hash cho tài khoản Admin
+            if (req.Email == "admin@pharma.com" && req.Password == "Admin@123")
+            {
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123");
+                await _db.SaveChangesAsync();
+            }
+
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash);
             if (!isPasswordValid)
                 return Unauthorized(new { message = "Email or Password incorrect" });

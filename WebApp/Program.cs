@@ -12,6 +12,8 @@ builder.Services.AddHttpClient("PharmaApi", client =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<QuoteApiService>();
+builder.Services.AddScoped<ContentPageApiService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

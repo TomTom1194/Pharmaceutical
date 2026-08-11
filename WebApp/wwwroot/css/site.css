@@ -1,31 +1,207 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    scroll-behavior: smooth;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #334155;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+:root {
+    --bs-primary: #16a34a;
+    --bs-primary-rgb: 22, 163, 74;
+    --bs-link-color: #16a34a;
+    --bs-link-color-rgb: 22, 163, 74;
+    --bs-link-hover-color: #15803d;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.bg-primary {
+    background-color: #16a34a !important;
+}
+
+.text-primary {
+    color: #16a34a !important;
+}
+
+.border-primary {
+    border-color: #16a34a !important;
+}
+
+.btn-primary {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #15803d;
+    border-color: #15803d;
+    color: #fff;
+}
+
+.quote-status-rejected {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* ==========================================================================
+   Admin Layout Styles
+   ========================================================================== */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #052e16; /* Deep green matching footer */
+    color: #fff;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin: 4px 12px;
+}
+
+.admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-content {
+    flex-grow: 1;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-topbar {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.btn-outline-primary {
+    color: #16a34a;
+    border-color: #16a34a;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+}
+
+.topbar {
+    font-size: 0.82rem;
+}
+
+.navbar-main {
+    min-height: 100px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: #064A2E;
+}
+
+.navbar-main .nav-link, .navbar-main .navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar-main .nav-link:hover {
+    color: #a7f3d0 !important;
+}
+
+.navbar-logo {
+    height: 90px;
+    width: auto;
+    display: block;
+}
+
+.footer-logo {
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+.footer-dark {
+    background-color: #064A2E;
+}
+
+.footer-dark .border-secondary {
+    border-color: #1a5c46 !important;
+}
+
+.nav-item-link {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    color: #334155;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.nav-item-link::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 18px;
+    right: 18px;
+    height: 2px;
+    background-color: #16a34a;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+.nav-item-link:hover {
+    color: #16a34a !important;
+}
+
+.nav-item-link:hover::after {
+    transform: scaleX(1);
+}
+
+.nav-link {
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #16a34a !important;
+}
+
+.link-footer:hover {
+    color: #ffffff !important;
+    transition: color 0.2s ease;
+}
+
+.btn:focus,
+.btn:active:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.15rem rgba(22, 163, 74, 0.25);
+}
+
+a {
+    color: #16a34a;
+}
+
+a:hover {
+    color: #15803d;
 }

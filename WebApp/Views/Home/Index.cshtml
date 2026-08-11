@@ -1,8 +1,32 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="hero-section text-white text-center d-flex align-items-center" style="background-color: #16a34a; min-height: 400px;">
+    <div class="container">
+        <h1 class="display-4 fw-bold">XYZ Pharmaceuticals Equipment</h1>
+        <p class="lead">Professional machinery for laboratories and pharmaceutical manufacturers.</p>
+        <div class="mt-4">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-outline-light btn-lg px-4 fw-bold">View Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Feature/Category Cards Placeholder -->
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="mb-4">Features / Categories Placeholder</h2>
+        <div class="row g-4">
+            <!-- Cards will go here -->
+        </div>
+    </div>
+</section>
+
+<!-- About Us Snippet Placeholder -->
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container">
+        <h2 class="mb-4">About XYZ Pharmaceuticals</h2>
+        <p>Short description will go here...</p>
+    </div>
+</section>

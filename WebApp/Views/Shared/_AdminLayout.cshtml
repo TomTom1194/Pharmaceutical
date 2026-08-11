@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PharmEquip Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar d-flex flex-column py-4">
+            <div class="px-4 mb-4 text-center">
+                <img src="~/images/logo.png" alt="Logo" class="img-fluid footer-logo mx-auto" style="height:45px;" />
+                <div class="text-white fw-bold mt-2 small">Admin Portal</div>
+            </div>
+
+            <nav class="nav flex-column mb-auto">
+                <div class="px-3 mb-2 mt-3 text-uppercase small fw-bold text-white-50">Content Management</div>
+                <a class="nav-link" asp-controller="ContentPage" asp-action="Index">Manage Pages</a>
+                <a class="nav-link" asp-controller="QuoteRequest" asp-action="Index">Manage Quotes</a>
+
+                <div class="px-3 mb-2 mt-4 text-uppercase small fw-bold text-white-50">HR Management</div>
+                <a class="nav-link" asp-controller="Candidate" asp-action="Index">Candidates</a>
+            </nav>
+            
+            <div class="px-4 mt-auto text-center small text-white-50">
+                &copy; @DateTime.Now.Year PharmEquip
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="admin-content">
+            <!-- Topbar -->
+            <header class="admin-topbar d-flex justify-content-between">
+                <div>
+                    <h5 class="mb-0 fw-bold">@ViewData["Title"]</h5>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-secondary small">Hello, <strong>@User.Identity?.Name</strong></span>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                    </form>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-light border">View Site</a>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="p-4 flex-grow-1 overflow-auto">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
