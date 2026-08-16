@@ -1,0 +1,97 @@
+@model WebApp.Dtos.CandidateProfileDto
+
+@{
+    ViewBag.Title = "My Profile";
+    Layout = "_Layout";
+}
+
+<h2>Candidate Profile</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+@if (Model != null)
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@(Model.FullName ?? "(No name provided)")</h5>
+            <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
+            <p class="mb-1"><strong>Phone:</strong> @(Model.Phone ?? "-")</p>
+            <p class="mb-1"><strong>Address:</strong> @(Model.Address ?? "-")</p>
+            <p class="mb-1"><strong>Summary:</strong> @(Model.Summary ?? "-")</p>
+            <p class="mb-0"><strong>Member since:</strong> @(Model.CreatedAt?.ToLocalTime().ToString("d") ?? "-")</p>
+        </div>
+    </div>
+
+    <h5>Education</h5>
+    @if (Model.Educations.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Institution</th>
+                <th>Qualification</th>
+                <th>Field</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model.Educations)
+            {
+                <tr>
+                    <td>@e.Institution</td>
+                    <td>@e.Qualification</td>
+                    <td>@e.Field</td>
+                    <td>@(e.StartDate?.ToString("MM/yyyy") ?? "-")</td>
+                    <td>@(e.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No education records yet.</p>
+    }
+
+    <h5>Work Experience</h5>
+    @if (Model.WorkExperiences.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Employer</th>
+                <th>Title</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var w in Model.WorkExperiences)
+            {
+                <tr>
+                    <td>@w.Employer</td>
+                    <td>@w.Title</td>
+                    <td>@(w.StartDate?.ToString("MM/yyyy") ?? "-")</td>
+                    <td>@(w.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                    <td>@w.Description</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No work experience records yet.</p>
+    }
+
+    <a asp-action="Index" asp-controller="Candidate" class="btn btn-secondary">Back to Resume</a>
+}
+else
+{
+    <p>Profile information is not available.</p>
+}

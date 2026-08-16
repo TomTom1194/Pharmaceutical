@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pharmaceutical.Data;
 using Pharmaceutical.Dtos;
+using Pharmaceutical.Models;
 
 namespace Pharmaceutical.Controllers
 {
@@ -21,6 +22,56 @@ namespace Pharmaceutical.Controllers
         {
             _db = db;
             _config = config;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterRequest req)
+        {
+            var emailExists = await _db.UserAccounts
+                .AnyAsync(u => u.Email == req.Email);
+
+            if (emailExists)
+                return Conflict(new { message = "Email already registered" });
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var user = new UserAccount
+                {
+                    Email = req.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.Password),
+                    Role = "Candidate",
+                    Status = "Active"
+                };
+
+                _db.UserAccounts.Add(user);
+                await _db.SaveChangesAsync(); // generates UserId (identity)
+
+                // Bare-minimum profile shell; the candidate fills in the rest
+                // later via the "Create Resume" flow in the candidate portal.
+                var profile = new CandidateProfile
+                {
+                    CandidateId = user.UserId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _db.CandidateProfiles.Add(profile);
+                await _db.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return CreatedAtAction(nameof(Register), new RegisterResponse
+                {
+                    UserId = user.UserId,
+                    Email = user.Email!,
+                    Role = user.Role!
+                });
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         [HttpPost("login")]

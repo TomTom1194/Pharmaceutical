@@ -16,6 +16,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<QuoteApiService>();
 builder.Services.AddScoped<ContentPageApiService>();
 builder.Services.AddScoped<DashboardApiService>();
+builder.Services.AddScoped<IResumeService, ResumeService>();
+builder.Services.AddScoped<ICandidateProfileService, CandidateProfileService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
