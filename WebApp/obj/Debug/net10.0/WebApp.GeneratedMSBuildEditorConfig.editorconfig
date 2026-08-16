@@ -23,40 +23,76 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/EditAboutUs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcRWRpdEFib3V0VXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/EditCareers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcRWRpdENhcmVlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/EditHome.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcRWRpdEhvbWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/EditQuote.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcRWRpdFF1b3RlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/ContentPage/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ29udGVudFBhZ2VcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/Shared/_AdminLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Areas/Admin/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/ContentPage/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGVudFBhZ2VcRWRpdC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/ContentPage/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGVudFBhZ2VcSW5kZXguY3NodG1s
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Home/About.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBYm91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Page/Careers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnZVxDYXJlZXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Page/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/QuoteRequest/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUXVvdGVSZXF1ZXN0XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/QuoteRequest/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUXVvdGVSZXF1ZXN0XERldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/QuoteRequest/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUXVvdGVSZXF1ZXN0XEluZGV4LmNzaHRtbA==
+[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Shared/DraftMaintenance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXERyYWZ0TWFpbnRlbmFuY2UuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Shared/_AdminLayout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Di Hoc/LBEPTL1/T3-2025/sem3/eproject/Pharmaceutical/WebApp/Views/Shared/_ValidationScriptsPartial.cshtml]

@@ -9,6 +9,8 @@ public class SaveContentPageDto
 
     public string? Body { get; set; }
 
+    public string? BannerImageUrl { get; set; }
+
     [MaxLength(20)]
     public string? Status { get; set; }
 }

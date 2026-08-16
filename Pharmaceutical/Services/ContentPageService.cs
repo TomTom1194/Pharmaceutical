@@ -36,6 +36,7 @@ public class ContentPageService : IContentPageService
 
         entity.Title = dto.Title;
         entity.Body = dto.Body;
+        entity.BannerImageUrl = dto.BannerImageUrl;
         entity.Status = dto.Status;
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = adminUserId;
@@ -50,6 +51,7 @@ public class ContentPageService : IContentPageService
         Slug = p.Slug,
         Title = p.Title,
         Body = p.Body,
+        BannerImageUrl = p.BannerImageUrl,
         Status = p.Status,
         UpdatedAt = p.UpdatedAt
     };

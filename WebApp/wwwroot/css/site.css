@@ -111,29 +111,56 @@ body {
     color: #fff;
 }
 
+/* Form validations */
+.input-validation-error {
+    border-color: #dc3545;
+}
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875em;
+}
+
+/* Utilities */
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+.transition-all {
+    transition: all 0.3s ease;
+}
+.hover-bg-light:hover {
+    background-color: #f8fafc !important;
+}
+
 .topbar {
     font-size: 0.82rem;
 }
 
 .navbar-main {
-    min-height: 100px;
+    min-height: 65px;
     padding-top: 0;
     padding-bottom: 0;
-    background-color: #064A2E;
+    background-color: #f1f5f9; /* Soft light slate gray to reduce glare */
+    border-bottom: 1px solid #cbd5e1;
+    border-top: 4px solid #064A2E;
 }
 
 .navbar-main .nav-link, .navbar-main .navbar-brand {
-    color: #ffffff !important;
+    color: #334155 !important;
 }
 
 .navbar-main .nav-link:hover {
-    color: #a7f3d0 !important;
+    color: #16a34a !important;
 }
 
 .navbar-logo {
-    height: 90px;
+    height: 55px;
     width: auto;
     display: block;
+    transform: scale(2.2);
+    transform-origin: left center;
+    margin-right: 80px; /* Compensate for scale overflow */
+    margin-top: -15px; /* Overlap navbar boundaries */
+    margin-bottom: -15px;
 }
 
 .footer-logo {
@@ -142,40 +169,34 @@ body {
     display: block;
 }
 
-.footer-dark {
-    background-color: #064A2E;
-}
-
-.footer-dark .border-secondary {
-    border-color: #1a5c46 !important;
-}
-
-.nav-item-link {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-    color: #334155;
-    position: relative;
+.footer-link {
+    color: #94a3b8;
     transition: color 0.2s ease;
 }
 
-.nav-item-link::after {
-    content: '';
-    position: absolute;
-    bottom: 6px;
-    left: 18px;
-    right: 18px;
-    height: 2px;
-    background-color: #16a34a;
-    transform: scaleX(0);
-    transition: transform 0.2s ease;
+.footer-link:hover {
+    color: #ffffff;
+}
+
+.hover-opacity-100 {
+    transition: opacity 0.2s ease;
+}
+.hover-opacity-100:hover {
+    opacity: 1 !important;
+}
+
+.nav-item-link {
+    padding: 8px 16px !important;
+    margin: 0 4px;
+    color: #475569 !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
 .nav-item-link:hover {
-    color: #16a34a !important;
-}
-
-.nav-item-link:hover::after {
-    transform: scaleX(1);
+    color: #064A2E !important;
+    background-color: #f1f5f9;
 }
 
 .nav-link {
@@ -187,7 +208,7 @@ body {
 }
 
 .link-footer:hover {
-    color: #ffffff !important;
+    color: #16a34a !important;
     transition: color 0.2s ease;
 }
 
@@ -204,4 +225,66 @@ a {
 
 a:hover {
     color: #15803d;
+}
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* ==========================================================================
+   Quote Floating Action Button (FAB)
+   ========================================================================== */
+.quote-fab {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    padding: 12px 25px;
+    background-color: #16a34a;
+    color: #ffffff !important;
+    border-radius: 50px; /* Pill shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100px); /* Slide in from the right */
+}
+
+.quote-fab.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.quote-fab:hover {
+    background-color: #15803d;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(22, 163, 74, 0.6) !important;
+    color: #ffffff;
+}
+
+/* Subtle pulse that doesn't look cheap */
+.pulse-animation.visible {
+    animation: subtle-pulse 3s infinite;
+}
+
+@keyframes subtle-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
 }

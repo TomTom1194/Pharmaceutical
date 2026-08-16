@@ -5,22 +5,38 @@ using WebApp.Services;
 
 namespace WebApp.Controllers;
 
-[Authorize(Roles = "Admin")]
 public class QuoteRequestController : Controller
 {
     private readonly QuoteApiService _api;
+    private readonly ContentPageApiService _contentApi;
 
-    public QuoteRequestController(QuoteApiService api) => _api = api;
+    public QuoteRequestController(QuoteApiService api, ContentPageApiService contentApi)
+    {
+        _api = api;
+        _contentApi = contentApi;
+    }
 
     [AllowAnonymous]
-    public IActionResult Create() => View(new QuoteFormModel());
+    [HttpGet("Quote")]
+    public async Task<IActionResult> Create()
+    {
+        await LoadPageContent();
+        if (ViewData["IsDraft"] is true) return View("DraftMaintenance");
+        return View(new QuoteFormModel());
+    }
 
-    [HttpPost]
+    [HttpPost("Quote")]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(QuoteFormModel model)
     {
-        if (!ModelState.IsValid) return View(model);
+        await LoadPageContent();
+        if (ViewData["IsDraft"] is true) return View("DraftMaintenance");
+
+        if (!ModelState.IsValid) 
+        {
+            return View(model);
+        }
 
         var ok = await _api.Submit(model);
         if (!ok)
@@ -33,37 +49,29 @@ public class QuoteRequestController : Controller
         return RedirectToAction(nameof(Create));
     }
 
-    [Authorize]
-    public async Task<IActionResult> Index()
+    private async Task LoadPageContent()
     {
-        var list = await _api.GetAll();
-        return View(list);
-    }
+        var page = await _contentApi.GetBySlug("quote");
+        
+        bool isPreview = Request.Query["preview"] == "true" && User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin");
+        if (page != null && page.Status != "Published" && !isPreview)
+        {
+            ViewData["IsDraft"] = true;
+            return;
+        }
 
-    [Authorize]
-    public async Task<IActionResult> Details(int id)
-    {
-        var dto = await _api.GetById(id);
-        return dto is null ? NotFound() : View(dto);
-    }
-
-    [Authorize]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateStatus(int id, string status)
-    {
-        await _api.UpdateStatus(id, status);
-        TempData["SuccessMessage"] = "Status updated.";
-        return RedirectToAction(nameof(Details), new { id });
-    }
-
-    [Authorize]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id)
-    {
-        await _api.Delete(id);
-        TempData["SuccessMessage"] = "Quote request deleted.";
-        return RedirectToAction(nameof(Index));
+        var model = new HomePageContentModel();
+        
+        if (page != null && !string.IsNullOrEmpty(page.Body))
+        {
+            try
+            {
+                var json = System.Text.Json.JsonSerializer.Deserialize<HomePageContentModel>(page.Body);
+                if (json != null) model = json;
+            }
+            catch { }
+        }
+        
+        ViewBag.ContentModel = model;
     }
 }

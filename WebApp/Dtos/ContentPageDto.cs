@@ -6,6 +6,7 @@ public class ContentPageDto
     public string Slug { get; set; } = null!;
     public string? Title { get; set; }
     public string? Body { get; set; }
+    public string? BannerImageUrl { get; set; }
     public string? Status { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

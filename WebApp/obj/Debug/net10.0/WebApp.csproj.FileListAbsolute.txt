@@ -125,7 +125,6 @@ D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\scopedcss\bundle\WebApp.styles.css
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\scopedcss\projectbundle\WebApp.bundle.scp.css
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\r0eh6qul5j-{0}-61n19gt1b8-61n19gt1b8.gz
-D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\gd9znr7z8k-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\siwt0tsb8r-{0}-t1cqhe9u97-t1cqhe9u97.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\lfp1ivp953-{0}-c2jlpeoesf-c2jlpeoesf.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\ldq9vexem1-{0}-sejl45xvog-sejl45xvog.gz
@@ -185,8 +184,6 @@ D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\6k7fv1pfqa-{0}-9vr69e8ynj-9vr69e8ynj.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\xlfud65edp-{0}-87fc7y1x7t-87fc7y1x7t.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\y4mb16hq9n-{0}-mlv21k5csn-mlv21k5csn.gz
-D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\nrt9wfei13-{0}-svpnydbduk-svpnydbduk.gz
-D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\lcaz16i7pu-{0}-svpnydbduk-svpnydbduk.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\staticwebassets.build.json
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\staticwebassets.build.json.cache
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\staticwebassets.development.json
@@ -198,5 +195,8 @@ D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\WebApp.pdb
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\WebApp.genruntimeconfig.cache
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\ref\WebApp.dll
+D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\gd9znr7z8k-{0}-qhei38ugzj-qhei38ugzj.gz
+D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\cyyammxk5f-{0}-3h5d0lqgao-3h5d0lqgao.gz
 D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
-D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\cyyammxk5f-{0}-je40ja35rn-je40ja35rn.gz
+D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\nrt9wfei13-{0}-qsajz3ps4l-qsajz3ps4l.gz
+D:\Di Hoc\LBEPTL1\T3-2025\sem3\eproject\Pharmaceutical\WebApp\obj\Debug\net10.0\compressed\lcaz16i7pu-{0}-qsajz3ps4l-qsajz3ps4l.gz

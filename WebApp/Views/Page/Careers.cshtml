@@ -1,0 +1,87 @@
+@model WebApp.Models.HomePageContentModel
+@{
+    var banner = ViewData["BannerImageUrl"] as string ?? "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
+    var title = ViewData["Title"] as string ?? "Careers";
+}
+
+<!-- Split-screen Hero Section -->
+<section class="container-fluid p-0">
+    <div class="row g-0" style="min-height: 500px;">
+        <div class="col-lg-5 d-flex align-items-center" style="background-color: #064A2E;">
+            <div class="p-5 p-xl-6 text-white w-100">
+                <span class="d-inline-block py-1 px-3 rounded-pill bg-white bg-opacity-10 small fw-medium mb-4 text-uppercase tracking-wider">Join Our Team</span>
+                <h1 class="display-4 fw-bold mb-4 lh-sm">@(string.IsNullOrEmpty(Model.HeroTitle) ? title : Model.HeroTitle)</h1>
+                <p class="fs-5 text-white opacity-75 mb-0" style="font-weight: 300; max-width: 90%;">
+                    @(string.IsNullOrEmpty(Model.HeroSubtitle) ? "Help us build the future of pharmaceutical manufacturing with innovation and excellence." : Model.HeroSubtitle)
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-7 d-none d-lg-block">
+            <div class="h-100 w-100" style="background: url('@banner') center/cover no-repeat; min-height: 500px;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Inspiring Blockquote Section -->
+<section class="py-5 my-lg-5 text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <i class="bi bi-quote display-1 text-success opacity-25 d-block mb-3"></i>
+                <h2 class="display-6 fw-bold text-dark mb-4 lh-base" style="font-weight: 300 !important;">
+                    @(string.IsNullOrEmpty(Model.AboutDescription) ? "We are committed to innovation, uncompromising quality, and empowering every employee to achieve their absolute best." : Model.AboutDescription)
+                </h2>
+                <p class="text-success fw-bold text-uppercase letter-spacing-1 mt-4">@(string.IsNullOrEmpty(Model.AboutTitle) ? "Why Join Us" : Model.AboutTitle)</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Job Board List -->
+<section class="py-5 bg-light border-top" style="border-color: #e2e8f0 !important;">
+    <div class="container py-lg-4">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <h2 class="fw-bold text-dark mb-0">Open Positions</h2>
+            </div>
+            <div class="text-muted d-none d-md-block">
+                @if (Model.JobOpenings != null)
+                {
+                    <span>Showing @Model.JobOpenings.Count() opportunities</span>
+                }
+            </div>
+        </div>
+        
+        @if (Model.JobOpenings != null && Model.JobOpenings.Any())
+        {
+            <div class="bg-white rounded-4 shadow-sm border overflow-hidden" style="border-color: #e2e8f0 !important;">
+                @foreach (var job in Model.JobOpenings)
+                {
+                    <div class="p-4 p-lg-5 border-bottom hover-bg-light transition-all d-flex flex-column flex-md-row align-items-md-center justify-content-between" style="border-color: #e2e8f0 !important;">
+                        <div class="mb-4 mb-md-0 pe-md-4" style="max-width: 600px;">
+                            <h4 class="fw-bold text-dark mb-2">@job.Title</h4>
+                            <div class="d-flex flex-wrap gap-3 text-muted small mb-3">
+                                <span><i class="bi bi-briefcase me-1"></i> @job.Department</span>
+                                <span><i class="bi bi-geo-alt me-1"></i> @job.Location</span>
+                            </div>
+                            <p class="text-secondary mb-0 text-truncate" style="max-width: 100%;">@job.Description</p>
+                        </div>
+                        <div class="text-md-end flex-shrink-0">
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-success rounded-pill px-4 py-2 fw-medium hover-lift">Apply Now <i class="bi bi-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="bg-white rounded-4 border p-5 text-center shadow-sm" style="border-color: #e2e8f0 !important;">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-4">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                </div>
+                <h4 class="fw-bold text-dark">No open positions right now</h4>
+                <p class="text-muted mb-0">Our team is currently full, but we're always looking for great talent. Please check back later!</p>
+            </div>
+        }
+    </div>
+</section>

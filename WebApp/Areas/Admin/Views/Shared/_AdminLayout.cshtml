@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - XYZ Pharmaceutical Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa; /* Light grey/blue background for content */
+            overflow-x: hidden;
+            color: #333;
+        }
+        
+        #wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #ffffff; /* White sidebar */
+            border-right: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        #sidebar .sidebar-header img.logo {
+            max-width: 180px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #sidebar ul.components {
+            padding: 10px 0;
+            flex-grow: 1;
+        }
+
+        #sidebar ul li {
+            padding: 2px 15px;
+        }
+
+        #sidebar ul li a {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        #sidebar ul li a:hover {
+            background-color: #f1f5f9;
+            color: #2d3748;
+        }
+
+        #sidebar ul li a.active {
+            color: #198754; /* Dark green */
+            background-color: #e8f5e9; /* Light green bg */
+            /* In Bao's mockup, there's a left green indicator, but it looks like a pill bg. 
+               We will use a full pill/rounded bg instead of a strict border to match the image accurately */
+        }
+        
+        #sidebar ul li a i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Logout button at bottom */
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .sidebar-footer a {
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .sidebar-footer a:hover {
+            color: #e53e3e;
+        }
+
+        .sidebar-footer a i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Content Styling */
+        #content {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #eaeaea;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breadcrumb-nav {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        
+        .breadcrumb-nav span.active-crumb {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        /* Mobile Toggle */
+        @@media (max-width: 768px) {
+            #sidebar {
+                margin-left: -250px;
+                position: fixed;
+                height: 100vh;
+                z-index: 999;
+            }
+            #sidebar.active {
+                margin-left: 0;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.5);
+                z-index: 998;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+    <div id="wrapper">
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <!-- Using the new white background logo -->
+                <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="d-block text-center w-100">
+                    <img src="~/images/logo.png" alt="XYZ Pharmaceutical Admin" class="logo" onerror="this.outerHTML='<h5 class=\'fw-bold mb-0 text-dark\'>XYZ Pharmaceutical<br/>Admin</h5>'" />
+                </a>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a asp-area="Admin" asp-controller="ContentPage" asp-action="Index">
+                        <i class="bi bi-layout-text-window"></i> Content Pages
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="bi bi-list-ul"></i> Categories
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="bi bi-file-earmark-text"></i> Specifications
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="QuoteHandle" asp-action="Index">
+                        <i class="bi bi-file-earmark-ruled"></i> Quote Requests
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <form id="logoutForm" asp-area="" asp-controller="Auth" asp-action="Logout" method="post" style="display: none;"></form>
+                <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Top Navbar -->
+            <div class="top-navbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" id="sidebarCollapse" class="btn btn-light d-md-none border me-3">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="breadcrumb-nav d-none d-md-block">
+                        Home / <span class="active-crumb">@ViewData["Title"]</span>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-4">
+                    <a href="#" class="text-secondary fs-5"><i class="bi bi-bell"></i></a>
+                    
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-weight: 600; font-size: 0.9rem;">
+                            AD
+                        </div>
+                        <div class="d-none d-md-flex flex-column" style="line-height: 1.1;">
+                            <span class="fw-bold" style="font-size: 0.85rem;">Admin</span>
+                            <span class="text-muted" style="font-size: 0.75rem;">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Sidebar Toggle Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarCollapse = document.getElementById('sidebarCollapse');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            }
+
+            if(sidebarCollapse) {
+                sidebarCollapse.addEventListener('click', toggleSidebar);
+            }
+            if(sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', toggleSidebar);
+            }
+            
+            // Auto highlight active menu based on URL
+            const currentLocation = location.pathname;
+            const menuItems = document.querySelectorAll('#sidebar ul li a');
+            menuItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if(href && href !== '#' && currentLocation.toLowerCase().includes(href.toLowerCase())) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

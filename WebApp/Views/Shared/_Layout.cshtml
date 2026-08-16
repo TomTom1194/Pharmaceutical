@@ -14,8 +14,14 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-    <header class="sticky-top shadow-sm">
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+    @{
+        var isPreview = Context.Request.Query["preview"] == "true";
+    }
+
+    @if (!isPreview)
+    {
+        <header class="sticky-top shadow">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-main">
             <div class="container">
                 <a class="navbar-brand me-4" asp-controller="Home" asp-action="Index">
                     <img src="~/images/logo.png" alt="PharmEquip" class="navbar-logo" />
@@ -39,18 +45,31 @@
                             <a class="nav-link nav-item-link" asp-controller="Product" asp-action="Index">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-item-link" asp-controller="Career" asp-action="Index">Careers</a>
-                            <!-- Optional: Public User/Candidate Login link goes here in the future -->
+                            <a class="nav-link nav-item-link" href="/careers">Careers</a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item ms-lg-2">
+                                <a class="nav-link fw-semibold text-warning-emphasis bg-warning-subtle px-3 rounded-2"
+                                   asp-area="Admin" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-shield-lock me-1"></i> Admin Portal
+                                </a>
+                            </li>
+                        }
                     </ul>
 
-                    <div class="d-flex align-items-center" style="gap: 10px;">
+                    <div class="d-flex align-items-center" style="gap: 15px;">
+                        <!-- Quote Button in Navbar -->
+                        <a asp-controller="QuoteRequest" asp-action="Create" class="btn btn-primary px-4 rounded-pill shadow-sm fw-bold d-none d-md-block">
+                            Get a Quote
+                        </a>
+                        
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
                                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @User.Identity.Name
+                                    @(string.IsNullOrEmpty(User.Identity.Name) ? "Admin" : User.Identity.Name)
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2">
                                     <li>
@@ -63,13 +82,16 @@
                         }
                         else
                         {
-                            <a class="btn btn-outline-primary px-4 rounded-pill" asp-controller="Auth" asp-action="Login">Login</a>
+                            <a class="btn btn-success px-4 rounded-pill shadow-sm fw-medium" asp-controller="Auth" asp-action="Login">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                            </a>
                         }
                     </div>
                 </div>
             </div>
         </nav>
     </header>
+    }
 
     <main role="main" class="flex-grow-1">
         @if (TempData["SuccessMessage"] != null)
@@ -94,33 +116,58 @@
         @RenderBody()
     </main>
 
-    <footer class="footer-dark text-white pt-5 pb-3 mt-auto">
+    @if (!isPreview)
+    {
+    <footer class="pt-5 pb-3 mt-auto" style="background-color: #0f172a; color: #94a3b8;">
         <div class="container">
-            <div class="row g-4 pb-4 border-bottom border-secondary">
+            <div class="row g-4 pb-4 border-bottom" style="border-color: #1e293b !important;">
                 <div class="col-lg-4 col-md-6">
                     <h5 class="text-white mb-3 fw-bold">XYZ Pharmaceutical</h5>
-                    <p class="text-secondary small">
+                    <p class="small mb-4" style="line-height: 1.8;">
                         We supply pharmaceutical manufacturing equipment meeting GMP/FDA standards. Serving domestic and international drug manufacturers since 2005.
                     </p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white opacity-75 hover-opacity-100"><i class="bi bi-linkedin fs-5"></i></a>
+                        <a href="#" class="text-white opacity-75 hover-opacity-100"><i class="bi bi-twitter-x fs-5"></i></a>
+                        <a href="#" class="text-white opacity-75 hover-opacity-100"><i class="bi bi-youtube fs-5"></i></a>
+                    </div>
                 </div>
 
                 <div class="col-lg-2 col-md-6">
-                    <h6 class="text-white fw-semibold mb-3">Quick Links</h6>
-                    <ul class="list-unstyled small d-flex flex-column gap-2">
-                        <li><a asp-controller="Home" asp-action="Index" class="text-secondary text-decoration-none link-footer">Home</a></li>
-                        <li><a asp-controller="Home" asp-action="About" class="text-secondary text-decoration-none link-footer">About Us</a></li>
-                        <li><a asp-controller="Product" asp-action="Index" class="text-secondary text-decoration-none link-footer">Products</a></li>
-                        <li><a asp-controller="Career" asp-action="Index" class="text-secondary text-decoration-none link-footer">Careers</a></li>
+                    <h6 class="text-white fw-semibold mb-4 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">Quick Links</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-3">
+                        <li><a asp-controller="Home" asp-action="Index" class="text-decoration-none footer-link">Home</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="text-decoration-none footer-link">About Us</a></li>
+                        <li><a asp-controller="Product" asp-action="Index" class="text-decoration-none footer-link">Products</a></li>
+                        <li><a href="/careers" class="text-decoration-none footer-link">Careers</a></li>
                     </ul>
                 </div>
-
+                
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-semibold mb-4 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">Contact Us</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-3">
+                        <li class="d-flex align-items-center gap-2"><i class="bi bi-envelope text-success"></i> info@xyzpharma.com</li>
+                        <li class="d-flex align-items-center gap-2"><i class="bi bi-telephone text-success"></i> +1 (800) 123-4567</li>
+                        <li class="d-flex align-items-center gap-2"><i class="bi bi-geo-alt text-success"></i> 21 Bis Hậu Giang, Phường Tân Sơn Nhất, TP HCM</li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center pt-3 text-secondary small">
+            <div class="pt-4 small opacity-75 text-center">
                 <p class="mb-0">&copy; @DateTime.Now.Year PharmEquip Portal. All rights reserved.</p>
             </div>
         </div>
     </footer>
+    }
+
+    @if (!isPreview)
+    {
+        <!-- Floating Action Button (FAB) -->
+        <a asp-controller="QuoteRequest" asp-action="Create" class="quote-fab shadow-lg pulse-animation" title="Request a Quote">
+            <i class="bi bi-chat-quote-fill fs-5 me-2"></i>
+            <span class="fw-bold fs-6">Get a Quote</span>
+        </a>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
