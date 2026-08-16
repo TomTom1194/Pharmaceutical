@@ -37,8 +37,7 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    // CV management page: shows the current uploaded resume file and offers
-    // the "Create Resume" entry point for filling in structured resume data.
+    
     [HttpGet]
     public async Task<IActionResult> ManageCv()
     {
@@ -50,13 +49,8 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    // The real business rule is 5 MB (matches the API). The RequestSizeLimit here is
-    // set well above that on purpose: if it were set to exactly 5 MB, Kestrel would
-    // reject an oversized upload mid-stream by resetting the connection outright
-    // (the browser shows "This site can't be reached" instead of a real error page).
-    // Giving it headroom lets the request reach the action below, where we can return
-    // a friendly, redirected error message instead.
-    private const long MaxUploadSizeBytes = 5 * 1024 * 1024; // 5 MB, must match the API's limit
+    
+    private const long MaxUploadSizeBytes = 5 * 1024 * 1024; 
 
     [HttpPost]
     [RequestSizeLimit(20 * 1024 * 1024)]
