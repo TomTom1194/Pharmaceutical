@@ -47,12 +47,11 @@ namespace Pharmaceutical.Controllers
                 _db.UserAccounts.Add(user);
                 await _db.SaveChangesAsync(); // generates UserId (identity)
 
+                // Bare-minimum profile shell; the candidate fills in the rest
+                // later via the "Create Resume" flow in the candidate portal.
                 var profile = new CandidateProfile
                 {
                     CandidateId = user.UserId,
-                    FullName = req.FullName,
-                    Phone = req.Phone,
-                    Address = req.Address,
                     CreatedAt = DateTime.UtcNow
                 };
 

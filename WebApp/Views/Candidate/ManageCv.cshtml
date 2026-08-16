@@ -1,0 +1,81 @@
+@model WebApp.Dtos.ResumeResponseDto
+
+@{
+    ViewBag.Title = "Manage CV";
+    Layout = "_Layout";
+}
+
+<h2>Manage CV</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Resume</h5>
+        <p class="card-text">Build your resume by filling in your personal info, education and work experience.</p>
+        <a asp-action="CreateResume" asp-controller="Candidate" class="btn btn-primary">Create Resume</a>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Current CV File</h5>
+            <p class="mb-1"><strong>File name:</strong> @Model.OriginalName</p>
+            <p class="mb-1"><strong>Uploaded at:</strong> @(Model.UploadedAt?.ToLocalTime().ToString("g") ?? "-")</p>
+            <p class="mb-0"><strong>Size:</strong> @((Model.Size ?? 0) / 1024) KB</p>
+        </div>
+    </div>
+}
+else
+{
+    <p>You haven't uploaded a CV file yet.</p>
+}
+
+<h5>@(Model != null ? "Replace CV File" : "Upload CV File")</h5>
+<form asp-action="UploadCv" method="post" enctype="multipart/form-data" id="uploadCvForm">
+    <div class="mb-3">
+        <input type="file" name="resumeFile" id="resumeFileInput" class="form-control" accept=".pdf,.doc,.docx" required />
+        <div class="form-text">Accepted formats: PDF, DOC, DOCX. Max size 5 MB.</div>
+        <div id="fileSizeError" class="text-danger mt-1" style="display: none;"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Must match CandidateController.MaxUploadSizeBytes on the server.
+            var MAX_SIZE_BYTES = 5 * 1024 * 1024;
+            var form = document.getElementById('uploadCvForm');
+            var fileInput = document.getElementById('resumeFileInput');
+            var errorDiv = document.getElementById('fileSizeError');
+
+            form.addEventListener('submit', function (e) {
+                errorDiv.style.display = 'none';
+                errorDiv.textContent = '';
+
+                var file = fileInput.files[0];
+                if (file && file.size > MAX_SIZE_BYTES) {
+                    e.preventDefault();
+                    errorDiv.textContent = 'File "' + file.name + '" is ' +
+                        (file.size / 1024 / 1024).toFixed(2) +
+                        ' MB, which exceeds the 5 MB limit. Please choose a smaller file.';
+                    errorDiv.style.display = 'block';
+                }
+            });
+        })();
+    </script>
+}
