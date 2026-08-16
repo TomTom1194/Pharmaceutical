@@ -10,7 +10,7 @@ namespace WebApp.Controllers;
 public class AuthController :Controller
 {
     private readonly IAuthService _authService;
-    
+
     public AuthController(IAuthService authService)
     {
         _authService = authService;
@@ -48,6 +48,30 @@ public class AuthController :Controller
             new ClaimsPrincipal(identity));
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return View(request);
+
+        var result = await _authService.Register(request);
+
+        if (!result.Success)
+        {
+            ModelState.AddModelError("", result.ErrorMessage ?? "Registration failed. Please try again.");
+            return View(request);
+        }
+
+        TempData["SuccessMessage"] = "Account created successfully. Please log in.";
+        return RedirectToAction("Login");
     }
 
     [HttpPost]

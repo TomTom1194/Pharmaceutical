@@ -98,3 +98,4 @@
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/WebApp.pdb
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/WebApp.genruntimeconfig.cache
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/ref/WebApp.dll
+/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/WebApp.sourcelink.json
