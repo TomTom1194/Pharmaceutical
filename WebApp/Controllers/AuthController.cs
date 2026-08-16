@@ -47,6 +47,11 @@ public class AuthController :Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
+        // Candidate accounts land straight on their candidate portal (resume page);
+        // other roles fall back to the default home page.
+        if (string.Equals(result.Role, "Candidate", StringComparison.OrdinalIgnoreCase))
+            return RedirectToAction("Index", "Candidate");
+
         return RedirectToAction("Index", "Home");
     }
 

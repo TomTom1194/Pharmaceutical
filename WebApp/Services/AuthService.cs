@@ -56,7 +56,7 @@ public class AuthService :IAuthService
             }
             catch (JsonException)
             {
-                // response body wasn't the expected { message: "" } shape, ignore
+                
             }
 
             return new RegisterResultDto

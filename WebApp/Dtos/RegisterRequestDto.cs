@@ -15,14 +15,4 @@ public class RegisterRequestDto
     [Required(ErrorMessage = "Confirm your password")]
     [Compare(nameof(Password), ErrorMessage = "Password confirmation does not match")]
     public string ConfirmPassword { get; set; }
-
-    [Required(ErrorMessage = "Input Full Name")]
-    [MaxLength(255)]
-    public string FullName { get; set; }
-
-    [Phone(ErrorMessage = "Phone number is not valid")]
-    public string? Phone { get; set; }
-
-    [MaxLength(255)]
-    public string? Address { get; set; }
 }

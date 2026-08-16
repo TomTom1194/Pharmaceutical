@@ -12,6 +12,8 @@ builder.Services.AddHttpClient("PharmaApi", client =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IResumeService, ResumeService>();
+builder.Services.AddScoped<ICandidateProfileService, CandidateProfileService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
