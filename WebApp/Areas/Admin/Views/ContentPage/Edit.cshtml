@@ -1,0 +1,110 @@
+@model WebApp.Models.ContentPageFormModel
+@{
+    ViewData["Title"] = "Edit Page: " + Model.Title;
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a asp-action="Index" class="text-muted text-decoration-none small">&larr; Back to list</a>
+            <h2 class="fw-bold mb-0 mt-1">Edit Page</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="PageId" />
+                        <input type="hidden" asp-for="Slug" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Page URL (Slug)</label>
+                            <input class="form-control bg-light" value="/@Model.Slug" readonly disabled />
+                            <div class="form-text">The URL slug cannot be changed.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-medium">Page Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="BannerImageUpload" class="form-label fw-medium">Banner Image (Optional)</label>
+                            @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.BannerImageUrl" alt="Current Banner" class="img-thumbnail" style="max-height: 150px;" />
+                                </div>
+                            }
+                            <input asp-for="BannerImageUpload" type="file" class="form-control" accept="image/*" />
+                            <div class="form-text">Upload a new banner image to replace the current one.</div>
+                            <input type="hidden" asp-for="BannerImageUrl" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Body" class="form-label fw-medium">Page Content</label>
+                            <textarea asp-for="Body" class="form-control" rows="15"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Status" class="form-label fw-medium">Visibility Status</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Published">Published (Visible to users)</option>
+                                <option value="Draft">Draft (Hidden)</option>
+                            </select>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">Writing Guide</h6>
+                    <ul class="small text-muted ps-3 mb-0">
+                        <li class="mb-2">Use <code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code> for headings.</li>
+                        <li class="mb-2">Use <code>&lt;p&gt;</code> for paragraphs.</li>
+                        <li class="mb-2">Use <code>&lt;strong&gt;</code> for bold text.</li>
+                        <li class="mb-2">You can use Bootstrap 5 classes like <code>text-primary</code>, <code>fw-bold</code>, <code>mb-3</code> directly in the HTML.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- TinyMCE Rich Text Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#Body',
+            height: 500,
+            menubar: true,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | ' +
+                'bold italic forecolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size:16px }',
+            promotion: false,
+            branding: false
+        });
+    </script>
+}

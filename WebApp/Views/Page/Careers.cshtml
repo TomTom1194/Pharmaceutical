@@ -1,0 +1,195 @@
+@model WebApp.Models.HomePageContentModel
+@{
+    var banner = ViewData["BannerImageUrl"] as string ?? "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
+    var title = ViewData["Title"] as string ?? "Careers";
+}
+
+<!-- Split-screen Hero Section -->
+<section class="container-fluid p-0 position-relative">
+    <div class="row g-0" style="min-height: 600px;">
+        <div class="col-lg-5 d-flex align-items-center position-relative z-1" style="background: linear-gradient(135deg, #064A2E 0%, #0a5c3b 100%);">
+            <div class="p-5 p-xl-6 text-white w-100" style="padding-bottom: 8rem !important;">
+                <span class="d-inline-block py-1 px-3 rounded-pill bg-white bg-opacity-10 small fw-medium mb-4 text-uppercase tracking-wider">Join Our Team</span>
+                <h1 class="display-4 fw-bold mb-4 lh-sm">@(string.IsNullOrEmpty(Model.HeroTitle) ? title : Model.HeroTitle)</h1>
+                <p class="fs-5 text-white opacity-75 mb-0" style="font-weight: 300; max-width: 90%;">
+                    @(string.IsNullOrEmpty(Model.HeroSubtitle) ? "Help us build the future of pharmaceutical manufacturing with innovation and excellence." : Model.HeroSubtitle)
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-7 d-none d-lg-block position-relative">
+            <div class="h-100 w-100" style="background: url('@banner') center/cover no-repeat; min-height: 600px;"></div>
+            <!-- Overlay to blend the image with the green -->
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, #0a5c3b 0%, transparent 15%);"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Inspiring Blockquote Section (Overlapping) -->
+<section class="position-relative" style="margin-top: -80px; z-index: 10;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body p-5 text-center bg-white">
+                        <i class="bi bi-quote display-3 text-success opacity-25 d-block mb-3" style="margin-top: -20px;"></i>
+                        <h2 class="h3 fw-medium text-dark mb-4 lh-base px-lg-5" style="font-weight: 400 !important; color: #334155 !important;">
+                            "@(string.IsNullOrEmpty(Model.AboutDescription) ? "We are committed to innovation, uncompromising quality, and empowering every employee to achieve their absolute best." : Model.AboutDescription)"
+                        </h2>
+                        <div class="d-inline-block border-top border-2 border-success pt-3 mt-2">
+                            <p class="text-success fw-bold text-uppercase tracking-wider mb-0 small">@(string.IsNullOrEmpty(Model.AboutTitle) ? "Why Join Us" : Model.AboutTitle)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Job Board List -->
+<section class="py-5" style="background-color: #f8fafc; padding-top: 6rem !important;">
+    <div class="container pb-lg-5">
+        @{
+            var positions = ViewBag.Positions as IEnumerable<Pharmaceutical.Models.Position>;
+        }
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <h2 class="display-6 fw-bold text-dark mb-2">Open Positions</h2>
+                <p class="text-muted mb-0 fs-5">Discover your next career opportunity</p>
+            </div>
+            <div class="text-muted d-none d-md-block bg-white px-4 py-2 rounded-pill shadow-sm border">
+                @if (positions != null)
+                {
+                    <span class="fw-medium"><i class="bi bi-briefcase text-success me-2"></i> @positions.Count() opportunities</span>
+                }
+            </div>
+        </div>
+        
+        @if (positions != null && positions.Any())
+        {
+            <div class="row g-4">
+                @foreach (var job in positions)
+                {
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 hover-shadow-lg transition-all h-100" style="border: 1px solid rgba(0,0,0,0.05) !important;">
+                            <div class="card-body p-4 p-lg-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+                                <div class="mb-4 mb-md-0 pe-md-4" style="max-width: 700px;">
+                                    <h4 class="fw-bold text-dark mb-3">@job.Title</h4>
+                                    <div class="d-flex flex-wrap gap-2 gap-md-4 text-muted small mb-3 fw-medium">
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-diagram-3 text-success me-2"></i> @job.Department</span>
+
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-clock text-primary me-2"></i> @job.Type</span>
+                                        @if(!string.IsNullOrEmpty(job.SalaryRange))
+                                        {
+                                            <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-currency-dollar text-warning me-1"></i> @job.SalaryRange</span>
+                                        }
+                                    </div>
+                                    <p class="text-secondary mb-0 text-truncate" style="max-width: 100%; font-size: 0.95rem;">@job.Description</p>
+                                </div>
+                                <div class="text-md-end flex-shrink-0 ms-md-auto ps-md-4 border-start-md border-light d-flex flex-column gap-2">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-2 fw-bold w-100" data-bs-toggle="modal" data-bs-target="#jobModal-@job.PositionId">
+                                        View Details <i class="bi bi-info-circle ms-2"></i>
+                                    </button>
+                                    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
+                                    {
+                                        <form asp-controller="Candidate" asp-action="Apply" method="post" class="d-inline">
+                                            <input type="hidden" name="positionId" value="@job.PositionId" />
+                                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 py-2 fw-bold hover-lift shadow-sm w-100" onclick="return confirm('Do you want to apply for this position?');">
+                                                Apply Now <i class="bi bi-arrow-right ms-2"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Auth" asp-action="Login" class="btn btn-dark btn-lg rounded-pill px-5 py-2 fw-bold hover-lift shadow-sm w-100">
+                                            Login to Apply <i class="bi bi-box-arrow-in-right ms-2"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Details Modal -->
+                    <div class="modal fade" id="jobModal-@job.PositionId" tabindex="-1" aria-labelledby="jobModalLabel-@job.PositionId" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                            <div class="modal-content rounded-4 border-0 shadow-lg">
+                                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                                    <h5 class="modal-title h3 fw-bold text-dark" id="jobModalLabel-@job.PositionId">@job.Title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body px-4 py-4">
+                                    <div class="d-flex flex-wrap gap-2 text-muted small mb-4 fw-medium border-bottom pb-4">
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-diagram-3 text-success me-2"></i> @job.Department</span>
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-clock text-primary me-2"></i> @job.Type</span>
+                                        @if(!string.IsNullOrEmpty(job.SalaryRange))
+                                        {
+                                            <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-currency-dollar text-warning me-1"></i> @job.SalaryRange</span>
+                                        }
+                                    </div>
+                                    
+                                    <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Job Description</h6>
+                                    <div class="text-secondary mb-4" style="line-height: 1.8;">
+                                        @Html.Raw(job.Description.Replace("\n", "<br/>"))
+                                    </div>
+
+                                    <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Requirements</h6>
+                                    <div class="text-secondary mb-2" style="line-height: 1.8;">
+                                        @Html.Raw(job.Requirements.Replace("\n", "<br/>"))
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top-0 px-4 pb-4 pt-2 d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+                                    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
+                                    {
+                                        <form asp-controller="Candidate" asp-action="Apply" method="post" class="d-inline">
+                                            <input type="hidden" name="positionId" value="@job.PositionId" />
+                                            <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" onclick="return confirm('Do you want to apply for this position?');">
+                                                Apply Now <i class="bi bi-arrow-right ms-2"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Auth" asp-action="Login" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm">
+                                            Login to Apply <i class="bi bi-box-arrow-in-right ms-2"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="bg-white rounded-4 border p-5 text-center shadow-sm" style="border-color: #e2e8f0 !important;">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-4">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                </div>
+                <h4 class="fw-bold text-dark">No open positions right now</h4>
+                <p class="text-muted mb-0">Our team is currently full, but we're always looking for great talent. Please check back later!</p>
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    .hover-shadow-lg:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
+    }
+    .tracking-wider {
+        letter-spacing: 0.05em;
+    }
+    .border-start-md {
+        border-left: 1px solid #f1f5f9;
+    }
+    @@media (max-width: 767.98px) {
+        .border-start-md {
+            border-left: none;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+    }
+</style>

@@ -21,6 +21,10 @@ public class ContentPage
     [Column("body")]
     public string? Body { get; set; }
 
+    [MaxLength(500)]
+    [Column("banner_image_url")]
+    public string? BannerImageUrl { get; set; }
+
     [MaxLength(20)]
     [Column("status")]
     public string? Status { get; set; }

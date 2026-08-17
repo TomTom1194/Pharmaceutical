@@ -48,7 +48,7 @@ public class AuthController :Controller
             new ClaimsPrincipal(identity));
 
         if (result.Role == "Admin")
-            return RedirectToAction("Index", "Product", new { area = "Admin" });
+            return RedirectToAction("Index", "Home", new { area = "Admin" });
         // Candidate accounts land straight on their candidate portal (resume page);
         // other roles fall back to the default home page.
         if (string.Equals(result.Role, "Candidate", StringComparison.OrdinalIgnoreCase))

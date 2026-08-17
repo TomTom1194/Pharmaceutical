@@ -1,0 +1,166 @@
+@model WebApp.Models.HomePageContentModel
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<!-- Hero Banner Section -->
+<section class="hero-section position-relative d-flex align-items-center" style="background: linear-gradient(rgba(6, 74, 46, 0.85), rgba(6, 74, 46, 0.85)), url('https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; min-height: 400px;">
+    <div class="container text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">About XYZ Pharmaceutical</h1>
+        <p class="lead mb-0">Pioneering the future of pharmaceutical manufacturing equipment since 2005.</p>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="py-5 my-lg-5 overflow-hidden">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 position-relative z-index-1">
+                <span class="d-block text-success fw-bold text-uppercase letter-spacing-1 mb-2" style="letter-spacing: 2px; font-size: 0.85rem;">Our Heritage</span>
+                <h2 class="display-5 fw-bold text-dark mb-4" style="line-height: 1.2;">Empowering Healthcare Through Innovation</h2>
+                @if (!string.IsNullOrEmpty(Model?.AboutDescription))
+                {
+                    <div class="fs-5 text-secondary lh-lg mb-5 content-body" style="font-weight: 300;">
+                        @Html.Raw(Model.AboutDescription)
+                    </div>
+                }
+                else
+                {
+                    <p class="fs-5 text-secondary lh-lg mb-4" style="font-weight: 300;">
+                        Founded with a vision to revolutionize the pharmaceutical industry, XYZ Pharmaceutical has grown from a specialized local distributor to a globally recognized leader in manufacturing equipment.
+                    </p>
+                    <p class="text-secondary lh-lg mb-5" style="font-weight: 300;">
+                        We understand that in the healthcare sector, precision and reliability are not just goals—they are lifelines. That is why our mission has always been to provide state-of-the-art machinery that exceeds international GMP and FDA standards.
+                    </p>
+                }
+                
+                <div class="row g-4 mt-2">
+                    <div class="col-sm-6">
+                        <div class="p-4 rounded-4" style="background-color: #f8fafc; border-left: 4px solid #16a34a;">
+                            <h3 class="display-6 fw-bold text-dark mb-0">18<span class="text-success">+</span></h3>
+                            <span class="text-secondary fw-medium">Years of Excellence</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-4 rounded-4" style="background-color: #f8fafc; border-left: 4px solid #16a34a;">
+                            <h3 class="display-6 fw-bold text-dark mb-0">50<span class="text-success">+</span></h3>
+                            <span class="text-secondary fw-medium">Global Partners</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="position-relative ps-lg-5">
+                    <!-- Main Image -->
+                    <div class="rounded-5 overflow-hidden shadow-lg position-relative">
+                        <img src="https://images.unsplash.com/photo-1587483166702-bf9aa66bd791?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Laboratory Equipment" class="img-fluid w-100" style="object-fit: cover; height: 550px; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                    </div>
+                    
+                    <!-- Floating Glassmorphism Badge -->
+                    <div class="position-absolute bottom-0 start-0 translate-middle-x p-4 rounded-4 shadow-lg d-none d-md-flex align-items-center" 
+                         style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); margin-bottom: 40px; margin-left: 40px;">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 56px; height: 56px;">
+                            <i class="bi bi-award text-white fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">ISO 9001</h5>
+                            <span class="text-secondary small fw-medium">Certified Quality</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values Section - Typographic Breakout -->
+<section class="py-5 py-lg-5" style="background-color: #ffffff;">
+    <div class="container py-4">
+        <div class="row mb-5 align-items-end">
+            <div class="col-lg-6">
+                <span class="text-success fw-bold text-uppercase letter-spacing-1 small d-block mb-2">Our Principles</span>
+                <h2 class="display-5 fw-bold text-dark mb-0">The Core Values</h2>
+            </div>
+            <div class="col-lg-6 text-lg-end mt-4 mt-lg-0">
+                <p class="text-secondary fs-5 mb-0" style="font-weight: 300;">The standards that guide every machine we build and every relationship we forge.</p>
+            </div>
+        </div>
+        
+        <div class="border-top pt-5" style="border-color: #e2e8f0 !important; border-width: 2px !important;">
+            @if (Model?.CoreValues != null && Model.CoreValues.Any())
+            {
+                for (int i = 0; i < Model.CoreValues.Count; i++)
+                {
+                    var cv = Model.CoreValues[i];
+                    var isLast = i == Model.CoreValues.Count - 1;
+                    var borderClass = isLast ? "" : "border-bottom mb-5 pb-5";
+                    <div class="row align-items-center @borderClass" style="border-color: #f1f5f9 !important;">
+                        <div class="col-md-2">
+                            <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">0@(i + 1)</span>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="fw-bold text-dark mb-3 mb-md-0">@cv.Title</h3>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">@cv.Description</p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Fallback Value 1 -->
+                <div class="row align-items-center mb-5 pb-5 border-bottom" style="border-color: #f1f5f9 !important;">
+                    <div class="col-md-2">
+                        <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">01</span>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="fw-bold text-dark mb-3 mb-md-0">Uncompromising Quality</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">Every piece of equipment is rigorously tested to ensure 100% compliance with strict GMP and FDA regulations, leaving zero room for error.</p>
+                    </div>
+                </div>
+                
+                <!-- Fallback Value 2 -->
+                <div class="row align-items-center mb-5 pb-5 border-bottom" style="border-color: #f1f5f9 !important;">
+                    <div class="col-md-2">
+                        <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">02</span>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="fw-bold text-dark mb-3 mb-md-0">Innovative Technology</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">We continuously invest in R&D to bring smart, automated, and highly efficient solutions to your production line, keeping you ahead of the curve.</p>
+                    </div>
+                </div>
+                
+                <!-- Fallback Value 3 -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-md-2">
+                        <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">03</span>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="fw-bold text-dark mb-3 mb-md-0">Global Support</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">Our dedicated international team provides seamless 24/7 technical support, on-site maintenance, and operator training worldwide.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-success text-white text-center">
+    <div class="container py-lg-5">
+        <h2 class="fw-bold mb-4">Ready to upgrade your production capabilities?</h2>
+        <p class="lead mb-5 opacity-75">Join thousands of pharmaceutical manufacturers who trust our equipment.</p>
+        <div>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-light btn-lg px-5 fw-bold text-success me-3 rounded-pill shadow">Explore Products</a>
+            <a asp-controller="QuoteRequest" asp-action="Create" class="btn btn-outline-light btn-lg px-5 fw-bold rounded-pill">Request a Quote</a>
+        </div>
+    </div>
+</section>

@@ -11,7 +11,12 @@ builder.Services.AddHttpClient("PharmaApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<QuoteApiService>();
+builder.Services.AddScoped<ContentPageApiService>();
+builder.Services.AddScoped<DashboardApiService>();
+builder.Services.AddScoped<PositionApiService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITabletSpecificationService, TabletSpecificationService>();
@@ -52,7 +57,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=Product}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
         name: "default",

@@ -1,0 +1,145 @@
+@model List<WebApp.Dtos.ContentPageDto>
+@{
+    ViewData["Title"] = "Content Pages";
+}
+
+<div class="container-fluid py-2">
+    <!-- Header -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1" style="color: #212529;">Content Pages</h3>
+        <p class="text-muted mb-0 small">Manage static website pages</p>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="p-5 text-center text-muted">
+                    <i class="bi bi-layout-text-window display-4 mb-3 d-block text-black-50"></i>
+                    <h5>No content pages found.</h5>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" style="border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #f1f5f9; background-color: #f8fafc;">
+                                <th class="ps-4 py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Page</th>
+                                <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">URL Slug</th>
+                                <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Status</th>
+                                <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Last Updated</th>
+                                <th class="py-3 text-muted fw-bold border-0 text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var isPublished = item.Status == "Published";
+                                var badgeBgColor = isPublished ? "#e8f5e9" : "#ffebee";
+                                var badgeTextColor = isPublished ? "#2e7d32" : "#c62828";
+                                var badgeText = isPublished ? "Published" : "Draft";
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; flex-shrink: 0;">
+                                                <i class="bi bi-file-earmark-text"></i>
+                                            </div>
+                                            <span class="fw-semibold text-dark">@item.Title</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="text-muted" style="font-family: monospace; font-size: 0.85rem;">/@item.Slug</span>
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="badge fw-medium px-2 py-1" style="background-color: @badgeBgColor; color: @badgeTextColor; font-size: 0.75rem;">@badgeText</span>
+                                    </td>
+                                    <td class="py-3 text-muted" style="font-size: 0.85rem;">
+                                        <i class="bi bi-clock me-1"></i>
+                                        @(item.UpdatedAt?.ToString("dd MMM yyyy") ?? "Never updated")
+                                    </td>
+                                    <td class="py-3 pe-4 text-end">
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.PageId"
+                                               class="btn btn-sm text-success fw-medium px-3"
+                                               style="background-color: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 4px;" title="Edit Content">
+                                                <i class="bi bi-pencil me-1"></i> Edit
+                                            </a>
+                                            <button type="button" class="btn btn-sm px-3 fw-medium text-secondary preview-btn"
+                                                    data-slug="@item.Slug"
+                                                    style="background-color: #fff; border: 1px solid #e2e8f0; border-radius: 4px;" title="Live Preview">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <!-- Live Preview Section -->
+    <div class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-laptop me-2"></i>Live Preview</h5>
+            <span class="badge bg-light text-dark border px-3 py-2" id="previewUrlLabel" style="font-family: monospace;">/home</span>
+        </div>
+        <div class="card border-1 shadow-sm rounded-3 overflow-hidden">
+            <div class="card-body p-0" style="height: 600px; background-color: #fff;">
+                <iframe id="previewFrame" src="/?preview=true" width="100%" height="100%" frameborder="0" style="border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const previewBtns = document.querySelectorAll('.preview-btn');
+            const previewFrame = document.getElementById('previewFrame');
+            const previewUrlLabel = document.getElementById('previewUrlLabel');
+
+            previewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let slug = this.getAttribute('data-slug');
+                    
+                    let url = '';
+                    if (slug === 'home' || slug === '/') {
+                        url = '/?preview=true';
+                    } else if (slug === 'quote') {
+                        url = '/Quote?preview=true';
+                    } else if (slug === 'about-us') {
+                        url = '/about?preview=true';
+                    } else if (slug === 'careers') {
+                        url = '/careers?preview=true';
+                    } else {
+                        url = '/page/' + slug.replace(/^\/+/, '') + '?preview=true';
+                    }
+                    
+                    // Update iframe and label
+                    previewFrame.src = url;
+                    previewUrlLabel.textContent = url.replace('?preview=true', '');
+                    
+                    // Scroll to preview smoothly
+                    previewFrame.parentElement.parentElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                });
+            });
+
+            // Auto-trigger preview if previewSlug is in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const previewSlug = urlParams.get('previewSlug');
+            if (previewSlug) {
+                const autoBtn = document.querySelector(`.preview-btn[data-slug="${previewSlug}"]`);
+                if (autoBtn) {
+                    autoBtn.click();
+                    // Clean up URL so it doesn't trigger again on normal refresh
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
+    </script>
+}

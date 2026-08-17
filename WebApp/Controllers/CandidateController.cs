@@ -137,5 +137,13 @@ public class CandidateController : Controller
         return RedirectToAction("ManageCv");
     }
 
+    [HttpPost]
+    public IActionResult Apply(int positionId)
+    {
+        // Placeholder until the Application API is implemented by the team
+        TempData["SuccessMessage"] = "Your application has been received successfully! (Note: The backend application storage is pending the database update from your team).";
+        return RedirectToAction("Careers", "Page");
+    }
+
     private string GetToken() => User.FindFirst("JwtToken")?.Value ?? string.Empty;
 }
