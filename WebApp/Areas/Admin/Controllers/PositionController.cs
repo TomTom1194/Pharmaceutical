@@ -33,7 +33,7 @@ public class PositionController : Controller
     {
         if (ModelState.IsValid)
         {
-            var token = Request.Cookies["jwtToken"];
+            var token = User.Claims.FirstOrDefault(c => c.Type == "JwtToken")?.Value;
             if (token != null)
             {
                 var success = await _api.CreateAsync(position, token);
@@ -63,7 +63,7 @@ public class PositionController : Controller
 
         if (ModelState.IsValid)
         {
-            var token = Request.Cookies["jwtToken"];
+            var token = User.Claims.FirstOrDefault(c => c.Type == "JwtToken")?.Value;
             if (token != null)
             {
                 var success = await _api.UpdateAsync(id, position, token);
@@ -82,7 +82,7 @@ public class PositionController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        var token = Request.Cookies["jwtToken"];
+        var token = User.Claims.FirstOrDefault(c => c.Type == "JwtToken")?.Value;
         if (token != null)
         {
             var success = await _api.DeleteAsync(id, token);

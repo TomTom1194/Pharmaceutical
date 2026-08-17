@@ -85,19 +85,72 @@
                                     </div>
                                     <p class="text-secondary mb-0 text-truncate" style="max-width: 100%; font-size: 0.95rem;">@job.Description</p>
                                 </div>
-                                <div class="text-md-end flex-shrink-0 ms-md-auto ps-md-4 border-start-md border-light">
+                                <div class="text-md-end flex-shrink-0 ms-md-auto ps-md-4 border-start-md border-light d-flex flex-column gap-2">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-2 fw-bold w-100" data-bs-toggle="modal" data-bs-target="#jobModal-@job.PositionId">
+                                        View Details <i class="bi bi-info-circle ms-2"></i>
+                                    </button>
                                     @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
                                     {
                                         <form asp-controller="Candidate" asp-action="Apply" method="post" class="d-inline">
                                             <input type="hidden" name="positionId" value="@job.PositionId" />
-                                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 py-3 fw-bold hover-lift shadow-sm w-100" onclick="return confirm('Do you want to apply for this position?');">
+                                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 py-2 fw-bold hover-lift shadow-sm w-100" onclick="return confirm('Do you want to apply for this position?');">
                                                 Apply Now <i class="bi bi-arrow-right ms-2"></i>
                                             </button>
                                         </form>
                                     }
                                     else
                                     {
-                                        <a asp-controller="Auth" asp-action="Login" class="btn btn-dark btn-lg rounded-pill px-5 py-3 fw-bold hover-lift shadow-sm w-100">
+                                        <a asp-controller="Auth" asp-action="Login" class="btn btn-dark btn-lg rounded-pill px-5 py-2 fw-bold hover-lift shadow-sm w-100">
+                                            Login to Apply <i class="bi bi-box-arrow-in-right ms-2"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Details Modal -->
+                    <div class="modal fade" id="jobModal-@job.PositionId" tabindex="-1" aria-labelledby="jobModalLabel-@job.PositionId" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                            <div class="modal-content rounded-4 border-0 shadow-lg">
+                                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                                    <h5 class="modal-title h3 fw-bold text-dark" id="jobModalLabel-@job.PositionId">@job.Title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body px-4 py-4">
+                                    <div class="d-flex flex-wrap gap-2 text-muted small mb-4 fw-medium border-bottom pb-4">
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-diagram-3 text-success me-2"></i> @job.Department</span>
+                                        <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-clock text-primary me-2"></i> @job.Type</span>
+                                        @if(!string.IsNullOrEmpty(job.SalaryRange))
+                                        {
+                                            <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-currency-dollar text-warning me-1"></i> @job.SalaryRange</span>
+                                        }
+                                    </div>
+                                    
+                                    <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Job Description</h6>
+                                    <div class="text-secondary mb-4" style="line-height: 1.8;">
+                                        @Html.Raw(job.Description.Replace("\n", "<br/>"))
+                                    </div>
+
+                                    <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Requirements</h6>
+                                    <div class="text-secondary mb-2" style="line-height: 1.8;">
+                                        @Html.Raw(job.Requirements.Replace("\n", "<br/>"))
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top-0 px-4 pb-4 pt-2 d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+                                    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
+                                    {
+                                        <form asp-controller="Candidate" asp-action="Apply" method="post" class="d-inline">
+                                            <input type="hidden" name="positionId" value="@job.PositionId" />
+                                            <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" onclick="return confirm('Do you want to apply for this position?');">
+                                                Apply Now <i class="bi bi-arrow-right ms-2"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Auth" asp-action="Login" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm">
                                             Login to Apply <i class="bi bi-box-arrow-in-right ms-2"></i>
                                         </a>
                                     }
