@@ -23,7 +23,6 @@
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/scopedcss/Views/Shared/_Layout.cshtml.rz.scp.css
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/scopedcss/bundle/WebApp.styles.css
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/scopedcss/projectbundle/WebApp.bundle.scp.css
-/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/compressed/cyyammxk5f-{0}-lugek5hnai-lugek5hnai.gz
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/compressed/r0eh6qul5j-{0}-61n19gt1b8-61n19gt1b8.gz
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/compressed/gd9znr7z8k-{0}-fr7q2aak1r-fr7q2aak1r.gz
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/compressed/siwt0tsb8r-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -99,3 +98,4 @@
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/WebApp.genruntimeconfig.cache
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/ref/WebApp.dll
 /Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/WebApp.sourcelink.json
+/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/obj/Debug/net10.0/compressed/cyyammxk5f-{0}-w91s414m3x-w91s414m3x.gz

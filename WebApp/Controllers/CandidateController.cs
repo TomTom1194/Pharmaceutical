@@ -10,22 +10,18 @@ namespace WebApp.Controllers;
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class CandidateController : Controller
 {
-    private readonly IResumeService _resumeService;
     private readonly ICandidateProfileService _profileService;
+    private readonly IApplicationService _applicationService;
+    private readonly IResumeService _resumeService;
 
-    public CandidateController(IResumeService resumeService, ICandidateProfileService profileService)
+    public CandidateController(ICandidateProfileService profileService, IApplicationService applicationService, IResumeService resumeService)
     {
-        _resumeService = resumeService;
         _profileService = profileService;
+        _applicationService = applicationService;
+        _resumeService = resumeService;
     }
 
-    // Candidate Portal landing page.
-    [HttpGet]
-    public IActionResult Index()
-    {
-        return View();
-    }
-
+    // "My CV": personal info + education + work experience, with Update / Export.
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -37,11 +33,28 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    
+    // Print-friendly standalone page (no site layout) that auto-opens the
+    // browser print dialog so the candidate can save the CV as a PDF.
     [HttpGet]
-    public async Task<IActionResult> ManageCv()
+    public async Task<IActionResult> ExportCv()
     {
-        var result = await _resumeService.GetCurrentResume(GetToken());
+        var result = await _profileService.GetProfile(GetToken());
+
+        if (!result.Success || result.Data == null)
+        {
+            TempData["ErrorMessage"] = result.ErrorMessage ?? "CV information is not available.";
+            return RedirectToAction("Profile");
+        }
+
+        return View(result.Data);
+    }
+
+
+    // Lists the positions this candidate has applied to.
+    [HttpGet]
+    public async Task<IActionResult> MyApplications()
+    {
+        var result = await _applicationService.GetMyApplications(GetToken());
 
         if (!result.Success)
             ViewBag.ErrorMessage = result.ErrorMessage;
@@ -49,41 +62,15 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    
-    private const long MaxUploadSizeBytes = 5 * 1024 * 1024; 
-
-    [HttpPost]
-    [RequestSizeLimit(20 * 1024 * 1024)]
-    public async Task<IActionResult> UploadCv(IFormFile resumeFile)
-    {
-        if (resumeFile == null || resumeFile.Length == 0)
-        {
-            TempData["ErrorMessage"] = "Please choose a file to upload.";
-            return RedirectToAction("ManageCv");
-        }
-
-        if (resumeFile.Length > MaxUploadSizeBytes)
-        {
-            TempData["ErrorMessage"] =
-                $"File \"{resumeFile.FileName}\" is {(resumeFile.Length / 1024.0 / 1024.0):0.00} MB, which exceeds the 5 MB limit.";
-            return RedirectToAction("ManageCv");
-        }
-
-        var result = await _resumeService.UploadResume(GetToken(), resumeFile);
-
-        if (result.Success)
-            TempData["SuccessMessage"] = "Resume uploaded successfully.";
-        else
-            TempData["ErrorMessage"] = result.ErrorMessage;
-
-        return RedirectToAction("ManageCv");
-    }
-
-    // "Create Resume": fill in personal info, education and work experience.
+    // "Update Resume": fill in personal info, education, work experience and (optionally) a new photo.
     [HttpGet]
-    public async Task<IActionResult> CreateResume()
+    public async Task<IActionResult> UpdateResume()
     {
         var result = await _profileService.GetProfile(GetToken());
+        ViewBag.HasProfileImage = result.Success && result.Data != null && result.Data.HasProfileImage;
+
+        var resumeResult = await _resumeService.GetCurrentResume(GetToken());
+        ViewBag.CurrentResume = resumeResult.Success ? resumeResult.Data : null;
 
         var model = new CandidateProfileUpdateRequestDto();
         if (result.Success && result.Data != null)
@@ -119,22 +106,84 @@ public class CandidateController : Controller
         return View(model);
     }
 
+    private const long MaxImageSizeBytes = 2 * 1024 * 1024; // 2 MB
+    private const long MaxResumeSizeBytes = 5 * 1024 * 1024; // 5 MB
+    private static readonly string[] AllowedResumeExtensions = { ".pdf", ".doc", ".docx" };
+
     [HttpPost]
-    public async Task<IActionResult> CreateResume(CandidateProfileUpdateRequestDto request)
+    [RequestSizeLimit(20 * 1024 * 1024)]
+    public async Task<IActionResult> UpdateResume(CandidateProfileUpdateRequestDto request)
     {
         if (!ModelState.IsValid)
             return View(request);
 
-        var result = await _profileService.UpdateProfile(GetToken(), request);
+        if (request.ProfileImageFile != null && request.ProfileImageFile.Length > MaxImageSizeBytes)
+        {
+            ModelState.AddModelError("",
+                $"Image \"{request.ProfileImageFile.FileName}\" is {(request.ProfileImageFile.Length / 1024.0 / 1024.0):0.00} MB, which exceeds the 2 MB limit.");
+            return View(request);
+        }
 
+        if (request.ResumeFile != null && request.ResumeFile.Length > 0)
+        {
+            var extension = Path.GetExtension(request.ResumeFile.FileName).ToLowerInvariant();
+            if (!AllowedResumeExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("", "CV file must be a PDF, DOC or DOCX.");
+                return View(request);
+            }
+
+            if (request.ResumeFile.Length > MaxResumeSizeBytes)
+            {
+                ModelState.AddModelError("",
+                    $"CV file \"{request.ResumeFile.FileName}\" is {(request.ResumeFile.Length / 1024.0 / 1024.0):0.00} MB, which exceeds the 5 MB limit.");
+                return View(request);
+            }
+        }
+
+        var result = await _profileService.UpdateProfile(GetToken(), request);
         if (!result.Success)
         {
             ModelState.AddModelError("", result.ErrorMessage ?? "Could not save resume. Please try again.");
             return View(request);
         }
 
+        // Photo and CV file are saved together with the rest of the form, only if one was picked.
+        if (request.ProfileImageFile != null && request.ProfileImageFile.Length > 0)
+        {
+            var imageResult = await _profileService.UploadProfileImage(GetToken(), request.ProfileImageFile);
+            if (!imageResult.Success)
+            {
+                TempData["ErrorMessage"] = imageResult.ErrorMessage ?? "Resume saved, but the photo could not be uploaded.";
+                return RedirectToAction("Profile");
+            }
+        }
+
+        if (request.ResumeFile != null && request.ResumeFile.Length > 0)
+        {
+            var resumeResult = await _resumeService.UploadResume(GetToken(), request.ResumeFile);
+            if (!resumeResult.Success)
+            {
+                TempData["ErrorMessage"] = resumeResult.ErrorMessage ?? "Resume saved, but the CV file could not be uploaded.";
+                return RedirectToAction("Profile");
+            }
+        }
+
         TempData["SuccessMessage"] = "Resume saved successfully.";
-        return RedirectToAction("ManageCv");
+        return RedirectToAction("Profile");
+    }
+
+    // Streams the candidate's profile photo. The cookie auth on this controller
+    // covers the <img> request, so no token needs to reach the browser directly.
+    [HttpGet]
+    public async Task<IActionResult> ProfileImage()
+    {
+        var result = await _profileService.GetProfileImage(GetToken());
+
+        if (!result.Success || result.Content == null)
+            return NotFound();
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream");
     }
 
     private string GetToken() => User.FindFirst("JwtToken")?.Value ?? string.Empty;

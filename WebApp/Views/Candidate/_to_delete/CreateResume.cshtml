@@ -1,0 +1,199 @@
+@model WebApp.Dtos.CandidateProfileUpdateRequestDto
+
+@{
+    ViewBag.Title = "Create Resume";
+    Layout = "_Layout";
+    var eduList = Model.Educations != null && Model.Educations.Count > 0
+        ? Model.Educations
+        : new List<WebApp.Dtos.EducationInputDto> { new WebApp.Dtos.EducationInputDto() };
+    var workList = Model.WorkExperiences != null && Model.WorkExperiences.Count > 0
+        ? Model.WorkExperiences
+        : new List<WebApp.Dtos.WorkExperienceInputDto> { new WebApp.Dtos.WorkExperienceInputDto() };
+}
+
+<h2>Create Resume</h2>
+<p class="text-muted">Fill in your personal information, education and work experience.</p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Personal Photo</h5>
+        <div class="d-flex gap-3 align-items-center">
+            @if (ViewBag.HasProfileImage == true)
+            {
+                <img src="@Url.Action("ProfileImage", "Candidate")" alt="Profile photo"
+                     class="rounded-circle" style="width:100px;height:100px;object-fit:cover;" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center text-muted"
+                     style="width:100px;height:100px;">No photo</div>
+            }
+            <form asp-action="UploadProfileImage" method="post" enctype="multipart/form-data" class="flex-grow-1">
+                <div class="mb-2">
+                    <input type="file" name="profileImageFile" class="form-control" accept=".jpg,.jpeg,.png,.webp,.gif" />
+                    <div class="form-text">Accepted formats: JPG, PNG, WEBP, GIF. Max size 2 MB.</div>
+                </div>
+                <button type="submit" class="btn btn-outline-primary btn-sm">Upload Photo</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form asp-action="CreateResume" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label>Full Name</label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Phone</label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Address</label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Summary</label>
+        <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
+    </div>
+
+    <hr class="my-4" />
+
+    <h5>Education</h5>
+    <p class="text-muted">Optional. Add as many degrees/qualifications as you like.</p>
+    <div id="education-list">
+        @for (var i = 0; i < eduList.Count; i++)
+        {
+            <div class="dynamic-row border rounded p-3 mb-2">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Institution</label>
+                        <input type="text" name="Educations[@i].Institution" class="form-control" value="@eduList[i].Institution" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Qualification</label>
+                        <input type="text" name="Educations[@i].Qualification" class="form-control" value="@eduList[i].Qualification" placeholder="e.g. Bachelor" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Field</label>
+                        <input type="text" name="Educations[@i].Field" class="form-control" value="@eduList[i].Field" placeholder="e.g. Pharmacy" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Start</label>
+                        <input type="date" name="Educations[@i].StartDate" class="form-control" value="@(eduList[i].StartDate?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label">End</label>
+                        <input type="date" name="Educations[@i].EndDate" class="form-control" value="@(eduList[i].EndDate?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2 remove-row">Remove</button>
+            </div>
+        }
+    </div>
+    <button type="button" id="add-education" class="btn btn-sm btn-outline-secondary mb-4">+ Add Education</button>
+
+    <h5>Work Experience</h5>
+    <p class="text-muted">Optional. Add as many previous jobs as you like.</p>
+    <div id="workexp-list">
+        @for (var i = 0; i < workList.Count; i++)
+        {
+            <div class="dynamic-row border rounded p-3 mb-2">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Employer</label>
+                        <input type="text" name="WorkExperiences[@i].Employer" class="form-control" value="@workList[i].Employer" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="WorkExperiences[@i].Title" class="form-control" value="@workList[i].Title" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Start</label>
+                        <input type="date" name="WorkExperiences[@i].StartDate" class="form-control" value="@(workList[i].StartDate?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">End</label>
+                        <input type="date" name="WorkExperiences[@i].EndDate" class="form-control" value="@(workList[i].EndDate?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Description</label>
+                        <input type="text" name="WorkExperiences[@i].Description" class="form-control" value="@workList[i].Description" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2 remove-row">Remove</button>
+            </div>
+        }
+    </div>
+    <button type="button" id="add-workexp" class="btn btn-sm btn-outline-secondary mb-4">+ Add Work Experience</button>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save Resume</button>
+        <a asp-action="Profile" asp-controller="Candidate" class="btn btn-link">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function initDynamicList(containerId, addBtnId) {
+            const container = document.getElementById(containerId);
+            const addBtn = document.getElementById(addBtnId);
+
+            function reindex() {
+                container.querySelectorAll('.dynamic-row').forEach((row, idx) => {
+                    row.querySelectorAll('[name]').forEach(input => {
+                        input.setAttribute('name', input.getAttribute('name').replace(/\[\d+\]/, `[${idx}]`));
+                    });
+                });
+            }
+
+            function attachRemoveHandlers() {
+                container.querySelectorAll('.remove-row').forEach(btn => {
+                    btn.onclick = function () {
+                        const rows = container.querySelectorAll('.dynamic-row');
+                        if (rows.length > 1) {
+                            btn.closest('.dynamic-row').remove();
+                            reindex();
+                        } else {
+                            btn.closest('.dynamic-row').querySelectorAll('input').forEach(i => i.value = '');
+                        }
+                    };
+                });
+            }
+
+            addBtn.addEventListener('click', function () {
+                const firstRow = container.querySelector('.dynamic-row');
+                const clone = firstRow.cloneNode(true);
+                clone.querySelectorAll('input').forEach(input => input.value = '');
+                container.appendChild(clone);
+                reindex();
+                attachRemoveHandlers();
+            });
+
+            attachRemoveHandlers();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initDynamicList('education-list', 'add-education');
+            initDynamicList('workexp-list', 'add-workexp');
+        });
+    </script>
+}

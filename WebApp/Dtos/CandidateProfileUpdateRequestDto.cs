@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApp.Dtos;
 
-// Bound to the "Create Resume" form: personal info plus any number of
+// Bound to the "Update Resume" form: personal info plus any number of
 // education / work-experience entries the candidate fills in.
 public class CandidateProfileUpdateRequestDto
 {
@@ -20,6 +21,14 @@ public class CandidateProfileUpdateRequestDto
 
     public List<EducationInputDto> Educations { get; set; } = new();
     public List<WorkExperienceInputDto> WorkExperiences { get; set; } = new();
+
+    // Optional: when the candidate picks a new photo, it is saved together
+    // with the rest of the form on Save (no separate upload button/request).
+    public IFormFile? ProfileImageFile { get; set; }
+
+    // Optional: when the candidate picks a CV file (PDF/DOC/DOCX), it replaces
+    // their current resume file on Save, together with the rest of the form.
+    public IFormFile? ResumeFile { get; set; }
 }
 
 public class EducationInputDto

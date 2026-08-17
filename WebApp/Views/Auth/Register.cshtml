@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<h2>Candidate Registration</h2>
+<h2 class="h4 fw-bold mb-3 text-center">Candidate Registration</h2>
 <form asp-action="Register" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -27,8 +27,8 @@
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Register</button>
-    <a asp-action="Login" class="btn btn-link">Already have an account? Login</a>
+    <button type="submit" class="btn btn-primary w-100 mb-2">Register</button>
+    <a asp-action="Login" class="btn btn-link w-100 text-center d-block">Already have an account? Login</a>
 </form>
 
 @section Scripts {

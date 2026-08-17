@@ -3,7 +3,7 @@ using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient("PharmaApi", client =>
@@ -14,13 +14,15 @@ builder.Services.AddHttpClient("PharmaApi", client =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IResumeService, ResumeService>();
 builder.Services.AddScoped<ICandidateProfileService, CandidateProfileService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Auth/Login";
         options.AccessDeniedPath = "/Auth/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(300);
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     });
 
 builder.Services.AddAuthorization();

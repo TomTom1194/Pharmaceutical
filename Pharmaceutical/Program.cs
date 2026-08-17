@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pharmaceutical.Data;
+using Pharmaceutical.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<PharmaceuticalDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("PharmConnection")));
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 //Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

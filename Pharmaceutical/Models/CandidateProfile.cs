@@ -7,7 +7,7 @@ namespace Pharmaceutical.Models;
 public class CandidateProfile
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]   
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("candidate_id")]
     public int CandidateId { get; set; }
 
@@ -28,4 +28,9 @@ public class CandidateProfile
 
     [Column("created_at")]
     public DateTime? CreatedAt { get; set; }
+
+    
+    [MaxLength(255)]
+    [Column("profile_image")]
+    public string? ProfileImage { get; set; }
 }

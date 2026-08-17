@@ -1,11 +1,18 @@
 @model WebApp.Dtos.CandidateProfileDto
 
 @{
-    ViewBag.Title = "My Profile";
+    ViewBag.Title = "My CV";
+    ViewBag.Subtitle = "Your personal information, education and work experience.";
     Layout = "_Layout";
 }
 
-<h2>Candidate Profile</h2>
+@if (Model != null)
+{
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a asp-action="UpdateResume" asp-controller="Candidate" class="btn btn-primary">Update</a>
+        <a asp-action="ExportCv" asp-controller="Candidate" class="btn btn-outline-secondary" target="_blank">Export</a>
+    </div>
+}
 
 @if (ViewBag.ErrorMessage != null)
 {
@@ -15,13 +22,24 @@
 @if (Model != null)
 {
     <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">@(Model.FullName ?? "(No name provided)")</h5>
-            <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
-            <p class="mb-1"><strong>Phone:</strong> @(Model.Phone ?? "-")</p>
-            <p class="mb-1"><strong>Address:</strong> @(Model.Address ?? "-")</p>
-            <p class="mb-1"><strong>Summary:</strong> @(Model.Summary ?? "-")</p>
-            <p class="mb-0"><strong>Member since:</strong> @(Model.CreatedAt?.ToLocalTime().ToString("d") ?? "-")</p>
+        <div class="card-body d-flex gap-3 align-items-start">
+            @if (Model.HasProfileImage)
+            {
+                <img src="@Url.Action("ProfileImage", "Candidate")" alt="Profile photo"
+                     class="rounded-circle flex-shrink-0" style="width:100px;height:100px;object-fit:cover;" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center flex-shrink-0 text-muted"
+                     style="width:100px;height:100px;">No photo</div>
+            }
+            <div>
+                <h5 class="card-title">@Model.FullName</h5>
+                <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
+                <p class="mb-1"><strong>Phone:</strong> @Model.Phone</p>
+                <p class="mb-1"><strong>Address:</strong> @Model.Address</p>
+                <p class="mb-0"><strong>Summary:</strong> @Model.Summary</p>
+            </div>
         </div>
     </div>
 
@@ -45,8 +63,8 @@
                     <td>@e.Institution</td>
                     <td>@e.Qualification</td>
                     <td>@e.Field</td>
-                    <td>@(e.StartDate?.ToString("MM/yyyy") ?? "-")</td>
-                    <td>@(e.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                    <td>@(e.StartDate?.ToString("MM/yyyy"))</td>
+                    <td>@(e.EndDate?.ToString("MM/yyyy"))</td>
                 </tr>
             }
             </tbody>
@@ -54,7 +72,7 @@
     }
     else
     {
-        <p>No education records yet.</p>
+        <p class="text-muted">No education records yet.</p>
     }
 
     <h5>Work Experience</h5>
@@ -76,8 +94,8 @@
                 <tr>
                     <td>@w.Employer</td>
                     <td>@w.Title</td>
-                    <td>@(w.StartDate?.ToString("MM/yyyy") ?? "-")</td>
-                    <td>@(w.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                    <td>@(w.StartDate?.ToString("MM/yyyy"))</td>
+                    <td>@(w.EndDate?.ToString("MM/yyyy"))</td>
                     <td>@w.Description</td>
                 </tr>
             }
@@ -86,12 +104,10 @@
     }
     else
     {
-        <p>No work experience records yet.</p>
+        <p class="text-muted">No work experience records yet.</p>
     }
-
-    <a asp-action="Index" asp-controller="Candidate" class="btn btn-secondary">Back to Resume</a>
 }
 else
 {
-    <p>Profile information is not available.</p>
+    <p>CV information is not available.</p>
 }
