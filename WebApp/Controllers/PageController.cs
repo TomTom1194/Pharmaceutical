@@ -7,10 +7,12 @@ namespace WebApp.Controllers;
 public class PageController : Controller
 {
     private readonly ContentPageApiService _api;
+    private readonly PositionApiService _positionApi;
 
-    public PageController(ContentPageApiService api)
+    public PageController(ContentPageApiService api, PositionApiService positionApi)
     {
         _api = api;
+        _positionApi = positionApi;
     }
 
     [Route("careers")]
@@ -46,6 +48,7 @@ public class PageController : Controller
             }
             ViewData["BannerImageUrl"] = page.BannerImageUrl;
             ViewData["Title"] = page.Title;
+            ViewBag.Positions = await _positionApi.GetAllAsync(true); // Fetch active jobs
             return View("Careers", model);
         }
 

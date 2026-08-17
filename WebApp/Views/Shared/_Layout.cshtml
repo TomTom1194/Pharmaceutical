@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -20,7 +20,7 @@
 
     @if (!isPreview)
     {
-        <header class="sticky-top shadow">
+    <header class="sticky-top shadow">
         <nav class="navbar navbar-expand-lg navbar-light navbar-main">
             <div class="container">
                 <a class="navbar-brand me-4" asp-controller="Home" asp-action="Index">
@@ -47,19 +47,9 @@
                         <li class="nav-item">
                             <a class="nav-link nav-item-link" href="/careers">Careers</a>
                         </li>
-                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item ms-lg-2">
-                                <a class="nav-link fw-semibold text-warning-emphasis bg-warning-subtle px-3 rounded-2"
-                                   asp-area="Admin" asp-controller="Home" asp-action="Index">
-                                    <i class="bi bi-shield-lock me-1"></i> Admin Portal
-                                </a>
-                            </li>
-                        }
                     </ul>
 
                     <div class="d-flex align-items-center" style="gap: 15px;">
-                        <!-- Quote Button in Navbar -->
                         <a asp-controller="QuoteRequest" asp-action="Create" class="btn btn-primary px-4 rounded-pill shadow-sm fw-bold d-none d-md-block">
                             Get a Quote
                         </a>
@@ -95,10 +85,6 @@
                         }
                     </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    }
             </div>
         </nav>
     </header>
@@ -159,7 +145,7 @@
                     <ul class="list-unstyled small d-flex flex-column gap-3">
                         <li class="d-flex align-items-center gap-2"><i class="bi bi-envelope text-success"></i> info@xyzpharma.com</li>
                         <li class="d-flex align-items-center gap-2"><i class="bi bi-telephone text-success"></i> +1 (800) 123-4567</li>
-                        <li class="d-flex align-items-center gap-2"><i class="bi bi-geo-alt text-success"></i> 21 Bis H梳춙 Giang, Ph튼沼쓓g T창n S퉤n Nh梳쩿, TP HCM</li>
+                        <li class="d-flex align-items-center gap-2"><i class="bi bi-geo-alt text-success"></i> 21 Bis Hậu Giang, Phường Tân Sơn Nhất, TP HCM</li>
                     </ul>
                 </div>
             </div>
@@ -186,4 +172,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

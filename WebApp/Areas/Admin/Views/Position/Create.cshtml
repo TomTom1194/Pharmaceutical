@@ -1,0 +1,94 @@
+@model Pharmaceutical.Models.Position
+
+@{
+    ViewBag.Title = "Create Job";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-block"><i class="bi bi-arrow-left me-1"></i> Back to Jobs</a>
+        <h2 class="h3 fw-bold mb-0">Create New Job</h2>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Title" class="form-label fw-semibold">Job Title</label>
+                        <input asp-for="Title" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Senior Formulation Scientist" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Department" class="form-label fw-semibold">Department</label>
+                        <input asp-for="Department" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Research & Development" />
+                        <span asp-validation-for="Department" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Type" class="form-label fw-semibold">Employment Type</label>
+                        <select asp-for="Type" class="form-select form-select-lg bg-light border-0">
+                            <option value="">Select type...</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SalaryRange" class="form-label fw-semibold">Salary Range (Optional)</label>
+                        <input asp-for="SalaryRange" class="form-control form-control-lg bg-light border-0" placeholder="e.g. $90,000 - $120,000" />
+                        <span asp-validation-for="SalaryRange" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="Description" class="form-label fw-semibold">Job Description</label>
+                        <textarea asp-for="Description" class="form-control bg-light border-0" rows="5" placeholder="Enter full job description..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="Requirements" class="form-label fw-semibold">Requirements / Qualifications</label>
+                        <textarea asp-for="Requirements" class="form-control bg-light border-0" rows="5" placeholder="Enter requirements (bullet points recommended)..."></textarea>
+                        <span asp-validation-for="Requirements" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-check form-switch mt-2">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" checked>
+                        <label asp-for="IsActive" class="form-check-label ms-2 fw-medium">Publish this job immediately (Active)</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 border-light" />
+
+            <div class="d-flex gap-2 justify-content-end">
+                <a asp-action="Index" class="btn btn-light px-4 rounded-pill">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 rounded-pill fw-bold">Create Job</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

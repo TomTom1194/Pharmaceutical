@@ -62,48 +62,7 @@
                             <textarea asp-for="AboutDescription" class="form-control" rows="4"></textarea>
                         </div>
 
-                        <hr class="my-4" />
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="mb-0 text-primary">Open Positions</h4>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddJob">
-                                <i class="bi bi-plus-lg"></i> Add New Job
-                            </button>
-                        </div>
 
-                        <div id="jobListContainer">
-                            @if (Model.JobOpenings != null && Model.JobOpenings.Any())
-                            {
-                                for (int i = 0; i < Model.JobOpenings.Count; i++)
-                                {
-                                    <div class="card mb-3 job-item border-success border-opacity-50">
-                                        <div class="card-body position-relative">
-                                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-job" title="Remove Job">
-                                                <i class="bi bi-x-lg"></i> X
-                                            </button>
-                                            <input type="hidden" name="JobOpenings.Index" value="@i" />
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label small fw-medium">Job Title</label>
-                                                    <input type="text" name="JobOpenings[@i].Title" value="@Model.JobOpenings[i].Title" class="form-control form-control-sm" required />
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="form-label small fw-medium">Department</label>
-                                                    <input type="text" name="JobOpenings[@i].Department" value="@Model.JobOpenings[i].Department" class="form-control form-control-sm" required />
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="form-label small fw-medium">Location</label>
-                                                    <input type="text" name="JobOpenings[@i].Location" value="@Model.JobOpenings[i].Location" class="form-control form-control-sm" required />
-                                                </div>
-                                                <div class="col-12">
-                                                    <label class="form-label small fw-medium">Short Description</label>
-                                                    <input type="text" name="JobOpenings[@i].Description" value="@Model.JobOpenings[i].Description" class="form-control form-control-sm" required />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                        </div>
 
                         <hr class="my-4" />
                         <div class="mb-4">
@@ -125,56 +84,4 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const container = document.getElementById('jobListContainer');
-            const btnAddJob = document.getElementById('btnAddJob');
 
-            if (container) {
-                // Delete job
-                container.addEventListener('click', function (e) {
-                    if (e.target.closest('.btn-remove-job')) {
-                        e.target.closest('.job-item').remove();
-                    }
-                });
-            }
-
-            if (btnAddJob) {
-                // Add job
-                btnAddJob.addEventListener('click', function () {
-                    const uniqueId = 'new_' + Date.now();
-                    const html = `
-                        <div class="card mb-3 job-item border-success border-opacity-50">
-                            <div class="card-body position-relative">
-                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-job" title="Remove Job">
-                                    <i class="bi bi-x-lg"></i> X
-                                </button>
-                                <input type="hidden" name="JobOpenings.Index" value="${uniqueId}" />
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-medium">Job Title</label>
-                                        <input type="text" name="JobOpenings[${uniqueId}].Title" class="form-control form-control-sm" required />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small fw-medium">Department</label>
-                                        <input type="text" name="JobOpenings[${uniqueId}].Department" class="form-control form-control-sm" required />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small fw-medium">Location</label>
-                                        <input type="text" name="JobOpenings[${uniqueId}].Location" class="form-control form-control-sm" required />
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label small fw-medium">Short Description</label>
-                                        <input type="text" name="JobOpenings[${uniqueId}].Description" class="form-control form-control-sm" required />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', html);
-                });
-            }
-        });
-    </script>
-}

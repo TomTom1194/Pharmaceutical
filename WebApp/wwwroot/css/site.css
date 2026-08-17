@@ -169,13 +169,13 @@ body {
     display: block;
 }
 
-.footer-link {
-    color: #94a3b8;
+.footer-link, .footer-link:visited {
+    color: #94a3b8 !important;
     transition: color 0.2s ease;
 }
 
-.footer-link:hover {
-    color: #ffffff;
+.footer-link:hover, .footer-link:active {
+    color: #ffffff !important;
 }
 
 .hover-opacity-100 {
