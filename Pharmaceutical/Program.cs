@@ -12,6 +12,14 @@ builder.Services.AddDbContext<PharmaceuticalDbContext>(o =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ITabletSpecificationService, TabletSpecificationService>();
+builder.Services.AddScoped<ICapsuleSpecificationService, CapsuleSpecificationService>();
+builder.Services.AddScoped<ILiquidFillingSpecificationService, LiquidFillingSpecificationService>();
+builder.Services.AddScoped<IQuoteRequestService, QuoteRequestService>();
+
+//Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,6 +50,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

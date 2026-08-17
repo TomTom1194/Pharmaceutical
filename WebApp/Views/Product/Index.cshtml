@@ -1,0 +1,110 @@
+@model List<WebApp.Models.Product>
+@using WebApp.Models
+@{
+    ViewData["Title"] = "Products";
+    var categories = (List<ProductCategory>)ViewBag.Categories;
+    var categoryCounts = (Dictionary<int, int>)ViewBag.CategoryCounts;
+    var totalPublished = (int)ViewBag.TotalPublished;
+    var apiBaseUrl = (string)ViewBag.ApiBaseUrl;
+    int? categoryId = ViewBag.CategoryId;
+    string? keyword = ViewBag.Keyword;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"/>
+}
+
+<div class="pp-hero">
+    <h1>Products</h1>
+    <p>High-quality equipment and machinery for the pharmaceutical and industrial sectors.</p>
+    <div class="pp-hero-divider"></div>
+</div>
+
+<div class="pp-layout">
+    <aside class="pp-sidebar">
+        <div class="pp-card">
+            <div class="pp-card-title">Product Categories</div>
+            <div class="pp-cat-list">
+                <a class="pp-cat-row @(categoryId == null ? "active" : "")" asp-action="Index" asp-route-keyword="@keyword">
+                    <span>All products</span>
+                    <span class="pp-cat-count">@totalPublished</span>
+                </a>
+                @foreach (var category in categories)
+                {
+                    <a class="pp-cat-row @(category.CategoryId == categoryId ? "active" : "")" asp-action="Index" asp-route-categoryId="@category.CategoryId" asp-route-keyword="@keyword">
+                        <span>@category.Name</span>
+                        <span class="pp-cat-count">@categoryCounts.GetValueOrDefault(category.CategoryId)</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </aside>
+
+    <div class="pp-content">
+        <div class="pp-toolbar">
+            <div class="pp-toolbar-left">
+                <span class="pp-count-text">Showing @Model.Count of @totalPublished products</span>
+            </div>
+            <div class="pp-toolbar-right">
+                <form method="get" asp-action="Index" class="pp-toolbar-search">
+                    <input type="hidden" name="categoryId" value="@categoryId"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1ab" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                    <input type="text" name="keyword" placeholder="Search products..." value="@keyword"/>
+                    @if (!string.IsNullOrEmpty(keyword))
+                    {
+                        <a class="pp-toolbar-search-clear" asp-action="Index" asp-route-categoryId="@categoryId" title="Clear search">&times;</a>
+                    }
+                </form>
+                <div class="pp-sort">
+                    <span>Sort:</span>
+                    <select disabled>
+                        <option>Newest</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="pp-empty">No matching products found.</div>
+        }
+        else
+        {
+            <div class="pp-grid">
+                @foreach (var product in Model)
+                {
+                    var thumbnail = product.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? product.Images.FirstOrDefault();
+                    var hoverImage = product.Images.Where(i => i != thumbnail).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                    <a class="pp-card-product" asp-action="Details" asp-route-id="@product.ProductId">
+                        <div class="pp-card-img-wrap">
+                            @if (thumbnail != null)
+                            {
+                                <img class="pp-card-img-main" src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@product.ModelName"/>
+                                if (hoverImage != null)
+                                {
+                                    <img class="pp-card-img-hover" src="@(apiBaseUrl.TrimEnd('/') + hoverImage.Url)" alt="@product.ModelName"/>
+                                }
+                            }
+                            else
+                            {
+                                <div class="pp-card-img-placeholder">No image</div>
+                            }
+                        </div>
+                        <div class="pp-card-body">
+                            <div class="pp-card-name">@product.ModelName</div>
+                            @if (!string.IsNullOrEmpty(product.OutputLabel))
+                            {
+                                <span class="pp-card-sku">@product.OutputLabel</span>
+                            }
+                            <div class="pp-card-price">Contact for price</div>
+                            <div class="pp-card-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
+                                View details
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
