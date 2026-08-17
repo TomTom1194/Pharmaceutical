@@ -1,7 +1,4 @@
-/* ==========================================================================
-   Pharmaceutical Portal theme
-   Green brand palette, sidebar app shell, cards, tables, forms.
-   ========================================================================== */
+
 
 :root {
   --green-900: #0f2e22;
@@ -61,9 +58,7 @@ a:hover {
   color: var(--ink-500) !important;
 }
 
-/* --------------------------------------------------------------------
-   Brand mark (layered cross logo)
-   -------------------------------------------------------------------- */
+
 .brand-mark {
   position: relative;
   width: 40px;
