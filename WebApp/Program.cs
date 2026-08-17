@@ -18,6 +18,8 @@ builder.Services.AddScoped<ITabletSpecificationService, TabletSpecificationServi
 builder.Services.AddScoped<ICapsuleSpecificationService, CapsuleSpecificationService>();
 builder.Services.AddScoped<ILiquidFillingSpecificationService, LiquidFillingSpecificationService>();
 builder.Services.AddScoped<IQuoteRequestService, QuoteRequestService>();
+builder.Services.AddScoped<IResumeService, ResumeService>();
+builder.Services.AddScoped<ICandidateProfileService, CandidateProfileService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

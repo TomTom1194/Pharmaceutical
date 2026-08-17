@@ -27,6 +27,26 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Auth/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aC9SZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Candidate/CreateResume.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FuZGlkYXRlL0NyZWF0ZVJlc3VtZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Candidate/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FuZGlkYXRlL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Candidate/ManageCv.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FuZGlkYXRlL01hbmFnZUN2LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Candidate/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FuZGlkYXRlL1Byb2ZpbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/fullhouse/Desktop/eproject_sem3/Pharmaceutical/WebApp/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
