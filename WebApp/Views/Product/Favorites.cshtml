@@ -1,0 +1,95 @@
+@model List<WebApp.Models.Product>
+@using WebApp.Models
+@{
+    ViewData["Title"] = "Favorites";
+    var apiBaseUrl = (string)ViewBag.ApiBaseUrl;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"/>
+}
+
+<div class="pp-hero">
+    <h1>Favorite Products</h1>
+    <p>Products you've saved for later.</p>
+    <div class="pp-hero-divider"></div>
+</div>
+
+<div class="pp-layout">
+    <div class="pp-content">
+        <div id="pfEmpty" class="pp-empty" style="display:none;">
+            You haven't added any favorites yet. Browse <a asp-action="Index">products</a> and tap the heart icon to save them here.
+        </div>
+
+        <div class="pp-grid" id="pfGrid">
+            @foreach (var product in Model)
+            {
+                var thumbnail = product.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? product.Images.FirstOrDefault();
+                var hoverImage = product.Images.Where(i => i != thumbnail).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                <a class="pp-card-product" data-product-id="@product.ProductId" asp-action="Details" asp-route-id="@product.ProductId">
+                    <div class="pp-card-img-wrap">
+                        @if (thumbnail != null)
+                        {
+                            <img class="pp-card-img-main" src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@product.ModelName"/>
+                            if (hoverImage != null)
+                            {
+                                <img class="pp-card-img-hover" src="@(apiBaseUrl.TrimEnd('/') + hoverImage.Url)" alt="@product.ModelName"/>
+                            }
+                        }
+                        else
+                        {
+                            <div class="pp-card-img-placeholder">No image</div>
+                        }
+                    </div>
+                    <div class="pp-card-body">
+                        <div class="pp-card-name">@product.ModelName</div>
+                        @if (!string.IsNullOrEmpty(product.OutputLabel))
+                        {
+                            <span class="pp-card-sku">@product.OutputLabel</span>
+                        }
+                        <div class="pp-card-price">Contact for price</div>
+                        <div class="pp-card-btn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
+                            View details
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var STORAGE_KEY = 'pharma_favorites';
+
+            function getFavorites() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            var favorites = getFavorites();
+            var grid = document.getElementById('pfGrid');
+            var empty = document.getElementById('pfEmpty');
+            var cards = Array.prototype.slice.call(grid.querySelectorAll('.pp-card-product'));
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                if (favorites.indexOf(card.dataset.productId) === -1) {
+                    card.remove();
+                } else {
+                    visibleCount++;
+                }
+            });
+
+            if (visibleCount === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+            }
+        })();
+    </script>
+}

@@ -47,6 +47,9 @@ public class AuthController :Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
+        if (result.Role == "Admin")
+            return RedirectToAction("Index", "Product", new { area = "Admin" });
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -55,5 +58,11 @@ public class AuthController :Controller
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }
