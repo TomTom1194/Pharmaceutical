@@ -1,0 +1,180 @@
+@model List<Product>
+@{
+    ViewBag.Title = "Products";
+    var categories = (List<ProductCategory>)ViewBag.Categories;
+    var apiBaseUrl = (string)ViewBag.ApiBaseUrl;
+    var tabletProductIds = (HashSet<int>)ViewBag.TabletProductIds;
+    var capsuleProductIds = (HashSet<int>)ViewBag.CapsuleProductIds;
+    var liquidFillingProductIds = (HashSet<int>)ViewBag.LiquidFillingProductIds;
+    int? categoryId = ViewBag.CategoryId;
+    string? keyword = ViewBag.Keyword;
+    bool? isPublished = ViewBag.IsPublished;
+    int page = ViewBag.Page;
+    int pageSize = ViewBag.PageSize;
+    int totalCount = ViewBag.TotalCount;
+    int totalPages = ViewBag.TotalPages;
+}
+
+<div class="admin-page-header">
+    <div>
+        <h1>Products</h1>
+        <p>Manage the list of products in the system</p>
+    </div>
+    <a class="admin-btn-primary" asp-action="Create">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Add product
+    </a>
+</div>
+
+<form method="get" asp-action="Index" class="admin-filter-bar">
+    <select name="categoryId" class="admin-filter-select">
+        <option value="">All categories</option>
+        @foreach (var category in categories)
+        {
+            <option value="@category.CategoryId" selected="@(category.CategoryId == categoryId)">@category.Name</option>
+        }
+    </select>
+
+    <div class="admin-filter-search">
+        <input type="text" name="keyword" placeholder="Search by product name..." value="@keyword"/>
+    </div>
+
+    <select name="isPublished" class="admin-filter-select">
+        <option value="">All statuses</option>
+        <option value="true" selected="@(isPublished == true)">Published</option>
+        <option value="false" selected="@(isPublished == false)">Unpublished</option>
+    </select>
+
+    <button type="submit" class="admin-btn-filter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
+        Filter
+    </button>
+    <a asp-action="Index" class="admin-btn-clear">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        Clear filter
+    </a>
+</form>
+
+<div class="admin-table-card">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Product name</th>
+            <th>Category</th>
+            <th>Published</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var product in Model)
+        {
+            var thumbnail = product.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? product.Images.FirstOrDefault();
+            var categoryName = categories.FirstOrDefault(c => c.CategoryId == product.CategoryId)?.Name;
+            var specType = SpecificationTypeResolver.Resolve(categoryName);
+            <tr>
+                <td>@product.ProductId</td>
+                <td>
+                    <div class="admin-thumb">
+                        @if (thumbnail != null)
+                        {
+                            <img src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@product.ModelName"/>
+                        }
+                    </div>
+                </td>
+                <td>@product.ModelName</td>
+                <td>
+                    @if (categoryName != null)
+                    {
+                        <span class="admin-pill admin-pill-category">@categoryName</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="SetPublished" asp-route-id="@product.ProductId" method="post" class="d-inline">
+                        <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)"/>
+                        <select name="isPublished" class="admin-status-select @(product.IsPublished == true ? "admin-pill-yes" : "admin-pill-no")" onchange="this.form.submit()">
+                            <option value="true" selected="@(product.IsPublished == true)">Yes</option>
+                            <option value="false" selected="@(product.IsPublished != true)">No</option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <div class="admin-row-actions">
+                        @if (specType == SpecificationTypeResolver.Tablet)
+                        {
+                            if (tabletProductIds.Contains(product.ProductId))
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="TabletSpecification" asp-action="Edit" asp-route-id="@product.ProductId" title="Edit specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9M10 13h4"/></svg>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="TabletSpecification" asp-action="Create" asp-route-productId="@product.ProductId" title="Add specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9"/><path d="M12 13v5M9.5 15.5h5"/></svg>
+                                </a>
+                            }
+                        }
+                        else if (specType == SpecificationTypeResolver.Capsule)
+                        {
+                            if (capsuleProductIds.Contains(product.ProductId))
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="CapsuleSpecification" asp-action="Edit" asp-route-id="@product.ProductId" title="Edit specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9M10 13h4"/></svg>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="CapsuleSpecification" asp-action="Create" asp-route-productId="@product.ProductId" title="Add specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9"/><path d="M12 13v5M9.5 15.5h5"/></svg>
+                                </a>
+                            }
+                        }
+                        else if (specType == SpecificationTypeResolver.LiquidFilling)
+                        {
+                            if (liquidFillingProductIds.Contains(product.ProductId))
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="LiquidFillingSpecification" asp-action="Edit" asp-route-id="@product.ProductId" title="Edit specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9M10 13h4"/></svg>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="admin-icon-btn admin-icon-btn-spec" asp-area="Admin" asp-controller="LiquidFillingSpecification" asp-action="Create" asp-route-productId="@product.ProductId" title="Add specification">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 002 2h12a2 2 0 002-2V9"/><path d="M12 13v5M9.5 15.5h5"/></svg>
+                                </a>
+                            }
+                        }
+                        <a class="admin-icon-btn admin-icon-btn-edit" asp-action="Edit" asp-route-id="@product.ProductId" title="Edit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">No matching products found.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pager", new PagerViewModel
+    {
+        Action = "Index",
+        Page = page,
+        PageSize = pageSize,
+        TotalCount = totalCount,
+        TotalPages = totalPages,
+        ItemLabel = "products",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["categoryId"] = categoryId?.ToString(),
+            ["keyword"] = keyword,
+            ["isPublished"] = isPublished?.ToString()
+        }
+    })
+</div>

@@ -47,6 +47,8 @@ public class AuthController :Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
+        if (result.Role == "Admin")
+            return RedirectToAction("Index", "Product", new { area = "Admin" });
         // Candidate accounts land straight on their candidate portal (resume page);
         // other roles fall back to the default home page.
         if (string.Equals(result.Role, "Candidate", StringComparison.OrdinalIgnoreCase))
@@ -85,4 +87,11 @@ public class AuthController :Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
 }

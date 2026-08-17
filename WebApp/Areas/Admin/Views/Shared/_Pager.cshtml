@@ -1,0 +1,35 @@
+@model PagerViewModel
+
+<div class="admin-table-footer">
+    <form method="get" asp-action="@Model.Action" class="admin-page-size">
+        @foreach (var kv in Model.RouteValues)
+        {
+            <input type="hidden" name="@kv.Key" value="@kv.Value"/>
+        }
+        <span>Show</span>
+        <select name="pageSize" onchange="this.form.submit()">
+            @foreach (var size in new[] { 10, 20, 50 })
+            {
+                <option value="@size" selected="@(size == Model.PageSize)">@size</option>
+            }
+        </select>
+        <span>per page</span>
+    </form>
+
+    <div class="admin-pager">
+        <span>Total @Model.TotalCount @Model.ItemLabel</span>
+        <div class="admin-pager-nav">
+            <a class="admin-pager-btn @(Model.Page <= 1 ? "disabled" : "")"
+               asp-action="@Model.Action" asp-all-route-data="@Model.RouteValues" asp-route-page="@(Model.Page - 1)" asp-route-pageSize="@Model.PageSize">&lsaquo;</a>
+
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="admin-pager-btn @(p == Model.Page ? "active" : "")"
+                   asp-action="@Model.Action" asp-all-route-data="@Model.RouteValues" asp-route-page="@p" asp-route-pageSize="@Model.PageSize">@p</a>
+            }
+
+            <a class="admin-pager-btn @(Model.Page >= Model.TotalPages ? "disabled" : "")"
+               asp-action="@Model.Action" asp-all-route-data="@Model.RouteValues" asp-route-page="@(Model.Page + 1)" asp-route-pageSize="@Model.PageSize">&rsaquo;</a>
+        </div>
+    </div>
+</div>

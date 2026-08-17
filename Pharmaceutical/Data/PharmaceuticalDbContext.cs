@@ -22,4 +22,5 @@ public class PharmaceuticalDbContext :DbContext
     public DbSet<LiquidFillingSpecification> LiquidFillingSpecifications { get; set; } 
     public DbSet<QuoteRequest> QuoteRequests { get; set; } 
     public DbSet<ContentPage> ContentPages { get; set; } 
+    public DbSet<ImageProduct> ImageProducts { get; set; }
 }

@@ -1,0 +1,107 @@
+@model List<QuoteRequest>
+@{
+    ViewBag.Title = "Quote Requests";
+    string? status = ViewBag.Status;
+    string? keyword = ViewBag.Keyword;
+    int page = ViewBag.Page;
+    int pageSize = ViewBag.PageSize;
+    int totalCount = ViewBag.TotalCount;
+    int totalPages = ViewBag.TotalPages;
+
+    string PillClass(string? s) => s switch
+    {
+        "Done" => "admin-pill-yes",
+        "Rejected" => "admin-pill-no",
+        _ => "admin-pill-pending"
+    };
+}
+
+<div class="admin-page-header">
+    <div>
+        <h1>Quote Requests</h1>
+        <p>List of quote requests submitted by customers from the product page</p>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="admin-filter-bar">
+    <div class="admin-filter-search">
+        <input type="text" name="keyword" placeholder="Search by name/email..." value="@keyword"/>
+    </div>
+
+    <select name="status" class="admin-filter-select">
+        <option value="">All statuses</option>
+        @foreach (var s in new[] { "Pending", "Done", "Rejected" })
+        {
+            <option value="@s" selected="@(s == status)">@s</option>
+        }
+    </select>
+
+    <button type="submit" class="admin-btn-filter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
+        Filter
+    </button>
+    <a asp-action="Index" class="admin-btn-clear">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        Clear filter
+    </a>
+</form>
+
+<div class="admin-table-card">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Full name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Submitted at</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var quote in Model)
+        {
+            <tr>
+                <td>@quote.QuoteId</td>
+                <td>@quote.FullName</td>
+                <td>@quote.Email</td>
+                <td><span class="admin-pill @PillClass(quote.Status)">@quote.Status</span></td>
+                <td>@quote.SubmittedAt</td>
+                <td>
+                    <div class="admin-row-actions">
+                        <a class="admin-icon-btn admin-icon-btn-view" asp-action="Details" asp-route-id="@quote.QuoteId" title="View">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@quote.QuoteId" method="post" class="d-inline">
+                            <button type="submit" class="admin-icon-btn admin-icon-btn-delete" title="Delete" onclick="return confirm('Delete this request?');">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">No matching requests found.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pager", new PagerViewModel
+    {
+        Action = "Index",
+        Page = page,
+        PageSize = pageSize,
+        TotalCount = totalCount,
+        TotalPages = totalPages,
+        ItemLabel = "requests",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["status"] = status,
+            ["keyword"] = keyword
+        }
+    })
+</div>

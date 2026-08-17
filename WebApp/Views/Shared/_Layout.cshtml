@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true"/>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 <header>
@@ -22,6 +23,15 @@
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Favorites">
+                            Favorites
+                            <span id="navFavCount" class="badge rounded-pill bg-success" style="display:none;"></span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -73,6 +83,23 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script>
+    (function () {
+        window.updateFavCountBadge = function () {
+            var badge = document.getElementById('navFavCount');
+            if (!badge) return;
+            var count = 0;
+            try {
+                count = (JSON.parse(localStorage.getItem('pharma_favorites')) || []).length;
+            } catch (e) {
+                count = 0;
+            }
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+        };
+        window.updateFavCountBadge();
+    })();
+</script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

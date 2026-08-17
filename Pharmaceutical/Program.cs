@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pharmaceutical.Data;
+using Pharmaceutical.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<PharmaceuticalDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("PharmConnection")));
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ITabletSpecificationService, TabletSpecificationService>();
+builder.Services.AddScoped<ICapsuleSpecificationService, CapsuleSpecificationService>();
+builder.Services.AddScoped<ILiquidFillingSpecificationService, LiquidFillingSpecificationService>();
+builder.Services.AddScoped<IQuoteRequestService, QuoteRequestService>();
 
 //Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -46,6 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 var summaries = new[]
 {

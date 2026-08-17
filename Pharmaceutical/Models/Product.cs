@@ -30,4 +30,6 @@ public class Product
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }
+
+    public ICollection<ImageProduct> Images { get; set; } = new List<ImageProduct>();
 }

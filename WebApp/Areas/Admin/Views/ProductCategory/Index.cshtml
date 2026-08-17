@@ -1,0 +1,105 @@
+@model List<ProductCategory>
+@{
+    ViewBag.Title = "Product Categories";
+    string? keyword = ViewBag.Keyword;
+    bool? isActive = ViewBag.IsActive;
+    int page = ViewBag.Page;
+    int pageSize = ViewBag.PageSize;
+    int totalCount = ViewBag.TotalCount;
+    int totalPages = ViewBag.TotalPages;
+}
+
+<div class="admin-page-header">
+    <div>
+        <h1>Product Categories</h1>
+        <p>Manage product categories in the system</p>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="admin-filter-bar">
+    <div class="admin-filter-search">
+        <input type="text" name="keyword" placeholder="Search by category name..." value="@keyword"/>
+    </div>
+
+    <select name="isActive" class="admin-filter-select">
+        <option value="">All statuses</option>
+        <option value="true" selected="@(isActive == true)">Active</option>
+        <option value="false" selected="@(isActive == false)">Inactive</option>
+    </select>
+
+    <button type="submit" class="admin-btn-filter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
+        Filter
+    </button>
+    <a asp-action="Index" class="admin-btn-clear">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        Clear filter
+    </a>
+</form>
+
+<div class="admin-table-card">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.CategoryId</td>
+                <td>@category.Name</td>
+                <td>@category.Description</td>
+                <td>
+                    @if (category.IsActive == true)
+                    {
+                        <span class="admin-pill admin-pill-yes">Active</span>
+                    }
+                    else
+                    {
+                        <span class="admin-pill admin-pill-no">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <div class="admin-row-actions">
+                        <a class="admin-icon-btn admin-icon-btn-edit" asp-action="Edit" asp-route-id="@category.CategoryId" title="Edit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@category.CategoryId" method="post" class="d-inline">
+                            <button type="submit" class="admin-icon-btn admin-icon-btn-delete" title="Delete" onclick="return confirm('Delete this category?');">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">No matching categories found.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pager", new PagerViewModel
+    {
+        Action = "Index",
+        Page = page,
+        PageSize = pageSize,
+        TotalCount = totalCount,
+        TotalPages = totalPages,
+        ItemLabel = "categories",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["keyword"] = keyword,
+            ["isActive"] = isActive?.ToString()
+        }
+    })
+</div>

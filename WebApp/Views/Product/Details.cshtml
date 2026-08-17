@@ -1,0 +1,238 @@
+@model WebApp.Models.Product
+@using WebApp.Models
+@using System.Text.Json
+@{
+    ViewData["Title"] = Model.ModelName;
+    var category = (ProductCategory?)ViewBag.Category;
+    var apiBaseUrl = (string)ViewBag.ApiBaseUrl;
+    var specItems = (List<(string Label, string Value)>)ViewBag.SpecItems;
+    var relatedProducts = (List<Product>)ViewBag.RelatedProducts;
+
+    var orderedImages = new List<ImageProduct>();
+    var mainImage = Model.Images.FirstOrDefault(i => i.IsThumbnail == true);
+    if (mainImage != null) orderedImages.Add(mainImage);
+    orderedImages.AddRange(Model.Images.Where(i => i != mainImage));
+
+    var imageUrls = orderedImages.Select(i => apiBaseUrl.TrimEnd('/') + i.Url).ToList();
+    var imageUrlsJson = JsonSerializer.Serialize(imageUrls);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"/>
+}
+
+<div class="pd-wrap">
+    <div class="pd-breadcrumb">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        <a asp-controller="Home" asp-action="Index">Home</a><span>&rsaquo;</span>
+        <a asp-action="Index">Products</a><span>&rsaquo;</span>
+        @if (category != null)
+        {
+            <a asp-action="Index" asp-route-categoryId="@category.CategoryId">@category.Name</a><span>&rsaquo;</span>
+        }
+        <span class="current">@Model.ModelName</span>
+    </div>
+
+    <a class="pd-back-btn" asp-action="Index">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a1f27" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to products
+    </a>
+
+    <div class="pd-grid">
+        <div>
+            <div class="pd-gallery-main">
+                @if (imageUrls.Any())
+                {
+                    <img id="pdMainImage" src="@imageUrls[0]" alt="@Model.ModelName"/>
+                    @if (imageUrls.Count > 1)
+                    {
+                        <span class="pd-gallery-counter" id="pdCounter">1 / @imageUrls.Count</span>
+                        <button type="button" class="pd-gallery-nav pd-gallery-prev" id="pdPrevBtn" title="Previous image">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+                        <button type="button" class="pd-gallery-nav pd-gallery-next" id="pdNextBtn" title="Next image">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    }
+                }
+                else
+                {
+                    <div class="pd-gallery-placeholder">No image</div>
+                }
+            </div>
+
+            @if (imageUrls.Count > 1)
+            {
+                <div class="pd-thumbs" id="pdThumbs">
+                    @for (var i = 0; i < imageUrls.Count; i++)
+                    {
+                        <button type="button" class="pd-thumb @(i == 0 ? "active" : "")" data-index="@i">
+                            <img src="@imageUrls[i]" alt="@Model.ModelName thumbnail @(i + 1)"/>
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <div>
+            <div class="pd-badges">
+                @if (category != null)
+                {
+                    <span class="pd-badge-category">@category.Name</span>
+                }
+                @if (!string.IsNullOrEmpty(Model.OutputLabel))
+                {
+                    <span class="pd-badge-sku">@Model.OutputLabel</span>
+                }
+            </div>
+
+            <h1 class="pd-title">@Model.ModelName</h1>
+
+            @if (!string.IsNullOrEmpty(Model.Summary))
+            {
+                <p class="pd-subtitle">@Model.Summary</p>
+            }
+
+            <button type="button" id="pdFavoriteBtn" class="pd-favorite-btn" data-product-id="@Model.ProductId">
+                <svg id="pdFavoriteIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg>
+                <span id="pdFavoriteLabel">Add to Favorite</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="pd-info-grid">
+        <div>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="pd-description">@Model.Description</p>
+            }
+        </div>
+
+        <div>
+            @if (specItems.Any())
+            {
+                <div class="pd-spec-card">
+                    <div class="pd-spec-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a8754" stroke-width="2"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>
+                        Technical Specifications
+                    </div>
+                    <div class="pd-spec-grid">
+                        @foreach (var item in specItems)
+                        {
+                            <div class="pd-spec-row">
+                                <span class="pd-spec-label"><span class="pd-spec-dot"></span>@item.Label</span>
+                                <span class="pd-spec-value">@item.Value</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (relatedProducts.Any())
+    {
+        <div class="pd-related">
+            <h2 class="pd-section-title">Related products@(category != null ? $" in {category.Name}" : "")</h2>
+            <div class="pp-grid">
+                @foreach (var related in relatedProducts)
+                {
+                    var thumbnail = related.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? related.Images.FirstOrDefault();
+                    var hoverImage = related.Images.Where(i => i != thumbnail).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                    <a class="pp-card-product" asp-action="Details" asp-route-id="@related.ProductId">
+                        <div class="pp-card-img-wrap">
+                            @if (thumbnail != null)
+                            {
+                                <img class="pp-card-img-main" src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@related.ModelName"/>
+                                if (hoverImage != null)
+                                {
+                                    <img class="pp-card-img-hover" src="@(apiBaseUrl.TrimEnd('/') + hoverImage.Url)" alt="@related.ModelName"/>
+                                }
+                            }
+                            else
+                            {
+                                <div class="pp-card-img-placeholder">No image</div>
+                            }
+                        </div>
+                        <div class="pp-card-body">
+                            <div class="pp-card-name">@related.ModelName</div>
+                            @if (!string.IsNullOrEmpty(related.OutputLabel))
+                            {
+                                <span class="pp-card-sku">@related.OutputLabel</span>
+                            }
+                            <div class="pp-card-price">Contact for price</div>
+                            <div class="pp-card-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
+                                View details
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var images = @Html.Raw(imageUrlsJson);
+            if (images.length <= 1) return;
+
+            var index = 0;
+            var mainImg = document.getElementById('pdMainImage');
+            var counter = document.getElementById('pdCounter');
+            var thumbs = document.querySelectorAll('#pdThumbs .pd-thumb');
+
+            function show(i) {
+                index = (i + images.length) % images.length;
+                mainImg.src = images[index];
+                counter.textContent = (index + 1) + ' / ' + images.length;
+                thumbs.forEach(function (t, ti) {
+                    t.classList.toggle('active', ti === index);
+                });
+            }
+
+            document.getElementById('pdPrevBtn').addEventListener('click', function () { show(index - 1); });
+            document.getElementById('pdNextBtn').addEventListener('click', function () { show(index + 1); });
+            thumbs.forEach(function (t) {
+                t.addEventListener('click', function () { show(parseInt(t.dataset.index, 10)); });
+            });
+        })();
+
+        (function () {
+            var STORAGE_KEY = 'pharma_favorites';
+            var btn = document.getElementById('pdFavoriteBtn');
+            var label = document.getElementById('pdFavoriteLabel');
+            var productId = btn.dataset.productId;
+
+            function getFavorites() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function updateUi(isFavorite) {
+                btn.classList.toggle('active', isFavorite);
+                label.textContent = isFavorite ? 'Added to Favorites' : 'Add to Favorite';
+            }
+
+            updateUi(getFavorites().indexOf(productId) !== -1);
+
+            btn.addEventListener('click', function () {
+                var favorites = getFavorites();
+                var idx = favorites.indexOf(productId);
+                if (idx === -1) {
+                    favorites.push(productId);
+                } else {
+                    favorites.splice(idx, 1);
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+                updateUi(favorites.indexOf(productId) !== -1);
+                if (window.updateFavCountBadge) window.updateFavCountBadge();
+            });
+        })();
+    </script>
+}
