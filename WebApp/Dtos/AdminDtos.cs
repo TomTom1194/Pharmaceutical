@@ -36,7 +36,7 @@ public class InterviewInvitationDto
     public DateTime? SentAt { get; set; }
 }
 
-// Admin can leave Subject/Body blank to use the API's default template.
+
 public class SendInterviewInvitationRequestDto
 {
     public string? Subject { get; set; }
@@ -64,7 +64,7 @@ public class InterviewInvitationResultDto
     public InterviewInvitationDto? Data { get; set; }
 }
 
-// Used by the Admin Portal "Applications" page: one button per open position.
+
 public class AdminPositionSummaryDto
 {
     public int PositionId { get; set; }
@@ -73,7 +73,7 @@ public class AdminPositionSummaryDto
     public int ApplicationCount { get; set; }
 }
 
-// A single candidate's application to a given position.
+
 public class AdminPositionApplicationItemDto
 {
     public int ApplicationId { get; set; }
@@ -85,6 +85,8 @@ public class AdminPositionApplicationItemDto
     public DateTime AppliedDate { get; set; }
     public string ApplicationStatus { get; set; }
     public bool HasResume { get; set; }
+    public int PositionId { get; set; }
+    public string? PositionTitle { get; set; }
 }
 
 public class AdminPositionsResultDto

@@ -66,7 +66,7 @@ public class AuthController :Controller
 
         if (string.Equals(result.Role, "Admin", StringComparison.OrdinalIgnoreCase))
         {
-            return RedirectToAction("Index", "Application", new { area = "Admin" });
+            return RedirectToAction("Index", "Home", new { area = "Admin" });
         }
 
         return RedirectToAction("Index", "Home");

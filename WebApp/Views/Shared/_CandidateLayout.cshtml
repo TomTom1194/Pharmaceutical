@@ -22,8 +22,7 @@
 
 @if (isAuthenticated)
 {
-    // Already inside the Candidate Portal's own sidebar shell - the marketing
-    // navbar/footer would just be a second, redundant navigation on top of it.
+    
     ViewData["HideMarketingChrome"] = true;
     <div class="app-shell">
         <aside class="sidebar">

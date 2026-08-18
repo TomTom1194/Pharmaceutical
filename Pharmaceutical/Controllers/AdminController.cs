@@ -64,12 +64,39 @@ namespace Pharmaceutical.Controllers
             if (!positionExists)
                 return NotFound(new { message = "Position not found" });
 
-            var applications = await _db.Applications
-                .Where(a => a.PositionId == id)
+            var result = await BuildApplicationItems(_db.Applications.Where(a => a.PositionId == id));
+            return Ok(result);
+        }
+
+        // All applications across every position, with optional filters.
+        // Backs the Admin Portal "Applications" page (position quick-filter,
+        // search box, and status dropdown).
+        [HttpGet("applications")]
+        public async Task<IActionResult> GetApplications([FromQuery] int? positionId, [FromQuery] string? status, [FromQuery] string? keyword)
+        {
+            var query = _db.Applications.AsQueryable();
+
+            if (positionId.HasValue)
+                query = query.Where(a => a.PositionId == positionId.Value);
+
+            if (!string.IsNullOrWhiteSpace(status))
+                query = query.Where(a => a.Status == status);
+
+            var result = await BuildApplicationItems(query, keyword);
+            return Ok(result);
+        }
+
+        // Shared projection logic for both the per-position and the all-applications
+        // endpoints above, so they stay consistent.
+        private async Task<List<AdminPositionApplicationItem>> BuildApplicationItems(
+            IQueryable<Application> applicationsQuery, string? keyword = null)
+        {
+            var applications = await applicationsQuery
                 .OrderByDescending(a => a.AppliedDate)
                 .ToListAsync();
 
             var candidateIds = applications.Select(a => a.CandidateId).Distinct().ToList();
+            var positionIds = applications.Select(a => a.PositionId).Distinct().ToList();
 
             var profiles = await _db.CandidateProfiles
                 .Where(p => candidateIds.Contains(p.CandidateId))
@@ -77,6 +104,10 @@ namespace Pharmaceutical.Controllers
 
             var users = await _db.UserAccounts
                 .Where(u => candidateIds.Contains(u.UserId))
+                .ToListAsync();
+
+            var positions = await _db.Positions
+                .Where(p => positionIds.Contains(p.PositionId))
                 .ToListAsync();
 
             var withResume = await _db.ResumeFiles
@@ -89,6 +120,7 @@ namespace Pharmaceutical.Controllers
             {
                 var profile = profiles.FirstOrDefault(p => p.CandidateId == a.CandidateId);
                 var user = users.FirstOrDefault(u => u.UserId == a.CandidateId);
+                var position = positions.FirstOrDefault(p => p.PositionId == a.PositionId);
 
                 return new AdminPositionApplicationItem
                 {
@@ -100,11 +132,20 @@ namespace Pharmaceutical.Controllers
                     AccountStatus = user?.Status,
                     AppliedDate = a.AppliedDate,
                     ApplicationStatus = a.Status,
-                    HasResume = withResume.Contains(a.CandidateId)
+                    HasResume = withResume.Contains(a.CandidateId),
+                    PositionId = a.PositionId,
+                    PositionTitle = position?.Title
                 };
-            }).ToList();
+            });
 
-            return Ok(result);
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                result = result.Where(r =>
+                    (r.FullName != null && r.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
+                    r.Email.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return result.ToList();
         }
 
         [HttpGet("candidates")]

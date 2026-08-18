@@ -10,6 +10,7 @@ public interface IAdminService
     Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId);
     Task<AdminPositionsResultDto> GetPositions(string token);
     Task<AdminPositionApplicationsResultDto> GetPositionApplications(string token, int positionId);
+    Task<AdminPositionApplicationsResultDto> GetApplications(string token, int? positionId, string? status, string? keyword);
 }
 
 public class AdminResumeDownloadResult

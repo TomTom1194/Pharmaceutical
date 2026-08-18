@@ -25,7 +25,7 @@ public class QuoteService : IQuoteService
             Email = dto.Email,
             Phone = dto.Phone,
             Comments = dto.Comments,
-            Status = "New",
+            Status = "Pending",
             SubmittedAt = DateTime.UtcNow
         };
 
