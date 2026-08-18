@@ -297,7 +297,8 @@
   background: #fff;
   border: 1px solid #e8eaed;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
@@ -382,6 +383,13 @@
 .admin-pill-no {
   background: #fdeef0;
   color: #e0304a;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f1f5f9;
+  overflow-x: hidden;
 }
 
 .admin-pill-pending {
@@ -644,4 +652,74 @@
 .sidebar-logo {
   height: 100px;
   width: auto;
+}
+
+/* Responsive Layout */
+@media (max-width: 992px) {
+  .admin-shell {
+    flex-direction: column;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e8eaed;
+    padding: 16px 20px;
+  }
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    gap: 8px;
+  }
+  .admin-nav-item {
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 13.5px;
+  }
+  .admin-brand {
+    padding: 0 0 16px 0;
+    justify-content: center;
+  }
+  .admin-logout {
+    margin-top: 12px;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .admin-logout button {
+    justify-content: center;
+    width: auto;
+    padding: 8px 16px;
+  }
+  .admin-topbar {
+    padding: 16px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    height: auto !important;
+    min-height: 100px;
+  }
+  .admin-topbar-right {
+    width: 100%;
+    justify-content: flex-start !important;
+    gap: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed #e8eaed;
+  }
+  .admin-content {
+    padding: 20px 16px;
+  }
+  .admin-page-header h1 {
+    font-size: 24px;
+  }
+  .admin-detail-grid {
+    grid-template-columns: 1fr;
+  }
 }
