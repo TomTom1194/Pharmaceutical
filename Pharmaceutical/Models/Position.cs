@@ -20,7 +20,7 @@ public class Position
 
     [Required]
     [MaxLength(50)]
-    public string Type { get; set; } = string.Empty; // Full-time, Part-time, Contract
+    public string Type { get; set; } = string.Empty; 
 
     [MaxLength(100)]
     public string SalaryRange { get; set; } = string.Empty;

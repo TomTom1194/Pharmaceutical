@@ -1,3 +1,41 @@
+
+
+:root {
+  --green-900: #0f2e22;
+  --green-800: #15402f;
+  --green-700: #1c5039;
+  --green-600: #236648;
+  --green-500: #2f7d56;
+  --green-400: #4a9c72;
+  --green-300: #7dbe9a;
+  --green-200: #b7dcc6;
+  --green-100: #e3f3e9;
+  --green-050: #f2f9f5;
+
+  --ink-900: #16211c;
+  --ink-700: #33443c;
+  --ink-500: #5c6f66;
+  --ink-300: #8b998f;
+
+  --border-color: #e4e9e5;
+  --bg-page: #f4f7f5;
+  --bg-card: #ffffff;
+
+  --danger: #c9463c;
+  --danger-bg: #fbe9e7;
+  --warning: #b8790c;
+  --warning-bg: #fdf0dc;
+  --success: #1c8a55;
+  --success-bg: #e2f5e9;
+  --neutral: #6b7280;
+  --neutral-bg: #eef1ef;
+
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 1px 2px rgba(15, 46, 34, 0.04), 0 6px 20px rgba(15, 46, 34, 0.05);
+}
+
 html {
     font-size: 14px;
     scroll-behavior: smooth;
@@ -7,6 +45,16 @@ html {
     html {
         font-size: 16px;
     }
+}
+
+.btn-link {
+  color: var(--green-700);
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn-link:hover {
+  color: var(--green-900);
+  text-decoration: underline;
 }
 
 body {

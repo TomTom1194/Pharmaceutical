@@ -1,0 +1,119 @@
+@model WebApp.Dtos.CandidateProfileDto
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@(Model.FullName) - CV</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; color: #212529; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        h1 { margin-bottom: 4px; }
+        .meta p { margin: 2px 0; }
+        h2 { margin-top: 28px; border-bottom: 2px solid #333; padding-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; font-size: 14px; }
+        th { background: #f2f2f2; }
+        .no-records { color: #666; font-style: italic; }
+        .no-print { margin-top: 24px; }
+        .header { display: flex; gap: 16px; align-items: flex-start; }
+        .header img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; }
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        @if (Model.HasProfileImage)
+        {
+            <img src="@Url.Action("ProfileImage", "Candidate")" alt="Profile photo" />
+        }
+        <div>
+            <h1>@Model.FullName</h1>
+            <div class="meta">
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Phone:</strong> @Model.Phone</p>
+                <p><strong>Address:</strong> @Model.Address</p>
+                <p><strong>Summary:</strong> @Model.Summary</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Education</h2>
+    @if (Model.Educations.Any())
+    {
+        <table>
+            <thead>
+            <tr>
+                <th>Institution</th>
+                <th>Qualification</th>
+                <th>Field</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model.Educations)
+            {
+                <tr>
+                    <td>@e.Institution</td>
+                    <td>@e.Qualification</td>
+                    <td>@e.Field</td>
+                    <td>@(e.StartDate?.ToString("MM/yyyy"))</td>
+                    <td>@(e.EndDate?.ToString("MM/yyyy"))</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="no-records">No education records.</p>
+    }
+
+    <h2>Work Experience</h2>
+    @if (Model.WorkExperiences.Any())
+    {
+        <table>
+            <thead>
+            <tr>
+                <th>Employer</th>
+                <th>Title</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var w in Model.WorkExperiences)
+            {
+                <tr>
+                    <td>@w.Employer</td>
+                    <td>@w.Title</td>
+                    <td>@(w.StartDate?.ToString("MM/yyyy"))</td>
+                    <td>@(w.EndDate?.ToString("MM/yyyy"))</td>
+                    <td>@w.Description</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="no-records">No work experience records.</p>
+    }
+
+    <p class="no-print">
+        <button onclick="window.print()">Print / Save as PDF</button>
+    </p>
+
+    <script>
+        // Auto-open the print dialog; the candidate can choose "Save as PDF" there.
+        window.onload = function () { window.print(); };
+    </script>
+</body>
+</html>

@@ -19,6 +19,17 @@ public class AuthController :Controller
     [HttpGet]
     public IActionResult Login()
     {
+        if (User.Identity is { IsAuthenticated: true })
+        {
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "Application", new { area = "Admin" });
+
+            if (User.IsInRole("Candidate"))
+                return RedirectToAction("Profile", "Candidate");
+
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 
@@ -47,12 +58,16 @@ public class AuthController :Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        if (result.Role == "Admin")
-            return RedirectToAction("Index", "Home", new { area = "Admin" });
-        // Candidate accounts land straight on their candidate portal (resume page);
-        // other roles fall back to the default home page.
+
         if (string.Equals(result.Role, "Candidate", StringComparison.OrdinalIgnoreCase))
-            return RedirectToAction("Index", "Candidate");
+        {
+            return RedirectToAction("Profile", "Candidate");
+        }
+
+        if (string.Equals(result.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectToAction("Index", "Application", new { area = "Admin" });
+        }
 
         return RedirectToAction("Index", "Home");
     }
@@ -60,6 +75,17 @@ public class AuthController :Controller
     [HttpGet]
     public IActionResult Register()
     {
+        if (User.Identity is { IsAuthenticated: true })
+        {
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "Application", new { area = "Admin" });
+
+            if (User.IsInRole("Candidate"))
+                return RedirectToAction("Profile", "Candidate");
+
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 
@@ -87,11 +113,4 @@ public class AuthController :Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
-
-    [HttpGet]
-    public IActionResult AccessDenied()
-    {
-        return View();
-    }
-
 }

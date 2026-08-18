@@ -9,16 +9,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" /> *@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     @{
         var isPreview = Context.Request.Query["preview"] == "true";
+        // Set by _CandidateLayout when it's rendering the authenticated sidebar
+        // shell, so the marketing navbar/footer don't double up with it.
+        var hideMarketingChrome = ViewData["HideMarketingChrome"] as bool? ?? false;
+        var showChrome = !isPreview && !hideMarketingChrome;
     }
 
-    @if (!isPreview)
+    @if (showChrome)
     {
     <header class="sticky-top shadow">
         <nav class="navbar navbar-expand-lg navbar-light navbar-main">
@@ -58,7 +62,7 @@
                         <a asp-controller="QuoteRequest" asp-action="Create" class="btn btn-primary px-4 rounded-pill shadow-sm fw-bold d-none d-md-block">
                             Get a Quote
                         </a>
-                        
+
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <div class="dropdown">
@@ -69,9 +73,13 @@
                                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2">
                                     @if (!User.IsInRole("Admin"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="Candidate" asp-action="Index">Candidate Portal</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Candidate" asp-action="Profile">My Profile</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Candidate" asp-action="ManageCv">Manage CV</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Candidate" asp-action="Profile">Candidate Portal</a></li>
+                                        
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Application" asp-action="Index">Admin Portal</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                     }
                                     <li>
@@ -144,7 +152,7 @@
                         <li><a href="/careers" class="text-decoration-none footer-link">Careers</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="col-lg-3 col-md-6">
                     <h6 class="text-white fw-semibold mb-4 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">Contact Us</h6>
                     <ul class="list-unstyled small d-flex flex-column gap-3">

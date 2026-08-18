@@ -12,6 +12,8 @@ builder.Services.AddDbContext<PharmaceuticalDbContext>(o =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITabletSpecificationService, TabletSpecificationService>();

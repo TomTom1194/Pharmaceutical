@@ -2,10 +2,10 @@
 
 @{
     ViewBag.Title = "Login";
-    Layout = "_Layout";
+    Layout = "_CandidateLayout";
 }
 
-<h2>Login</h2>
+<h2 class="h4 fw-bold mb-3 text-center">Sign in</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -25,6 +25,6 @@
         <input asp-for="Password" type="password" class="form-control" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Login</button>
-    <a asp-action="Register" class="btn btn-link">Don't have an account? Register</a>
+    <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+    <a asp-action="Register" class="btn btn-link w-100 text-center d-block">Don't have an account? Register</a>
 </form>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PharmEquip Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" /> *@
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+@{
+    var isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
+    var isCandidate = isAuthenticated && User.IsInRole("Candidate");
+    var isAdmin = isAuthenticated && User.IsInRole("Admin");
+    var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+    var userRole = isAdmin ? "Administrator" : (isCandidate ? "Candidate" : "");
+    var avatarInitial = string.IsNullOrEmpty(userEmail) ? "?" : userEmail.Substring(0, 1).ToUpperInvariant();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    bool IsActive(string controller, string action) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+}
+
+@if (isAuthenticated)
+{
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <a asp-area="@(isAdmin ? "Admin" : "")" asp-controller="@(isAdmin ? "Application" : "Candidate")" asp-action="@(isAdmin ? "Index" : "Profile")" class="text-decoration-none">
+                    <div class="brand-mark">
+                        <span class="cross cross-back"></span>
+                        <span class="cross cross-front"></span>
+                    </div>
+                </a>
+                <div class="brand-name">@(isAdmin ? "Admin Portal" : "Candidate Portal")</div>
+            </div>
+
+            <ul class="sidebar-nav">
+                @if (isCandidate)
+                {
+                    <li>
+                        <a class="nav-item-link @(IsActive("Candidate", "Profile") || IsActive("Candidate", "UpdateResume") ? "active" : "")"
+                           asp-controller="Candidate" asp-action="Profile">
+                            <i class="bi bi-person-vcard"></i> My CV
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-item-link @(IsActive("Candidate", "MyApplications") ? "active" : "")"
+                           asp-controller="Candidate" asp-action="MyApplications">
+                            <i class="bi bi-briefcase"></i> My Applications
+                        </a>
+                    </li>
+                }
+                @if (isAdmin)
+                {
+                    <li>
+                        <a class="nav-item-link @(IsActive("Application", "Index") ? "active" : "")"
+                           asp-area="Admin" asp-controller="Application" asp-action="Index">
+                            <i class="bi bi-clipboard-check"></i> Applications
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-avatar">@avatarInitial</div>
+                <div class="user-meta">
+                    <div class="user-name" title="@userEmail">@userEmail</div>
+                    <div class="user-role">@userRole</div>
+                </div>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="logout-btn" title="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main-area">
+            <header class="topbar">
+                <div>
+                    <h1 class="page-title">@ViewBag.Title</h1>
+                    @if (ViewBag.Subtitle != null)
+                    {
+                        <p class="page-subtitle">@ViewBag.Subtitle</p>
+                    }
+                </div>
+                <div class="topbar-actions">
+                    <span class="icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+                    <span class="icon-btn" title="Settings"><i class="bi bi-gear"></i></span>
+                </div>
+            </header>
+            <main class="content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+else
+{
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <div class="brand-mark">
+                    <span class="cross cross-back"></span>
+                    <span class="cross cross-front"></span>
+                </div>
+                <div class="brand-title">Pharmaceutical Portal</div>
+                <div class="brand-subtitle">Candidate &amp; recruitment management</div>
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
