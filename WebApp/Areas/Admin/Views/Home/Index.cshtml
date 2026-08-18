@@ -105,8 +105,8 @@
                         }
                     </div>
                     <div class="card-footer bg-white border-top border-light-subtle p-3 text-center">
-                        <a asp-area="Admin" asp-controller="QuoteHandle" asp-action="Index" class="btn btn-sm btn-outline-success fw-medium rounded-pill px-4">
-                            View all Quote Requests <i class="bi bi-arrow-right ms-1"></i>
+                        <a asp-area="Admin" asp-controller="QuoteRequest" asp-action="Index" asp-route-status="Pending" class="btn btn-sm btn-outline-success fw-medium rounded-pill px-4">
+                            View all Pending Quote Requests <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                         {
                             <div class="text-center py-5 text-muted">
                                 <i class="bi bi-person-x fs-2 d-block mb-2"></i>
-                                <p class="small">No interview invitations yet.</p>
+                                <p class="small">No new applications yet.</p>
                             </div>
                         }
                         else
@@ -132,9 +132,9 @@
                                     <thead>
                                         <tr style="border-bottom: 2px solid #f1f5f9;">
                                             <th class="ps-4 py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Candidate</th>
-                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Email</th>
-                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Registered</th>
-                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Account Status</th>
+                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Applied Position</th>
+                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Applied Date</th>
+                                            <th class="py-3 text-muted fw-bold border-0" style="font-size: 0.75rem; text-transform: uppercase;">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -153,8 +153,8 @@
                         }
                     </div>
                     <div class="card-footer bg-white border-top border-light-subtle p-3 text-center">
-                        <a asp-area="Admin" asp-controller="Invitation" asp-action="Index" class="btn btn-sm btn-outline-primary fw-medium rounded-pill px-4">
-                            View all Invitations <i class="bi bi-arrow-right ms-1"></i>
+                        <a asp-area="Admin" asp-controller="Application" asp-action="Index" asp-route-status="Applied" class="btn btn-sm btn-outline-primary fw-medium rounded-pill px-4">
+                            View all Applied Applications <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>

@@ -17,7 +17,7 @@ public class ApplicationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int? positionId)
+    public async Task<IActionResult> Index(int? positionId, string? status, string? keyword)
     {
         var positionsResult = await _adminService.GetPositions(GetToken());
         ViewBag.Positions = positionsResult.Data;
@@ -25,19 +25,18 @@ public class ApplicationController : Controller
             ViewBag.ErrorMessage = positionsResult.ErrorMessage;
 
         ViewBag.SelectedPositionId = positionId;
+        ViewBag.Status = status;
+        ViewBag.Keyword = keyword;
 
         var applications = new List<AdminPositionApplicationItemDto>();
-        if (positionId.HasValue)
+        var appsResult = await _adminService.GetApplications(GetToken(), positionId, status, keyword);
+        if (appsResult.Success)
         {
-            var appsResult = await _adminService.GetPositionApplications(GetToken(), positionId.Value);
-            if (appsResult.Success)
-            {
-                applications = appsResult.Data;
-            }
-            else
-            {
-                ViewBag.ErrorMessage = appsResult.ErrorMessage;
-            }
+            applications = appsResult.Data;
+        }
+        else
+        {
+            ViewBag.ErrorMessage = appsResult.ErrorMessage;
         }
 
         return View(applications);

@@ -2,28 +2,36 @@
 
 @{
     ViewBag.Title = "Applications";
-    ViewBag.Subtitle = "Pick a position to see who has applied to it.";
+    ViewBag.Subtitle = "All candidates who have applied to your open positions.";
 
     var positions = ViewBag.Positions as List<WebApp.Dtos.AdminPositionSummaryDto> ?? new();
     int? selectedPositionId = ViewBag.SelectedPositionId;
+    string? status = ViewBag.Status;
+    string? keyword = ViewBag.Keyword;
 
-    string AccountStatusBadgeClass(string? status) => (status ?? "").ToLowerInvariant() switch
+    string AccountPillClass(string? s) => (s ?? "").ToLowerInvariant() switch
     {
-        "active" => "bg-success",
-        "pending" => "bg-warning",
-        "inactive" => "bg-danger",
-        _ => "bg-secondary"
+        "active" => "admin-pill-yes",
+        "pending" => "admin-pill-pending",
+        "inactive" => "admin-pill-no",
+        _ => "admin-pill-category"
     };
 
-    string ApplicationStatusBadgeClass(string status) => (status ?? "").ToLowerInvariant() switch
+    string ApplicationPillClass(string? s) => (s ?? "").ToLowerInvariant() switch
     {
-        "applied" => "bg-secondary",
-        "reviewing" or "in review" or "shortlisted" => "bg-warning",
-        "sent" or "interview" or "interviewing" or "offered" or "hired" or "accepted" => "bg-success",
-        "rejected" or "withdrawn" => "bg-danger",
-        _ => "bg-secondary"
+        "applied" or "reviewing" or "in review" or "shortlisted" => "admin-pill-pending",
+        "sent" or "interview" or "interviewing" or "offered" or "hired" or "accepted" => "admin-pill-yes",
+        "rejected" or "withdrawn" => "admin-pill-no",
+        _ => "admin-pill-category"
     };
 }
+
+<div class="admin-page-header">
+    <div>
+        <h1>Applications</h1>
+        <p>All candidates who have applied to your open positions</p>
+    </div>
+</div>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -44,10 +52,14 @@
         @if (positions.Any())
         {
             <div class="d-flex flex-wrap gap-2">
+                <a asp-action="Index" asp-route-status="@status" asp-route-keyword="@keyword"
+                   class="btn @(!selectedPositionId.HasValue ? "btn-primary" : "btn-outline-primary") btn-sm">
+                    All positions
+                </a>
                 @foreach (var p in positions)
                 {
                     var isSelected = selectedPositionId == p.PositionId;
-                    <a asp-action="Index" asp-route-positionId="@p.PositionId"
+                    <a asp-action="Index" asp-route-positionId="@p.PositionId" asp-route-status="@status" asp-route-keyword="@keyword"
                        class="btn @(isSelected ? "btn-primary" : "btn-outline-primary") btn-sm">
                         @p.Title
                         <span class="badge @(isSelected ? "bg-light text-dark" : "bg-secondary") ms-1">@p.ApplicationCount</span>
@@ -62,69 +74,85 @@
     </div>
 </div>
 
-@if (!selectedPositionId.HasValue)
-{
-    <div class="card">
-        <div class="card-body text-center text-muted py-5">
-            Select a position above to see its applicants.
-        </div>
+<form method="get" asp-action="Index" class="admin-filter-bar">
+    <input type="hidden" name="positionId" value="@selectedPositionId"/>
+
+    <div class="admin-filter-search">
+        <input type="text" name="keyword" placeholder="Search by name/email..." value="@keyword"/>
     </div>
-}
-else
-{
-    var selectedPosition = positions.FirstOrDefault(p => p.PositionId == selectedPositionId.Value);
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">
-                Applicants @(selectedPosition != null ? $"— {selectedPosition.Title}" : "")
-            </h5>
-            @if (Model != null && Model.Any())
+
+    <select name="status" class="admin-filter-select">
+        <option value="">All statuses</option>
+        @foreach (var s in new[] { "Applied", "Sent" })
+        {
+            <option value="@s" selected="@(s == status)">@s</option>
+        }
+    </select>
+
+    <button type="submit" class="admin-btn-filter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
+        Filter
+    </button>
+    <a asp-action="Index" asp-route-positionId="@selectedPositionId" class="admin-btn-clear">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        Clear filter
+    </a>
+</form>
+
+<div class="admin-table-card">
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Position</th>
+            <th>Account Status</th>
+            <th>CV</th>
+            <th>Applied</th>
+            <th>Application Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (Model != null)
+        {
+            @foreach (var a in Model)
             {
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Account Status</th>
-                        <th>CV</th>
-                        <th>Applied</th>
-                        <th>Application Status</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var a in Model)
-                    {
-                        <tr>
-                            <td class="fw-semibold">@(a.FullName ?? "(No name)")</td>
-                            <td>@a.Email</td>
-                            <td>@(a.Phone ?? "-")</td>
-                            <td><span class="badge @AccountStatusBadgeClass(a.AccountStatus)">@(a.AccountStatus ?? "-")</span></td>
-                            <td>
-                                @if (a.HasResume)
-                                {
-                                    <span class="badge bg-success">Has CV</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">No CV</span>
-                                }
-                            </td>
-                            <td>@a.AppliedDate.ToLocalTime().ToString("d")</td>
-                            <td><span class="badge @ApplicationStatusBadgeClass(a.ApplicationStatus)">@a.ApplicationStatus</span></td>
-                            <td>
-                                <a asp-action="CandidateDetail" asp-route-id="@a.CandidateId" asp-route-positionId="@selectedPositionId" class="btn btn-sm btn-primary">View CV</a>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <tr>
+                    <td class="fw-semibold">@(a.FullName ?? "(No name)")</td>
+                    <td>@a.Email</td>
+                    <td>@(a.Phone ?? "-")</td>
+                    <td>@(a.PositionTitle ?? "-")</td>
+                    <td><span class="admin-pill @AccountPillClass(a.AccountStatus)">@(a.AccountStatus ?? "-")</span></td>
+                    <td>
+                        @if (a.HasResume)
+                        {
+                            <span class="admin-pill admin-pill-yes">Yes</span>
+                        }
+                        else
+                        {
+                            <span class="admin-pill admin-pill-no">No</span>
+                        }
+                    </td>
+                    <td>@a.AppliedDate.ToLocalTime().ToString("d")</td>
+                    <td><span class="admin-pill @ApplicationPillClass(a.ApplicationStatus)">@a.ApplicationStatus</span></td>
+                    <td>
+                        <div class="admin-row-actions">
+                            <a class="admin-icon-btn admin-icon-btn-view" asp-action="CandidateDetail" asp-route-id="@a.CandidateId" asp-route-positionId="@a.PositionId" title="View CV">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
             }
-            else
-            {
-                <p class="text-muted mb-0">No applications for this position yet.</p>
-            }
-        </div>
-    </div>
-}
+        }
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="9" class="text-center text-muted py-4">No matching applications found.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

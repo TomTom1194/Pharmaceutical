@@ -69,4 +69,6 @@ public class AdminPositionApplicationItem
     public DateTime AppliedDate { get; set; }
     public string ApplicationStatus { get; set; } = null!;
     public bool HasResume { get; set; }
+    public int PositionId { get; set; }
+    public string? PositionTitle { get; set; }
 }

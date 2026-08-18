@@ -171,6 +171,34 @@ public class AdminService : IAdminService
         return new AdminPositionApplicationsResultDto { Success = true, Data = data };
     }
 
+    public async Task<AdminPositionApplicationsResultDto> GetApplications(string token, int? positionId, string? status, string? keyword)
+    {
+        var query = new List<string>();
+        if (positionId.HasValue) query.Add($"positionId={positionId.Value}");
+        if (!string.IsNullOrWhiteSpace(status)) query.Add($"status={Uri.EscapeDataString(status)}");
+        if (!string.IsNullOrWhiteSpace(keyword)) query.Add($"keyword={Uri.EscapeDataString(keyword)}");
+        var url = "api/admin/applications" + (query.Count > 0 ? "?" + string.Join("&", query) : "");
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+        var responseJson = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("GetApplications fail: {StatusCode}", response.StatusCode);
+            return new AdminPositionApplicationsResultDto
+            {
+                Success = false,
+                ErrorMessage = ExtractMessage(responseJson) ?? "Could not load applications."
+            };
+        }
+
+        var data = JsonConvert.DeserializeObject<List<AdminPositionApplicationItemDto>>(responseJson) ?? new();
+        return new AdminPositionApplicationsResultDto { Success = true, Data = data };
+    }
+
     private static string? ExtractMessage(string json)
     {
         try

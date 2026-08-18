@@ -18,16 +18,17 @@ public class DashboardController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStats()
     {
-        // Count quotes that are New or Pending (unresolved)
+        
         var pendingQuotes = await _db.QuoteRequests
             .CountAsync(q => q.Status == null || q.Status == "New" || q.Status == "Pending");
 
-        // Count candidates with Pending status (newly registered, not yet processed by Tân)
-        var newApplicants = await _db.UserAccounts
-            .CountAsync(u => u.Role == "Candidate" && u.Status == "Pending");
+        
+        var newApplicants = await _db.Applications
+            .CountAsync(a => a.Status == "Applied");
 
-        // Recent 5 quote requests
+        
         var recentQuotes = await _db.QuoteRequests
+            .Where(q => q.Status == "Pending")
             .OrderByDescending(q => q.SubmittedAt)
             .Take(5)
             .Select(q => new RecentQuoteDto
@@ -35,26 +36,31 @@ public class DashboardController : ControllerBase
                 QuoteId = q.QuoteId,
                 FullName = q.FullName,
                 CompanyName = q.CompanyName,
-                Status = q.Status ?? "New",
+                Status = q.Status ?? "Pending",
                 SubmittedAt = q.SubmittedAt
             })
             .ToListAsync();
 
-        // Recent 5 candidates with Pending status (read-only, managed by Tân)
-        var recentApplicants = await (
-            from c in _db.CandidateProfiles
-            join u in _db.UserAccounts on c.CandidateId equals u.UserId
-            where u.Role == "Candidate" && u.Status == "Pending"
-            orderby c.CreatedAt descending
-            select new RecentApplicantDto
-            {
-                InvitationId = c.CandidateId,
-                CandidateName = c.FullName,
-                Subject = u.Email,
-                Status = u.Status,
-                SentAt = c.CreatedAt
-            })
+        
+        var recentApplicants = await _db.Applications
+            .Where(a => a.Status == "Applied")
+            .OrderByDescending(a => a.AppliedDate)
             .Take(5)
+            .Join(_db.CandidateProfiles,
+                a => a.CandidateId,
+                c => c.CandidateId,
+                (a, c) => new { a, c })
+            .Join(_db.Positions,
+                ac => ac.a.PositionId,
+                p => p.PositionId,
+                (ac, p) => new RecentApplicantDto
+                {
+                    InvitationId = ac.a.ApplicationId,
+                    CandidateName = ac.c.FullName,
+                    Subject = p.Title,
+                    Status = ac.a.Status,
+                    SentAt = ac.a.AppliedDate
+                })
             .ToListAsync();
 
         return Ok(new DashboardStatsDto
