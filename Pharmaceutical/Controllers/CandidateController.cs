@@ -47,7 +47,8 @@ namespace Pharmaceutical.Controllers
             _env = env;
         }
 
-        
+        // Candidate accounts share their primary key with UserAccount (see AuthController.Register),
+        // so the "sub" claim in the JWT is also the CandidateProfile.CandidateId.
         private int? GetCandidateId()
         {
             var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
@@ -273,6 +274,52 @@ namespace Pharmaceutical.Controllers
                 ".gif" => "image/gif",
                 _ => "application/octet-stream"
             };
+
+        // Candidate applies to an open position from the Careers page.
+        [HttpPost("positions/{positionId:int}/apply")]
+        public async Task<IActionResult> ApplyToPosition(int positionId)
+        {
+            var candidateId = GetCandidateId();
+            if (candidateId == null)
+                return Unauthorized();
+
+            var candidateExists = await _db.CandidateProfiles.AnyAsync(c => c.CandidateId == candidateId);
+            if (!candidateExists)
+                return NotFound(new { message = "Candidate profile not found" });
+
+            var position = await _db.Positions.FirstOrDefaultAsync(p => p.PositionId == positionId);
+            if (position == null)
+                return NotFound(new { message = "Position not found" });
+
+            if (!position.IsActive)
+                return BadRequest(new { message = "This position is no longer accepting applications" });
+
+            var alreadyApplied = await _db.Applications
+                .AnyAsync(a => a.CandidateId == candidateId && a.PositionId == positionId);
+            if (alreadyApplied)
+                return Conflict(new { message = "You have already applied to this position" });
+
+            var application = new Application
+            {
+                CandidateId = candidateId.Value,
+                PositionId = positionId,
+                AppliedDate = DateTime.UtcNow,
+                Status = "Applied"
+            };
+
+            _db.Applications.Add(application);
+            await _db.SaveChangesAsync();
+
+            return Ok(new ApplicationResponse
+            {
+                ApplicationId = application.ApplicationId,
+                PositionId = position.PositionId,
+                PositionTitle = position.Title,
+                Department = position.Department,
+                AppliedDate = application.AppliedDate,
+                Status = application.Status
+            });
+        }
 
         [HttpGet("applications")]
         public async Task<IActionResult> GetApplications()

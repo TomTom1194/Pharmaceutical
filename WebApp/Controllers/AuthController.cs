@@ -19,6 +19,17 @@ public class AuthController :Controller
     [HttpGet]
     public IActionResult Login()
     {
+        if (User.Identity is { IsAuthenticated: true })
+        {
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "Application", new { area = "Admin" });
+
+            if (User.IsInRole("Candidate"))
+                return RedirectToAction("Profile", "Candidate");
+
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 
@@ -47,12 +58,16 @@ public class AuthController :Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        // Route each role to its own portal; anything else falls back to the default home page.
+
         if (string.Equals(result.Role, "Candidate", StringComparison.OrdinalIgnoreCase))
+        {
             return RedirectToAction("Profile", "Candidate");
+        }
 
         if (string.Equals(result.Role, "Admin", StringComparison.OrdinalIgnoreCase))
-            return RedirectToAction("Index", "Admin");
+        {
+            return RedirectToAction("Index", "Application", new { area = "Admin" });
+        }
 
         return RedirectToAction("Index", "Home");
     }
@@ -60,6 +75,17 @@ public class AuthController :Controller
     [HttpGet]
     public IActionResult Register()
     {
+        if (User.Identity is { IsAuthenticated: true })
+        {
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "Application", new { area = "Admin" });
+
+            if (User.IsInRole("Candidate"))
+                return RedirectToAction("Profile", "Candidate");
+
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 

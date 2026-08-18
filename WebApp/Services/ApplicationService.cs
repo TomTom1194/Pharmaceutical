@@ -37,6 +37,27 @@ public class ApplicationService : IApplicationService
         return new ApplicationListResultDto { Success = true, Data = data };
     }
 
+    public async Task<ApplyResultDto> Apply(string token, int positionId)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"api/candidate/positions/{positionId}/apply");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+        var responseJson = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("Apply fail: {StatusCode}", response.StatusCode);
+            return new ApplyResultDto
+            {
+                Success = false,
+                ErrorMessage = ExtractMessage(responseJson) ?? "Could not submit your application."
+            };
+        }
+
+        return new ApplyResultDto { Success = true };
+    }
+
     private static string? ExtractMessage(string json)
     {
         try

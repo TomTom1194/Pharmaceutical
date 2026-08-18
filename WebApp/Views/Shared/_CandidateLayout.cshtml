@@ -1,0 +1,98 @@
+@{
+    
+    Layout = "_MarketingLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/candidate.css" asp-append-version="true" />
+}
+
+@{
+    var isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
+    var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+    var avatarInitial = string.IsNullOrEmpty(userEmail) ? "?" : userEmail.Substring(0, 1).ToUpperInvariant();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    bool IsActive(string controller, string action) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+}
+
+@if (isAuthenticated)
+{
+    // Already inside the Candidate Portal's own sidebar shell - the marketing
+    // navbar/footer would just be a second, redundant navigation on top of it.
+    ViewData["HideMarketingChrome"] = true;
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="sidebar-brand" asp-controller="Candidate" asp-action="Profile">
+                <img src="~/images/logo.png" alt="PharmEquip" class="sidebar-logo" />
+                <span class="brand-name">Candidate Portal</span>
+            </a>
+
+            <ul class="sidebar-nav">
+                <li>
+                    <a class="nav-item-link @(IsActive("Candidate", "Profile") || IsActive("Candidate", "UpdateResume") ? "active" : "")"
+                       asp-controller="Candidate" asp-action="Profile">
+                        <i class="bi bi-person-vcard"></i> My CV
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item-link @(IsActive("Candidate", "MyApplications") ? "active" : "")"
+                       asp-controller="Candidate" asp-action="MyApplications">
+                        <i class="bi bi-briefcase"></i> My Applications
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-avatar">@avatarInitial</div>
+                <div class="user-meta">
+                    <div class="user-name" title="@userEmail">@userEmail</div>
+                    <div class="user-role">Candidate</div>
+                </div>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="logout-btn" title="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main-area">
+            <header class="topbar">
+                <div>
+                    <h1 class="page-title">@ViewBag.Title</h1>
+                    @if (ViewBag.Subtitle != null)
+                    {
+                        <p class="page-subtitle">@ViewBag.Subtitle</p>
+                    }
+                </div>
+                <div class="topbar-actions">
+                    <span class="icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+                    <span class="icon-btn" title="Settings"><i class="bi bi-gear"></i></span>
+                </div>
+            </header>
+            <main class="content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+else
+{
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <img src="~/images/logo.png" alt="PharmEquip" class="auth-logo" />
+                
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+}
+
+
+@await RenderSectionAsync("Scripts", required: false)

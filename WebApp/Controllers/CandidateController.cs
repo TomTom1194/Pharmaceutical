@@ -21,7 +21,7 @@ public class CandidateController : Controller
         _resumeService = resumeService;
     }
 
-    // "My CV": personal info + education + work experience, with Update / Export.
+    
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -33,8 +33,7 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    // Print-friendly standalone page (no site layout) that auto-opens the
-    // browser print dialog so the candidate can save the CV as a PDF.
+   
     [HttpGet]
     public async Task<IActionResult> ExportCv()
     {
@@ -62,7 +61,7 @@ public class CandidateController : Controller
         return View(result.Data);
     }
 
-    // "Update Resume": fill in personal info, education, work experience and (optionally) a new photo.
+    
     [HttpGet]
     public async Task<IActionResult> UpdateResume()
     {
@@ -106,8 +105,8 @@ public class CandidateController : Controller
         return View(model);
     }
 
-    private const long MaxImageSizeBytes = 2 * 1024 * 1024; // 2 MB
-    private const long MaxResumeSizeBytes = 5 * 1024 * 1024; // 5 MB
+    private const long MaxImageSizeBytes = 2 * 1024 * 1024; 
+    private const long MaxResumeSizeBytes = 5 * 1024 * 1024; 
     private static readonly string[] AllowedResumeExtensions = { ".pdf", ".doc", ".docx" };
 
     [HttpPost]
@@ -173,8 +172,7 @@ public class CandidateController : Controller
         return RedirectToAction("Profile");
     }
 
-    // Streams the candidate's profile photo. The cookie auth on this controller
-    // covers the <img> request, so no token needs to reach the browser directly.
+    
     [HttpGet]
     public async Task<IActionResult> ProfileImage()
     {
@@ -184,6 +182,22 @@ public class CandidateController : Controller
             return NotFound();
 
         return File(result.Content, result.ContentType ?? "application/octet-stream");
+    }
+
+    // Called from the Careers page "Apply Now" button — creates a real Application row via the API.
+    [HttpPost]
+    public async Task<IActionResult> Apply(int positionId)
+    {
+        var result = await _applicationService.Apply(GetToken(), positionId);
+
+        if (!result.Success)
+        {
+            TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not submit your application. Please try again.";
+            return RedirectToAction("Careers", "Page");
+        }
+
+        TempData["SuccessMessage"] = "Your application has been submitted successfully!";
+        return RedirectToAction("Careers", "Page");
     }
 
     private string GetToken() => User.FindFirst("JwtToken")?.Value ?? string.Empty;

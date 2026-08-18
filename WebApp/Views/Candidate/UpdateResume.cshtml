@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Update Resume";
     ViewBag.Subtitle = "Fill in your personal information, education and work experience.";
-    Layout = "_Layout";
+    Layout = "_CandidateLayout";
     var eduList = Model.Educations != null && Model.Educations.Count > 0
         ? Model.Educations
         : new List<WebApp.Dtos.EducationInputDto> { new WebApp.Dtos.EducationInputDto() };

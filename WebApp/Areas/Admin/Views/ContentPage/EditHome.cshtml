@@ -1,0 +1,112 @@
+@model WebApp.Models.ContentPageFormModel
+@{
+    ViewData["Title"] = "Edit Homepage";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a asp-action="Index" class="text-muted text-decoration-none small">&larr; Back to list</a>
+            <h2 class="fw-bold mb-0 mt-1">Edit Homepage Content</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="PageId" />
+                        <input type="hidden" asp-for="Slug" />
+                        <input type="hidden" asp-for="Title" value="Homepage" />
+
+                        <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Page URL (Slug)</label>
+                            <input class="form-control bg-light" value="/@Model.Slug" readonly disabled />
+                        </div>
+                        
+                        <hr class="my-4" />
+                        <h4 class="mb-3 text-primary">Main Banner</h4>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-medium">Slider Images (Carousel)</label>
+                            @if (Model.ExistingSliderImages != null && Model.ExistingSliderImages.Any())
+                            {
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    @for (int i = 0; i < Model.ExistingSliderImages.Count; i++)
+                                    {
+                                        <div class="position-relative" style="width: 200px;">
+                                            <img src="@Model.ExistingSliderImages[i]" class="img-thumbnail w-100 object-fit-cover" style="height: 120px;" />
+                                            <input type="hidden" name="ExistingSliderImages" value="@Model.ExistingSliderImages[i]" />
+                                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="this.parentElement.remove()" title="Delete Image"><i class="bi bi-x-lg"></i> X</button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <input asp-for="SliderImageUploads" type="file" class="form-control" accept="image/*" multiple />
+                            <div class="form-text">Select one or multiple images to add to the automatic slider.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="HeroTitle" class="form-label fw-medium">Main Title</label>
+                            <input asp-for="HeroTitle" class="form-control" placeholder="e.g. XYZ Pharmaceuticals Equipment" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="HeroSubtitle" class="form-label fw-medium">Short Description</label>
+                            <textarea asp-for="HeroSubtitle" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <hr class="my-4" />
+                        <h4 class="mb-3 text-primary">About Us Snippet</h4>
+
+                        <div class="mb-3">
+                            <label asp-for="AboutTitle" class="form-label fw-medium">Section Title</label>
+                            <input asp-for="AboutTitle" class="form-control" placeholder="e.g. About XYZ Pharmaceuticals" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="AboutDescription" class="form-label fw-medium">Description</label>
+                            <textarea asp-for="AboutDescription" class="form-control" rows="4"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Status" class="form-label fw-medium">Status</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Published">Published</option>
+                                <option value="Draft">Draft</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2">
+                            <button type="submit" class="btn btn-primary px-4 fw-medium">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-light px-4">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Structured Content</h5>
+                    <p class="text-muted small">
+                        The Homepage uses a structured content layout to preserve the complex CSS design. 
+                        Instead of a single rich-text editor, you edit specific text fields which are safely injected into the page layout.
+                    </p>
+                    <div class="alert alert-info mt-3 small border-0">
+                        <i class="bi bi-info-circle me-1"></i> Changes made here will immediately reflect on the public landing page.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -3,43 +3,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pharmaceutical.Models;
 
-[Table("Positions")]
 public class Position
 {
     [Key]
-    [Column("PositionId")]
     public int PositionId { get; set; }
 
-    [Required, MaxLength(255)]
-    [Column("Title")]
-    public string Title { get; set; } = null!;
+    [Required]
+    [MaxLength(255)]
+    public string Title { get; set; } = string.Empty;
 
-    [Required, MaxLength(100)]
-    [Column("Department")]
-    public string Department { get; set; } = null!;
+    [Required]
+    [MaxLength(100)]
+    public string Department { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
-    [Column("Type")]
-    public string Type { get; set; } = null!;
+
+
+    [Required]
+    [MaxLength(50)]
+    public string Type { get; set; } = string.Empty; 
 
     [MaxLength(100)]
-    [Column("SalaryRange")]
-    public string? SalaryRange { get; set; }
+    public string SalaryRange { get; set; } = string.Empty;
 
     [Required]
-    [Column("Description")]
-    public string Description { get; set; } = null!;
+    public string Description { get; set; } = string.Empty;
 
     [Required]
-    [Column("Requirements")]
-    public string Requirements { get; set; } = null!;
+    public string Requirements { get; set; } = string.Empty;
 
-    // DB default is 1 (Active); still set explicitly on insert from C# to avoid
-    // relying on the server-side default when EF sends an explicit value.
-    [Column("IsActive")]
     public bool IsActive { get; set; } = true;
 
-    // DB default is GETUTCDATE(); set explicitly on insert for the same reason.
-    [Column("CreatedAt")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

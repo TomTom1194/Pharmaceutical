@@ -18,3 +18,10 @@ public class ApplicationListResultDto
     public string? ErrorMessage { get; set; }
     public List<ApplicationDto> Data { get; set; } = new();
 }
+
+// Wraps the outcome of submitting a new application from the Careers page.
+public class ApplyResultDto
+{
+    public bool Success { get; set; }
+    public string? ErrorMessage { get; set; }
+}

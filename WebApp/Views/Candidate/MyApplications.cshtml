@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "My Applications";
     ViewBag.Subtitle = "Positions you have applied to.";
-    Layout = "_Layout";
+    Layout = "_CandidateLayout";
 
     string StatusBadgeClass(string status) => (status ?? "").ToLowerInvariant() switch
     {

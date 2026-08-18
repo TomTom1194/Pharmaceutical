@@ -10,4 +10,14 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Areas\Admin\Views\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Candidate\_to_delete\CreateResume.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Candidate\_to_delete\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Candidate\_to_delete\ManageCv.cshtml" />
+    </ItemGroup>
+
 </Project>

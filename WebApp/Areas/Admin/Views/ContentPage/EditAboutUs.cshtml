@@ -1,0 +1,153 @@
+@model WebApp.Models.ContentPageFormModel
+@{
+    ViewData["Title"] = "Edit About Us Page";
+}
+
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1" style="color: #212529;">Edit About Us Page</h3>
+            <p class="text-muted mb-0 small">Customize the heritage text and core values displayed on the About Us page</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary fw-medium px-4 rounded-pill">
+            <i class="bi bi-arrow-left me-2"></i>Back to Pages
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4 p-lg-5">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="PageId" />
+                <input type="hidden" asp-for="Slug" />
+                <input type="hidden" asp-for="Title" />
+
+                <div class="row g-5">
+                    <div class="col-lg-8">
+                        <h5 class="fw-bold text-success mb-4 border-bottom pb-2">Main Content</h5>
+
+                        <div class="mb-4">
+                            <label asp-for="AboutTitle" class="form-label fw-semibold">Heading Title</label>
+                            <input asp-for="AboutTitle" class="form-control form-control-lg bg-light" placeholder="e.g. Empowering Healthcare Through Innovation" />
+                            <span asp-validation-for="AboutTitle" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Body" class="form-label fw-semibold">Our Heritage Text</label>
+                            <textarea asp-for="Body" class="form-control" rows="15"></textarea>
+                        </div>
+
+                        <h5 class="fw-bold text-success mt-5 mb-4 border-bottom pb-2">Core Values</h5>
+                        <p class="text-muted small">Add up to 3 core values to display beautifully on the About Us page.</p>
+
+                        <div id="coreValuesContainer">
+                            @for (int i = 0; i < Math.Max(1, Model.CoreValues.Count); i++)
+                            {
+                                var value = i < Model.CoreValues.Count ? Model.CoreValues[i] : new WebApp.Models.CoreValueModel();
+                                <div class="core-value-item card border border-light shadow-sm mb-3">
+                                    <div class="card-body bg-light rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="fw-bold mb-0">Core Value #<span class="value-index">@(i + 1)</span></h6>
+                                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-value"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-medium small">Title</label>
+                                            <input name="CoreValues[@i].Title" value="@value.Title" class="form-control" placeholder="e.g. Uncompromising Quality" />
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-medium small">Description</label>
+                                            <textarea name="CoreValues[@i].Description" class="form-control" rows="2" placeholder="e.g. Every piece of equipment is rigorously tested...">@value.Description</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <button type="button" id="btnAddCoreValue" class="btn btn-outline-success btn-sm fw-medium mt-2">
+                            <i class="bi bi-plus-lg me-1"></i> Add Core Value
+                        </button>
+                    </div>
+                    
+                    <div class="col-lg-4 border-start">
+                        <h5 class="fw-bold text-dark mb-4">Publishing</h5>
+                        
+                        <div class="mb-4 p-3 bg-light rounded-3">
+                            <label asp-for="Status" class="form-label fw-semibold">Page Status</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Published">Published</option>
+                                <option value="Draft">Draft</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm">
+                            <i class="bi bi-save me-2"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#Body',
+            height: 350,
+            menubar: false,
+            plugins: ['advlist', 'autolink', 'lists', 'link', 'wordcount'],
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat'
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById("coreValuesContainer");
+            const btnAdd = document.getElementById("btnAddCoreValue");
+
+            function updateIndices() {
+                const items = container.querySelectorAll('.core-value-item');
+                items.forEach((item, index) => {
+                    item.querySelector('.value-index').textContent = index + 1;
+                    const inputs = item.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            input.setAttribute('name', name.replace(/\[\d+\]/, '[' + index + ']'));
+                        }
+                    });
+                });
+            }
+
+            container.addEventListener("click", function(e) {
+                if (e.target.closest('.btn-remove-value')) {
+                    e.target.closest('.core-value-item').remove();
+                    updateIndices();
+                }
+            });
+
+            btnAdd.addEventListener("click", function() {
+                const index = container.querySelectorAll('.core-value-item').length;
+                const html = `
+                    <div class="core-value-item card border border-light shadow-sm mb-3">
+                        <div class="card-body bg-light rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0">Core Value #<span class="value-index">${index + 1}</span></h6>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-value"><i class="bi bi-trash"></i></button>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium small">Title</label>
+                                <input name="CoreValues[${index}].Title" class="form-control" placeholder="e.g. Uncompromising Quality" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-medium small">Description</label>
+                                <textarea name="CoreValues[${index}].Description" class="form-control" rows="2" placeholder="e.g. Every piece of equipment is rigorously tested..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        });
+    </script>
+}

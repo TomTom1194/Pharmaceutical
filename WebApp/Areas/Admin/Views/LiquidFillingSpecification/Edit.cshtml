@@ -1,0 +1,46 @@
+@model LiquidFillingSpecification
+@{
+    ViewBag.Title = "Edit liquid filling specification";
+    var product = (Product)ViewBag.Product;
+}
+
+<h2>Edit liquid filling specification</h2>
+
+<form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" style="max-width:500px;">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="ProductId"/>
+
+    <div class="mb-3">
+        <label>Product</label>
+        <input class="form-control" value="@product.ModelName" disabled/>
+    </div>
+
+    <div class="mb-3">
+        <label>Air pressure</label>
+        <input asp-for="AirPressure" class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label>Air volume</label>
+        <input asp-for="AirVolume" class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label>Filling speed</label>
+        <input asp-for="FillingSpeed" class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label>Filling range (ml)</label>
+        <input asp-for="FillingRangeMl" class="form-control"/>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-secondary" asp-area="Admin" asp-controller="Product" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+<form asp-action="Delete" asp-route-id="@Model.ProductId" method="post" class="mt-2" onsubmit="return confirm('Delete this specification?');">
+    <button type="submit" class="btn btn-outline-danger btn-sm">Delete specification</button>
+</form>

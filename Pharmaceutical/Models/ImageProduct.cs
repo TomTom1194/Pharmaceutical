@@ -1,29 +1,27 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Pharmaceutical.Models;
-
-[Table("ImageProduct")]
-public class ImageProduct
+namespace Pharmaceutical.Models
 {
-    [Key]
-    [Column("image_id")]
-    public int ImageId { get; set; }
 
-    [Required]
-    [Column("product_id")]
-    public int ProductId { get; set; }
+    [Table("ImageProduct")]
+    public class ImageProduct
+    {
+        [Key]
+        [Column("image_id")]
+        public int ImageId { get; set; }
 
-    [Required, MaxLength(500)]
-    [Column("url")]
-    public string Url { get; set; } = null!;
+        [Column("product_id")]
+        public int? ProductId { get; set; }
 
-    [Column("display_order")]
-    public int? DisplayOrder { get; set; }
+        [Required, MaxLength(500)]
+        [Column("url")]
+        public string Url { get; set; } = null!;
 
-    [Column("is_thumbnail")]
-    public bool? IsThumbnail { get; set; }
+        [Column("display_order")]
+        public int? DisplayOrder { get; set; }
 
-    [ForeignKey(nameof(ProductId))]
-    public Product? Product { get; set; }
+        [Column("is_thumbnail")]
+        public bool? IsThumbnail { get; set; }
+    }
 }
