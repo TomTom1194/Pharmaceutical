@@ -6,4 +6,5 @@ public interface IAuthService
 {
     public Task<LoginResponseDto?> Login(LoginRequestDto request);
     public Task<RegisterResultDto> Register(RegisterRequestDto request);
+    public Task<ChangePasswordResultDto> ChangePassword(string token, ChangePasswordRequestDto request);
 }

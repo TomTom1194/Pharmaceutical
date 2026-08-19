@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using WebApp.Dtos;
@@ -56,7 +57,7 @@ public class AuthService :IAuthService
             }
             catch (JsonException)
             {
-                
+                // response body wasn't the expected { message: "" } shape, ignore
             }
 
             return new RegisterResultDto
@@ -72,5 +73,44 @@ public class AuthService :IAuthService
             Success = true,
             Data = result
         };
+    }
+
+    public async Task<ChangePasswordResultDto> ChangePassword(string token, ChangePasswordRequestDto request)
+    {
+        var json = JsonConvert.SerializeObject(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/auth/change-password")
+        {
+            Content = content
+        };
+        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(requestMessage);
+        var responseJson = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("ChangePassword fail: {StatusCode}", response.StatusCode);
+
+            string? message = null;
+            try
+            {
+                var errorObj = JsonConvert.DeserializeAnonymousType(responseJson, new { message = "" });
+                message = errorObj?.message;
+            }
+            catch (JsonException)
+            {
+
+            }
+
+            return new ChangePasswordResultDto
+            {
+                Success = false,
+                ErrorMessage = message ?? "Change password failed. Please try again."
+            };
+        }
+
+        return new ChangePasswordResultDto { Success = true };
     }
 }

@@ -1,5 +1,6 @@
 @{
-    
+    // Nested layout: _MarketingLayout provides the outer <html>/navbar/footer shell,
+    // this layout only renders what goes inside its <main>.
     Layout = "_MarketingLayout";
 }
 
@@ -22,7 +23,8 @@
 
 @if (isAuthenticated)
 {
-    
+    // Already inside the Candidate Portal's own sidebar shell - the marketing
+    // navbar/footer would just be a second, redundant navigation on top of it.
     ViewData["HideMarketingChrome"] = true;
     <div class="app-shell">
         <aside class="sidebar">
@@ -42,6 +44,12 @@
                     <a class="nav-item-link @(IsActive("Candidate", "MyApplications") ? "active" : "")"
                        asp-controller="Candidate" asp-action="MyApplications">
                         <i class="bi bi-briefcase"></i> My Applications
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item-link @(IsActive("Auth", "ChangePassword") ? "active" : "")"
+                       asp-controller="Auth" asp-action="ChangePassword">
+                        <i class="bi bi-shield-lock"></i> Change Password
                     </a>
                 </li>
             </ul>
@@ -71,7 +79,7 @@
                 </div>
                 <div class="topbar-actions">
                     <span class="icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
-                    <span class="icon-btn" title="Settings"><i class="bi bi-gear"></i></span>
+                    
                 </div>
             </header>
             <main class="content">
@@ -86,12 +94,13 @@ else
         <div class="auth-card">
             <div class="auth-brand">
                 <img src="~/images/logo.png" alt="PharmEquip" class="auth-logo" />
-                
+                <div class="brand-title">XYZ Pharmaceutical</div>
             </div>
             @RenderBody()
         </div>
     </div>
 }
 
-
+@* Pages nested under this layout (e.g. UpdateResume.cshtml, Register.cshtml) may
+   define their own @section Scripts { ... } - render it here so it isn't lost. *@
 @await RenderSectionAsync("Scripts", required: false)

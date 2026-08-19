@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -77,29 +78,23 @@ namespace Pharmaceutical.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest req)
         {
-            
+
             var user = await _db.UserAccounts
                 .FirstOrDefaultAsync(u => u.Email == req.Email);
 
             if (user == null)
                 return Unauthorized(new { message = "Email or Password incorrect" });
 
-            // Tự động fix lỗi hash cho tài khoản Admin
-            if (req.Email == "admin@pharma.com" && req.Password == "Admin@123")
-            {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123");
-                await _db.SaveChangesAsync();
-            }
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash);
             if (!isPasswordValid)
                 return Unauthorized(new { message = "Email or Password incorrect" });
 
-            
+
             if (user.Status != "Active")
                 return Unauthorized(new { message = "Account now is inactive" });
 
-            
+
             var expiresMinutes = int.Parse(_config["Jwt:ExpiresInMinutes"]!);
             var expiresAt = DateTime.UtcNow.AddMinutes(expiresMinutes);
 
@@ -124,11 +119,11 @@ namespace Pharmaceutical.Controllers
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-           
+
             user.LastLoginAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
-           
+
             return Ok(new LoginResponse
             {
                 Token = tokenString,
@@ -136,7 +131,31 @@ namespace Pharmaceutical.Controllers
                 Role = user.Role,
                 ExpiresAt = expiresAt
             });
-        
+
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest req)
+        {
+            var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                      ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(sub, out var userId))
+                return Unauthorized(new { message = "Invalid token" });
+
+            var user = await _db.UserAccounts.FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null)
+                return Unauthorized(new { message = "Invalid token" });
+
+            bool isCurrentValid = BCrypt.Net.BCrypt.Verify(req.CurrentPassword, user.PasswordHash);
+            if (!isCurrentValid)
+                return BadRequest(new { message = "Current password is incorrect" });
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Password changed successfully" });
         }
     }
 }
