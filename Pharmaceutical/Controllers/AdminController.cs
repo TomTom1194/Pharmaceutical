@@ -291,6 +291,31 @@ namespace Pharmaceutical.Controllers
             return File(bytes, resume.MimeType ?? "application/octet-stream", resume.OriginalName ?? resume.StorageKey);
         }
 
+        // Same file as above, but without a filename on the response — no
+        // "attachment" Content-Disposition gets set, so the browser renders
+        // it inline (e.g. PDFs open in the browser's built-in viewer) instead
+        // of forcing a download. Used by the Admin Portal's "View CV" button.
+        [HttpGet("candidates/{id:int}/resume/view")]
+        public async Task<IActionResult> ViewCandidateResume(int id)
+        {
+            var resume = await _db.ResumeFiles
+                .Where(r => r.CandidateId == id && r.IsCurrent == true)
+                .OrderByDescending(r => r.UploadedAt)
+                .FirstOrDefaultAsync();
+
+            if (resume == null)
+                return NotFound(new { message = "No resume on file for this candidate" });
+
+            var storageRoot = Path.Combine(_env.ContentRootPath, "Storage", "Resumes");
+            var filePath = Path.Combine(storageRoot, resume.StorageKey);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound(new { message = "File is missing from storage" });
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(bytes, resume.MimeType ?? "application/octet-stream");
+        }
+
         // Sends the recruitment/interview email and records it as an
         // InterviewInvitation (D10), regardless of whether the send succeeded,
         // so there is always an audit trail of what was attempted.

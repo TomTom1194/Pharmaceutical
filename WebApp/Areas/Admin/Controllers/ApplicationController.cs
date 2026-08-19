@@ -71,6 +71,21 @@ public class ApplicationController : Controller
         return File(result.Content, result.ContentType ?? "application/octet-stream", result.FileName ?? "resume");
     }
 
+    
+    [HttpGet]
+    public async Task<IActionResult> ViewResume(int id)
+    {
+        var result = await _adminService.ViewResume(GetToken(), id);
+
+        if (!result.Success || result.Content == null)
+        {
+            TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not load resume.";
+            return RedirectToAction("CandidateDetail", new { id });
+        }
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream");
+    }
+
     [HttpPost]
     public async Task<IActionResult> SendInvitation(int id, int? positionId, SendInterviewInvitationRequestDto request)
     {

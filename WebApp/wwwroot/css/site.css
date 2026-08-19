@@ -102,9 +102,7 @@ body {
     border: 1px solid #f5c6cb;
 }
 
-/* ==========================================================================
-   Admin Layout Styles
-   ========================================================================== */
+
 .admin-wrapper {
     display: flex;
     min-height: 100vh;
@@ -113,7 +111,7 @@ body {
 
 .admin-sidebar {
     width: 250px;
-    background-color: #052e16; /* Deep green matching footer */
+    background-color: #052e16; 
     color: #fff;
     flex-shrink: 0;
     transition: all 0.3s;
@@ -187,7 +185,7 @@ body {
     min-height: 65px;
     padding-top: 0;
     padding-bottom: 0;
-    background-color: #f1f5f9; /* Soft light slate gray to reduce glare */
+    background-color: #f1f5f9; 
     border-bottom: 1px solid #cbd5e1;
     border-top: 4px solid #064A2E;
 }
@@ -206,8 +204,8 @@ body {
     display: block;
     transform: scale(2.2);
     transform-origin: left center;
-    margin-right: 80px; /* Compensate for scale overflow */
-    margin-top: -15px; /* Overlap navbar boundaries */
+    margin-right: 80px; 
+    margin-top: -15px; 
     margin-bottom: -15px;
 }
 
@@ -284,9 +282,7 @@ a:hover {
     box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
 
-/* ==========================================================================
-   Quote Floating Action Button (FAB)
-   ========================================================================== */
+
 .quote-fab {
     position: fixed;
     bottom: 35px;
@@ -320,7 +316,7 @@ a:hover {
     color: #ffffff;
 }
 
-/* Subtle pulse that doesn't look cheap */
+
 .pulse-animation.visible {
     animation: subtle-pulse 3s infinite;
 }
@@ -336,7 +332,7 @@ a:hover {
         box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
     }
 }
-/* Mobile Navbar adjustments */
+
 @media (max-width: 991.98px) {
     .navbar-collapse {
         background-color: #fff;
