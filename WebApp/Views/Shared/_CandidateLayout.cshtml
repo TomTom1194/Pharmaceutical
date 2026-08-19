@@ -1,6 +1,5 @@
 @{
-    // Nested layout: _MarketingLayout provides the outer <html>/navbar/footer shell,
-    // this layout only renders what goes inside its <main>.
+    
     Layout = "_MarketingLayout";
 }
 
@@ -23,8 +22,7 @@
 
 @if (isAuthenticated)
 {
-    // Already inside the Candidate Portal's own sidebar shell - the marketing
-    // navbar/footer would just be a second, redundant navigation on top of it.
+    
     ViewData["HideMarketingChrome"] = true;
     <div class="app-shell">
         <aside class="sidebar">
@@ -54,15 +52,11 @@
                 </li>
             </ul>
 
-            <div class="sidebar-footer">
-                <div class="user-avatar">@avatarInitial</div>
-                <div class="user-meta">
-                    <div class="user-name" title="@userEmail">@userEmail</div>
-                    <div class="user-role">Candidate</div>
-                </div>
-                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                    <button type="submit" class="logout-btn" title="Logout">
-                        <i class="bi bi-box-arrow-right"></i>
+            <div class="candidate-logout">
+                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
+                    <button type="submit">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
@@ -78,7 +72,14 @@
                     }
                 </div>
                 <div class="topbar-actions">
-                    <span class="icon-btn" title="Notifications"><i class="bi bi-bell"></i></span>
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    <div class="user-information">
+                        <div class="user-avatar">@avatarInitial</div>
+                        <div class="user-meta">
+                            <div class="user-name" title="@userEmail">@userEmail</div>
+                            <div class="user-role">Candidate</div>
+                        </div>
+                    </div>
                     
                 </div>
             </header>
@@ -94,7 +95,7 @@ else
         <div class="auth-card">
             <div class="auth-brand">
                 <img src="~/images/logo.png" alt="PharmEquip" class="auth-logo" />
-                <div class="brand-title">XYZ Pharmaceutical</div>
+                
             </div>
             @RenderBody()
         </div>

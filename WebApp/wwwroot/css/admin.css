@@ -17,11 +17,19 @@
 
 .admin-brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 8px;
   padding: 0 24px 28px;
   text-decoration: none;
   color: inherit;
+}
+
+.sidebar-brand .brand-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1f27;
+  line-height: 1.2;
 }
 
 .admin-brand span {
@@ -654,7 +662,7 @@ body {
   width: auto;
 }
 
-/* Responsive Layout */
+
 @media (max-width: 992px) {
   .admin-shell {
     flex-direction: column;
