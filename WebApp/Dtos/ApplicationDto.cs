@@ -10,8 +10,7 @@ public class ApplicationDto
     public string Status { get; set; } = null!;
 }
 
-// Wraps the outcome of an applications lookup so the controller can surface
-// the real reason for failure instead of a generic message.
+
 public class ApplicationListResultDto
 {
     public bool Success { get; set; }
@@ -19,7 +18,7 @@ public class ApplicationListResultDto
     public List<ApplicationDto> Data { get; set; } = new();
 }
 
-// Wraps the outcome of submitting a new application from the Careers page.
+
 public class ApplyResultDto
 {
     public bool Success { get; set; }

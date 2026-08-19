@@ -1,8 +1,4 @@
-/* ==========================================================================
-   Candidate Portal + Auth (Login/Register) stylesheet.
-   Self-contained: used only by _CandidateLayout.cshtml, does not depend on
-   site.css (which is for the public marketing site) or admin.css.
-   ========================================================================== */
+
 
 :root {
     --green-900: #0f2e22;
@@ -136,12 +132,9 @@ a:hover {
     font-size: 0.875em;
 }
 
-/* ==========================================================================
-   Auth shell (Login / Register)
-   ========================================================================== */
+
 .auth-shell {
-    /* Nested inside _MarketingLayout's <main> now, so fill the space between
-       the navbar and footer instead of forcing a full extra viewport. */
+    
     min-height: calc(100vh - 65px);
     display: flex;
     align-items: center;

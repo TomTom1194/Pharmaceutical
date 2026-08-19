@@ -127,6 +127,35 @@ public class AdminService : IAdminService
         };
     }
 
+    public async Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/candidates/{candidateId}/resume/view");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorJson = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("ViewResume fail: {StatusCode}", response.StatusCode);
+            return new AdminResumeDownloadResult
+            {
+                Success = false,
+                ErrorMessage = ExtractMessage(errorJson) ?? "Could not load the resume file."
+            };
+        }
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+        return new AdminResumeDownloadResult
+        {
+            Success = true,
+            Content = bytes,
+            ContentType = contentType
+        };
+    }
+
     public async Task<AdminPositionsResultDto> GetPositions(string token)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "api/admin/positions");

@@ -106,16 +106,13 @@ public class ContentPageController : Controller
                         model.AboutTitle = json.AboutTitle;
                         model.AboutDescription = json.AboutDescription;
                         model.CoreValues = json.CoreValues ?? new();
-                        // For about-us, we'll keep using the Body property for the raw "Our Heritage" text 
-                        // so we might not need to extract it to a separate property if it's already there, 
-                        // but if Body contains JSON, the raw text should probably be in AboutDescription.
-                        // We will map AboutDescription to Body in the form.
+                        
                         model.Body = json.AboutDescription;
                     }
                 }
                 catch 
                 { 
-                    // If it's old HTML format, we just keep the raw body
+                    
                     model.Body = dto.Body;
                 }
             }
@@ -149,7 +146,7 @@ public class ContentPageController : Controller
             return View(form);
         }
 
-        // Handle file upload
+        
         if (form.BannerImageUpload != null && form.BannerImageUpload.Length > 0)
         {
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "uploads");
@@ -229,7 +226,7 @@ public class ContentPageController : Controller
             var jsonModel = new HomePageContentModel
             {
                 AboutTitle = form.AboutTitle,
-                AboutDescription = form.Body, // We use the TinyMCE Body field for the Heritage description
+                AboutDescription = form.Body, 
                 CoreValues = form.CoreValues ?? new()
             };
             form.Body = System.Text.Json.JsonSerializer.Serialize(jsonModel);

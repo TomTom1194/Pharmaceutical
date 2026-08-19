@@ -37,6 +37,7 @@
             <p class="mb-1"><strong>File name:</strong> @Model.Resume.OriginalName</p>
             <p class="mb-1"><strong>Uploaded at:</strong> @(Model.Resume.UploadedAt?.ToLocalTime().ToString("g") ?? "-")</p>
             <p class="mb-2"><strong>Size:</strong> @((Model.Resume.Size ?? 0) / 1024) KB</p>
+            <a asp-action="ViewResume" asp-route-id="@Model.CandidateId" class="btn btn-outline-secondary me-2" target="_blank">View CV File</a>
             <a asp-action="DownloadResume" asp-route-id="@Model.CandidateId" class="btn btn-outline-primary">Download CV File</a>
         }
         else
