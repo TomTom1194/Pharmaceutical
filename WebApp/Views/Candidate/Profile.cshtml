@@ -22,7 +22,7 @@
 @if (Model != null)
 {
     <div class="card mb-4">
-        <div class="card-body d-flex gap-3 align-items-start">
+        <div class="card-body d-flex flex-column flex-sm-row gap-3 align-items-start">
             @if (Model.HasProfileImage)
             {
                 <img src="@Url.Action("ProfileImage", "Candidate")" alt="Profile photo"
@@ -33,7 +33,7 @@
                 <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center flex-shrink-0 text-muted"
                      style="width:100px;height:100px;">No photo</div>
             }
-            <div>
+            <div class="w-100">
                 <h5 class="card-title">@Model.FullName</h5>
                 <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
                 <p class="mb-1"><strong>Phone:</strong> @Model.Phone</p>
@@ -46,29 +46,31 @@
     <h5>Education</h5>
     @if (Model.Educations.Any())
     {
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>Institution</th>
-                <th>Qualification</th>
-                <th>Field</th>
-                <th>Start</th>
-                <th>End</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var e in Model.Educations)
-            {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
                 <tr>
-                    <td>@e.Institution</td>
-                    <td>@e.Qualification</td>
-                    <td>@e.Field</td>
-                    <td>@(e.StartDate?.ToString("MM/yyyy"))</td>
-                    <td>@(e.EndDate?.ToString("MM/yyyy"))</td>
+                    <th>Institution</th>
+                    <th>Qualification</th>
+                    <th>Field</th>
+                    <th>Start</th>
+                    <th>End</th>
                 </tr>
-            }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var e in Model.Educations)
+                {
+                    <tr>
+                        <td>@e.Institution</td>
+                        <td>@e.Qualification</td>
+                        <td>@e.Field</td>
+                        <td>@(e.StartDate?.ToString("MM/yyyy"))</td>
+                        <td>@(e.EndDate?.ToString("MM/yyyy"))</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
@@ -78,29 +80,31 @@
     <h5>Work Experience</h5>
     @if (Model.WorkExperiences.Any())
     {
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>Employer</th>
-                <th>Title</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var w in Model.WorkExperiences)
-            {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
                 <tr>
-                    <td>@w.Employer</td>
-                    <td>@w.Title</td>
-                    <td>@(w.StartDate?.ToString("MM/yyyy"))</td>
-                    <td>@(w.EndDate?.ToString("MM/yyyy"))</td>
-                    <td>@w.Description</td>
+                    <th>Employer</th>
+                    <th>Title</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Description</th>
                 </tr>
-            }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var w in Model.WorkExperiences)
+                {
+                    <tr>
+                        <td>@w.Employer</td>
+                        <td>@w.Title</td>
+                        <td>@(w.StartDate?.ToString("MM/yyyy"))</td>
+                        <td>@(w.EndDate?.ToString("MM/yyyy"))</td>
+                        <td>@w.Description</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
