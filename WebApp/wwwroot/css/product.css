@@ -163,22 +163,6 @@
   color: #374151;
 }
 
-.pp-sort {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14.5px;
-  color: #6b7280;
-}
-
-.pp-sort select {
-  padding: 9px 14px;
-  border: 1px solid #dcdfe4;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #374151;
-}
-
 .pp-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -302,6 +286,46 @@
   color: #6b7280;
 }
 
+.pp-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.pp-pagination-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 6px;
+  border: 1px solid #dcdfe4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  text-decoration: none;
+}
+
+.pp-pagination-btn:hover {
+  border-color: #1a8754;
+  color: #1a8754;
+}
+
+.pp-pagination-btn.active {
+  background: #1a8754;
+  color: #fff;
+  border-color: #1a8754;
+}
+
+.pp-pagination-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .pd-wrap {
   max-width: 1440px;
   margin: 0 auto;
@@ -366,11 +390,63 @@
   border-top: 1px solid #e8eaed;
 }
 
+.pd-related-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 .pd-section-title {
   font-size: 22px;
   font-weight: 700;
   color: #1a1f27;
-  margin: 0 0 24px;
+  margin: 0;
+}
+
+.pd-carousel-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pd-carousel-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dcdfe4;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+}
+
+.pd-carousel-btn:hover {
+  border-color: #1a8754;
+  color: #1a8754;
+}
+
+.pd-carousel-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.pd-carousel-viewport {
+  overflow: hidden;
+}
+
+.pd-carousel-track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.35s ease;
+}
+
+.pd-carousel-slide {
+  flex-shrink: 0;
 }
 
 .pd-gallery-main {

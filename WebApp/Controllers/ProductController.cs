@@ -28,7 +28,9 @@ public class ProductController : Controller
         _config = config;
     }
 
-    public async Task<IActionResult> Index(int? categoryId, string? keyword)
+    private const int PageSize = 9;
+
+    public async Task<IActionResult> Index(int? categoryId, string? keyword, int page = 1)
     {
         var published = (await _service.GetAll()).Where(p => p.IsPublished == true).ToList();
 
@@ -42,6 +44,15 @@ public class ProductController : Controller
                 p.ModelName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
                 (p.Summary != null && p.Summary.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
 
+        var filteredList = filtered.OrderByDescending(p => p.ProductId).ToList();
+        var totalCount = filteredList.Count;
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)PageSize));
+
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        var pageItems = filteredList.Skip((page - 1) * PageSize).Take(PageSize).ToList();
+
         var categories = await _categoryService.GetAll();
 
         ViewBag.Categories = categories;
@@ -50,8 +61,12 @@ public class ProductController : Controller
         ViewBag.ApiBaseUrl = _config["ApiBaseUrl"];
         ViewBag.CategoryId = categoryId;
         ViewBag.Keyword = keyword;
+        ViewBag.Page = page;
+        ViewBag.PageSize = PageSize;
+        ViewBag.TotalCount = totalCount;
+        ViewBag.TotalPages = totalPages;
 
-        return View(filtered.OrderByDescending(p => p.ProductId).ToList());
+        return View(pageItems);
     }
 
     public async Task<IActionResult> Favorites()
@@ -116,7 +131,7 @@ public class ProductController : Controller
         ViewBag.RelatedProducts = allProducts
             .Where(p => p.IsPublished == true && p.CategoryId == product.CategoryId && p.ProductId != product.ProductId)
             .OrderByDescending(p => p.ProductId)
-            .Take(4)
+            .Take(12)
             .ToList();
 
         return View(product);

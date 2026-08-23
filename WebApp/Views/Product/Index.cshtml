@@ -8,6 +8,8 @@
     var apiBaseUrl = (string)ViewBag.ApiBaseUrl;
     int? categoryId = ViewBag.CategoryId;
     string? keyword = ViewBag.Keyword;
+    int page = ViewBag.Page;
+    int totalPages = ViewBag.TotalPages;
 }
 
 @section Styles {
@@ -55,12 +57,6 @@
                         <a class="pp-toolbar-search-clear" asp-action="Index" asp-route-categoryId="@categoryId" title="Clear search">&times;</a>
                     }
                 </form>
-                <div class="pp-sort">
-                    <span>Sort:</span>
-                    <select disabled>
-                        <option>Newest</option>
-                    </select>
-                </div>
             </div>
         </div>
 
@@ -105,6 +101,23 @@
                     </a>
                 }
             </div>
+
+            @if (totalPages > 1)
+            {
+                <div class="pp-pagination">
+                    <a class="pp-pagination-btn @(page <= 1 ? "disabled" : "")"
+                       asp-action="Index" asp-route-categoryId="@categoryId" asp-route-keyword="@keyword" asp-route-page="@(page - 1)">&lsaquo;</a>
+
+                    @for (var p = 1; p <= totalPages; p++)
+                    {
+                        <a class="pp-pagination-btn @(p == page ? "active" : "")"
+                           asp-action="Index" asp-route-categoryId="@categoryId" asp-route-keyword="@keyword" asp-route-page="@p">@p</a>
+                    }
+
+                    <a class="pp-pagination-btn @(page >= totalPages ? "disabled" : "")"
+                       asp-action="Index" asp-route-categoryId="@categoryId" asp-route-keyword="@keyword" asp-route-page="@(page + 1)">&rsaquo;</a>
+                </div>
+            }
         }
     </div>
 </div>
