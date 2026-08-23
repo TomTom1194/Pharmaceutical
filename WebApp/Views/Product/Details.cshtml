@@ -133,41 +133,58 @@
     @if (relatedProducts.Any())
     {
         <div class="pd-related">
-            <h2 class="pd-section-title">Related products@(category != null ? $" in {category.Name}" : "")</h2>
-            <div class="pp-grid">
-                @foreach (var related in relatedProducts)
+            <div class="pd-related-header">
+                <h2 class="pd-section-title">Related products@(category != null ? $" in {category.Name}" : "")</h2>
+                @if (relatedProducts.Count > 1)
                 {
-                    var thumbnail = related.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? related.Images.FirstOrDefault();
-                    var hoverImage = related.Images.Where(i => i != thumbnail).OrderBy(i => i.DisplayOrder).FirstOrDefault();
-                    <a class="pp-card-product" asp-action="Details" asp-route-id="@related.ProductId">
-                        <div class="pp-card-img-wrap">
-                            @if (thumbnail != null)
-                            {
-                                <img class="pp-card-img-main" src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@related.ModelName"/>
-                                if (hoverImage != null)
-                                {
-                                    <img class="pp-card-img-hover" src="@(apiBaseUrl.TrimEnd('/') + hoverImage.Url)" alt="@related.ModelName"/>
-                                }
-                            }
-                            else
-                            {
-                                <div class="pp-card-img-placeholder">No image</div>
-                            }
-                        </div>
-                        <div class="pp-card-body">
-                            <div class="pp-card-name">@related.ModelName</div>
-                            @if (!string.IsNullOrEmpty(related.OutputLabel))
-                            {
-                                <span class="pp-card-sku">@related.OutputLabel</span>
-                            }
-                            <div class="pp-card-price">Contact for price</div>
-                            <div class="pp-card-btn">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
-                                View details
-                            </div>
-                        </div>
-                    </a>
+                    <div class="pd-carousel-nav">
+                        <button type="button" class="pd-carousel-btn" id="pdRelatedPrev" title="Previous">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+                        <button type="button" class="pd-carousel-btn" id="pdRelatedNext" title="Next">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>
                 }
+            </div>
+            <div class="pd-carousel-viewport" id="pdRelatedViewport">
+                <div class="pd-carousel-track" id="pdRelatedTrack">
+                    @foreach (var related in relatedProducts)
+                    {
+                        var thumbnail = related.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? related.Images.FirstOrDefault();
+                        var hoverImage = related.Images.Where(i => i != thumbnail).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                        <div class="pd-carousel-slide">
+                            <a class="pp-card-product" asp-action="Details" asp-route-id="@related.ProductId">
+                                <div class="pp-card-img-wrap">
+                                    @if (thumbnail != null)
+                                    {
+                                        <img class="pp-card-img-main" src="@(apiBaseUrl.TrimEnd('/') + thumbnail.Url)" alt="@related.ModelName"/>
+                                        if (hoverImage != null)
+                                        {
+                                            <img class="pp-card-img-hover" src="@(apiBaseUrl.TrimEnd('/') + hoverImage.Url)" alt="@related.ModelName"/>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="pp-card-img-placeholder">No image</div>
+                                    }
+                                </div>
+                                <div class="pp-card-body">
+                                    <div class="pp-card-name">@related.ModelName</div>
+                                    @if (!string.IsNullOrEmpty(related.OutputLabel))
+                                    {
+                                        <span class="pp-card-sku">@related.OutputLabel</span>
+                                    }
+                                    <div class="pp-card-price">Contact for price</div>
+                                    <div class="pp-card-btn">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
+                                        View details
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     }
@@ -198,6 +215,66 @@
             thumbs.forEach(function (t) {
                 t.addEventListener('click', function () { show(parseInt(t.dataset.index, 10)); });
             });
+        })();
+
+        (function () {
+            var viewport = document.getElementById('pdRelatedViewport');
+            var track = document.getElementById('pdRelatedTrack');
+            var prevBtn = document.getElementById('pdRelatedPrev');
+            var nextBtn = document.getElementById('pdRelatedNext');
+            if (!viewport || !track) return;
+
+            var slides = Array.prototype.slice.call(track.children);
+            var gap = 24;
+            var groupIndex = 0;
+
+            function getPerView() {
+                if (window.innerWidth <= 576) return 1;
+                if (window.innerWidth <= 992) return 2;
+                return 3;
+            }
+
+            function layout() {
+                var perView = getPerView();
+                var totalGroups = Math.max(1, Math.ceil(slides.length / perView));
+                if (groupIndex > totalGroups - 1) groupIndex = totalGroups - 1;
+
+                var viewportWidth = viewport.clientWidth;
+                var slideWidth = (viewportWidth - gap * (perView - 1)) / perView;
+
+                slides.forEach(function (slide) {
+                    slide.style.flex = '0 0 ' + slideWidth + 'px';
+                });
+
+                var step = viewportWidth + gap;
+                track.style.transform = 'translateX(-' + (groupIndex * step) + 'px)';
+
+                if (prevBtn) prevBtn.classList.toggle('disabled', groupIndex === 0);
+                if (nextBtn) nextBtn.classList.toggle('disabled', groupIndex >= totalGroups - 1);
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function () {
+                    if (groupIndex > 0) {
+                        groupIndex--;
+                        layout();
+                    }
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function () {
+                    var perView = getPerView();
+                    var totalGroups = Math.max(1, Math.ceil(slides.length / perView));
+                    if (groupIndex < totalGroups - 1) {
+                        groupIndex++;
+                        layout();
+                    }
+                });
+            }
+
+            window.addEventListener('resize', layout);
+            layout();
         })();
 
         (function () {
