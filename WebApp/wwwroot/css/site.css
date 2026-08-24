@@ -182,7 +182,7 @@ body {
 }
 
 .navbar-main {
-    min-height: 65px;
+    min-height: 80px;
     padding-top: 0;
     padding-bottom: 0;
     background-color: #f1f5f9; 
@@ -198,15 +198,20 @@ body {
     color: #16a34a !important;
 }
 
-.navbar-logo {
-    height: 55px;
-    width: auto;
+.navbar-logo,
+.navbar-main .navbar-brand img.navbar-logo {
+    height: 140px !important;
+    max-height: none !important;
+    width: auto !important;
     display: block;
-    transform: scale(2.2);
-    transform-origin: left center;
-    margin-right: 80px; 
-    margin-top: -15px; 
-    margin-bottom: -15px;
+    margin-top: -30px;
+    margin-bottom: -30px;
+}
+
+.navbar-main .navbar-brand {
+    overflow: visible;
+    padding: 0;
+    line-height: 1;
 }
 
 .footer-logo {
