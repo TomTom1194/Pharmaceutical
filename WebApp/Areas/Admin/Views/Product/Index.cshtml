@@ -59,7 +59,7 @@
     <table class="admin-table">
         <thead>
         <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Image</th>
             <th>Product name</th>
             <th>Category</th>
@@ -68,13 +68,14 @@
         </tr>
         </thead>
         <tbody>
+        @{ int stt = (page - 1) * pageSize + 1; }
         @foreach (var product in Model)
         {
             var thumbnail = product.Images.FirstOrDefault(i => i.IsThumbnail == true) ?? product.Images.FirstOrDefault();
             var categoryName = categories.FirstOrDefault(c => c.CategoryId == product.CategoryId)?.Name;
             var specType = SpecificationTypeResolver.Resolve(categoryName);
             <tr>
-                <td>@product.ProductId</td>
+                <td>@(stt++)</td>
                 <td>
                     <div class="admin-thumb">
                         @if (thumbnail != null)

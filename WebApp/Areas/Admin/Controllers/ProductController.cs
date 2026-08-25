@@ -48,7 +48,7 @@ public class ProductController : Controller
         if (isPublished.HasValue)
             filtered = filtered.Where(p => p.IsPublished == isPublished);
 
-        var filteredList = filtered.OrderBy(p => p.ProductId).ToList();
+        var filteredList = filtered.OrderByDescending(p => p.ProductId).ToList();
         var totalCount = filteredList.Count;
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
 

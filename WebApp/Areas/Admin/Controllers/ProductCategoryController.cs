@@ -26,7 +26,7 @@ public class ProductCategoryController : Controller
         if (isActive.HasValue)
             categories = categories.Where(c => c.IsActive == isActive);
 
-        var filteredList = categories.OrderBy(c => c.CategoryId).ToList();
+        var filteredList = categories.OrderByDescending(c => c.CategoryId).ToList();
         var totalCount = filteredList.Count;
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
 
