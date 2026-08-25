@@ -10,15 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    @* <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" /> *@
+    
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     @{
         var isPreview = Context.Request.Query["preview"] == "true";
-        // Set by _CandidateLayout when it's rendering the authenticated sidebar
-        // shell, so the marketing navbar/footer don't double up with it.
+        
         var hideMarketingChrome = ViewData["HideMarketingChrome"] as bool? ?? false;
         var showChrome = !isPreview && !hideMarketingChrome;
     }
@@ -121,7 +120,15 @@
         {
             <div class="container mt-3">
                 <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
-                    <div>@TempData["ErrorMessage"]</div>
+                    
+                    @if (TempData["ErrorMessageHtml"] != null)
+                    {
+                        <div>@Html.Raw(TempData["ErrorMessage"])</div>
+                    }
+                    else
+                    {
+                        <div>@TempData["ErrorMessage"]</div>
+                    }
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
                 </div>
             </div>
@@ -154,6 +161,7 @@
                         <li><a asp-controller="Home" asp-action="About" class="text-decoration-none footer-link">About Us</a></li>
                         <li><a asp-controller="Product" asp-action="Index" class="text-decoration-none footer-link">Products</a></li>
                         <li><a href="/careers" class="text-decoration-none footer-link">Careers</a></li>
+                        <li><a asp-controller="News" asp-action="Index" class="text-decoration-none footer-link">News</a></li>
                     </ul>
                 </div>
 
@@ -176,7 +184,7 @@
 
     @if (!isPreview)
     {
-        <!-- Floating Action Button (FAB) -->
+        
         <a asp-controller="QuoteRequest" asp-action="Create" class="quote-fab shadow-lg pulse-animation" title="Request a Quote">
             <i class="bi bi-chat-quote-fill fs-5 me-2"></i>
             <span class="fw-bold fs-6">Get a Quote</span>

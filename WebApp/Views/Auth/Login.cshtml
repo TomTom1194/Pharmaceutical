@@ -7,10 +7,10 @@
 
 <h2 class="h4 fw-bold mb-3 text-center">Sign in</h2>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
+@* @if (TempData["SuccessMessage"] != null) *@
+@* { *@
+@*     <div class="alert alert-success">@TempData["SuccessMessage"]</div> *@
+@* } *@
 
 <form asp-action="Login" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>

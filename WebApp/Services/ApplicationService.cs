@@ -51,7 +51,8 @@ public class ApplicationService : IApplicationService
             return new ApplyResultDto
             {
                 Success = false,
-                ErrorMessage = ExtractMessage(responseJson) ?? "Could not submit your application."
+                ErrorMessage = ExtractMessage(responseJson) ?? "Could not submit your application.",
+                RequiresProfileCompletion = ExtractRequiresProfileCompletion(responseJson)
             };
         }
 
@@ -68,6 +69,19 @@ public class ApplicationService : IApplicationService
         catch (JsonException)
         {
             return null;
+        }
+    }
+
+    private static bool ExtractRequiresProfileCompletion(string json)
+    {
+        try
+        {
+            var obj = JsonConvert.DeserializeAnonymousType(json, new { requiresProfileCompletion = false });
+            return obj?.requiresProfileCompletion ?? false;
+        }
+        catch (JsonException)
+        {
+            return false;
         }
     }
 }
