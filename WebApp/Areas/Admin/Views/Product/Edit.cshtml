@@ -12,13 +12,13 @@
     <input type="hidden" asp-for="ProductId"/>
 
     <div class="mb-3">
-        <label>Product name (*)</label>
+        <label>Product name<span class="required-mark">*</span></label>
         <input asp-for="ModelName" class="form-control"/>
         <span asp-validation-for="ModelName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label>Category</label>
+        <label>Category<span class="required-mark">*</span></label>
         <select asp-for="CategoryId" class="form-select">
             <option value="">-- Select category --</option>
             @foreach (var category in categories)
@@ -26,6 +26,7 @@
                 <option value="@category.CategoryId">@category.Name</option>
             }
         </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
@@ -40,7 +41,7 @@
 
     <div class="mb-3">
         <div class="border rounded p-2">
-            <label class="fw-bold">Main image</label>
+            <label class="fw-bold">Main image<span class="required-mark">*</span></label>
             @{
                 var mainImage = Model.Images.FirstOrDefault(i => i.IsThumbnail == true);
             }

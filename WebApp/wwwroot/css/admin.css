@@ -736,3 +736,8 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.required-mark {
+  color: #dc3545;
+  margin-left: 2px;
+}
