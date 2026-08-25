@@ -189,9 +189,13 @@ namespace Pharmaceutical.Controllers
             return Ok(candidates.OrderByDescending(c => c.CreatedAt).ToList());
         }
 
-        // CV detail — Admin only.
+        // CV detail — Admin only. When positionId is supplied (i.e. this
+        // candidate is being viewed from a specific position's applications
+        // list), the Interview Invitation History is scoped to just that
+        // Application so invitations sent for a different position the same
+        // candidate applied to don't show up here.
         [HttpGet("candidates/{id:int}")]
-        public async Task<IActionResult> GetCandidateDetail(int id)
+        public async Task<IActionResult> GetCandidateDetail(int id, [FromQuery] int? positionId)
         {
             var user = await _db.UserAccounts.FirstOrDefaultAsync(u => u.UserId == id && u.Role == "Candidate");
             var profile = await _db.CandidateProfiles.FirstOrDefaultAsync(c => c.CandidateId == id);
@@ -232,14 +236,32 @@ namespace Pharmaceutical.Controllers
                 .OrderByDescending(r => r.UploadedAt)
                 .FirstOrDefaultAsync();
 
-            var invitations = await _db.InterviewInvitations
-                .Where(i => i.CandidateId == id)
+            var invitationsQuery = _db.InterviewInvitations.Where(i => i.CandidateId == id);
+
+            if (positionId.HasValue)
+            {
+                var scopedApplication = await _db.Applications
+                    .FirstOrDefaultAsync(a => a.CandidateId == id && a.PositionId == positionId.Value);
+
+                // Scope to this one application's invitations. Older invitations
+                // sent before ApplicationId was tracked (application_id == null)
+                // are still included when they belong to this candidate's only/most
+                // recent application context isn't determinable, so they're left
+                // out here — they'll still show up when viewing without a
+                // positionId (e.g. from the candidate list).
+                invitationsQuery = scopedApplication != null
+                    ? invitationsQuery.Where(i => i.ApplicationId == scopedApplication.ApplicationId)
+                    : invitationsQuery.Where(i => false);
+            }
+
+            var invitations = await invitationsQuery
                 .OrderByDescending(i => i.SentAt)
                 .Select(i => new InterviewInvitationResponse
                 {
                     InvitationId = i.InvitationId,
                     CandidateId = i.CandidateId,
                     Subject = i.Subject,
+                    Type = i.Type,
                     Status = i.Status,
                     SentAt = i.SentAt
                 })
@@ -332,16 +354,34 @@ namespace Pharmaceutical.Controllers
             if (user == null || profile == null)
                 return NotFound(new { message = "Candidate not found" });
 
-            var subject = string.IsNullOrWhiteSpace(req.Subject) ? "Interview Invitation" : req.Subject;
-            var body = string.IsNullOrWhiteSpace(req.Body) ? BuildDefaultInvitationBody(profile.FullName) : req.Body;
+            // Type picks which tab this was sent from and, in turn, which
+            // template is used when Subject/Body are left blank, and which
+            // status the application moves to on a successful send.
+            var type = NormalizeInvitationType(req.Type);
+
+            var subject = string.IsNullOrWhiteSpace(req.Subject) ? DefaultSubjectFor(type) : req.Subject;
+            var body = string.IsNullOrWhiteSpace(req.Body) ? DefaultBodyFor(type, profile.FullName) : req.Body;
+
+            // Resolve the specific application this invitation is being sent for
+            // (when known), so the invitation record can be scoped to it — a
+            // candidate who applied to several positions shouldn't have an
+            // invitation for one position show up in another position's history.
+            Application? application = null;
+            if (positionId.HasValue)
+            {
+                application = await _db.Applications
+                    .FirstOrDefaultAsync(a => a.CandidateId == id && a.PositionId == positionId.Value);
+            }
 
             var sent = await _emailService.SendEmailAsync(user.Email!, subject, body);
 
             var invitation = new InterviewInvitation
             {
                 CandidateId = id,
+                ApplicationId = application?.ApplicationId,
                 SentBy = adminId,
                 Subject = subject,
+                Type = type,
                 Body = body,
                 Status = sent ? "Sent" : "Failed",
                 SentAt = DateTime.UtcNow
@@ -349,16 +389,11 @@ namespace Pharmaceutical.Controllers
 
             _db.InterviewInvitations.Add(invitation);
 
-            // On a successful send, mark the specific application this invitation
-            // was sent from as "Sent" so the Applications page reflects it.
-            if (sent && positionId.HasValue)
-            {
-                var application = await _db.Applications
-                    .FirstOrDefaultAsync(a => a.CandidateId == id && a.PositionId == positionId.Value);
-
-                if (application != null)
-                    application.Status = "Sent";
-            }
+            // On a successful send, move the specific application this email
+            // was sent from to the status matching the most recent email type,
+            // so the Applications page always reflects the latest email sent.
+            if (sent && application != null)
+                application.Status = ApplicationStatusFor(type);
 
             await _db.SaveChangesAsync();
 
@@ -367,6 +402,7 @@ namespace Pharmaceutical.Controllers
                 InvitationId = invitation.InvitationId,
                 CandidateId = id,
                 Subject = invitation.Subject,
+                Type = invitation.Type,
                 Status = invitation.Status,
                 SentAt = invitation.SentAt
             };
@@ -377,13 +413,50 @@ namespace Pharmaceutical.Controllers
             return Ok(response);
         }
 
-        private static string BuildDefaultInvitationBody(string? fullName)
+        private static readonly string[] KnownInvitationTypes = { "Interview", "Offer", "Decline" };
+
+        private static string NormalizeInvitationType(string? type) =>
+            KnownInvitationTypes.FirstOrDefault(t => string.Equals(t, type, StringComparison.OrdinalIgnoreCase))
+            ?? "Interview";
+
+        // The Application.Status value that a successful send of this email
+        // type moves the application to.
+        private static string ApplicationStatusFor(string type) => type switch
+        {
+            "Offer" => "Offer",
+            "Decline" => "Decline",
+            _ => "Sent"
+        };
+
+        private static string DefaultSubjectFor(string type) => type switch
+        {
+            "Offer" => "Job Offer",
+            "Decline" => "Application Update",
+            _ => "Interview Invitation"
+        };
+
+        private static string DefaultBodyFor(string type, string? fullName)
         {
             var name = string.IsNullOrWhiteSpace(fullName) ? "Candidate" : fullName;
-            return $"<p>Dear {name},</p>" +
-                   "<p>We were impressed with your application and would like to invite you for an interview. " +
-                   "Our recruitment team will contact you shortly to arrange a time.</p>" +
-                   "<p>Best regards,<br/>Recruitment Team</p>";
+            return type switch
+            {
+                "Offer" =>
+                    $"<p>Dear {name},</p>" +
+                    "<p>Congratulations! We are pleased to offer you the position. Our recruitment team will reach out " +
+                    "shortly with the offer details and next steps.</p>" +
+                    "<p>Best regards,<br/>Recruitment Team</p>",
+                "Decline" =>
+                    $"<p>Dear {name},</p>" +
+                    "<p>Thank you for taking the time to apply and for your interest in joining our team. After careful " +
+                    "consideration, we have decided not to move forward with your application at this time.</p>" +
+                    "<p>We wish you the best in your future endeavors.</p>" +
+                    "<p>Best regards,<br/>Recruitment Team</p>",
+                _ =>
+                    $"<p>Dear {name},</p>" +
+                    "<p>We were impressed with your application and would like to invite you for an interview. " +
+                    "Our recruitment team will contact you shortly to arrange a time.</p>" +
+                    "<p>Best regards,<br/>Recruitment Team</p>"
+            };
         }
     }
 }

@@ -10,9 +10,11 @@ public class CandidateProfileUpdateRequestDto
     [MaxLength(255)]
     public string? FullName { get; set; }
 
+    [Required(ErrorMessage = "Input Phone")]
     [Phone(ErrorMessage = "Phone number is not valid")]
     public string? Phone { get; set; }
 
+    [Required(ErrorMessage = "Input Address")]
     [MaxLength(255)]
     public string? Address { get; set; }
 
@@ -21,7 +23,10 @@ public class CandidateProfileUpdateRequestDto
     public List<EducationInputDto> Educations { get; set; } = new();
     public List<WorkExperienceInputDto> WorkExperiences { get; set; } = new();
 
-    
+    // Not decorated with [Required]: whether it's required depends on
+    // whether the candidate already has an image on file, which can only
+    // be checked against the database. That check is done manually in
+    // CandidateController.UpdateResume (POST) instead.
     public IFormFile? ProfileImageFile { get; set; }
 
     

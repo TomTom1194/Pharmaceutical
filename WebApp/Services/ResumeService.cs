@@ -74,6 +74,39 @@ public class ResumeService : IResumeService
         return new ResumeResultDto { Success = true, Data = data };
     }
 
+    public async Task<ResumeDownloadResultDto> DownloadResume(string token, int resumeId)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/candidate/download/{resumeId}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorJson = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("DownloadResume fail: {StatusCode}", response.StatusCode);
+            return new ResumeDownloadResultDto
+            {
+                Success = false,
+                ErrorMessage = ExtractMessage(errorJson) ?? "Could not download the CV file."
+            };
+        }
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+        var fileName = response.Content.Headers.ContentDisposition?.FileNameStar
+                       ?? response.Content.Headers.ContentDisposition?.FileName
+                       ?? "resume";
+
+        return new ResumeDownloadResultDto
+        {
+            Success = true,
+            Content = bytes,
+            ContentType = contentType,
+            FileName = fileName.Trim('"')
+        };
+    }
+
     private static string? ExtractMessage(string json)
     {
         try

@@ -32,15 +32,18 @@ public class InterviewInvitationDto
     public int InvitationId { get; set; }
     public int? CandidateId { get; set; }
     public string? Subject { get; set; }
+    public string? Type { get; set; }
     public string? Status { get; set; }
     public DateTime? SentAt { get; set; }
 }
+
 
 
 public class SendInterviewInvitationRequestDto
 {
     public string? Subject { get; set; }
     public string? Body { get; set; }
+    public string? Type { get; set; }
 }
 
 public class AdminCandidatesResultDto
