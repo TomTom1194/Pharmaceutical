@@ -1,3 +1,4 @@
+@using WebApp.Helpers
 @model QuoteRequest
 @{
     ViewBag.Title = "Quote request detail";
@@ -61,7 +62,7 @@
         </div>
         <div class="admin-detail-item">
             <label>Submitted at</label>
-            <div>@Model.SubmittedAt</div>
+            <div>@(Model.SubmittedAt.ToVietnamTime()?.ToString("dd/MM/yyyy HH:mm") ?? "-") (GMT+7)</div>
         </div>
         <div class="admin-detail-item">
             <label>Status</label>

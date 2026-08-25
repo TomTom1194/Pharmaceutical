@@ -1,3 +1,4 @@
+@using WebApp.Helpers
 @model List<QuoteRequest>
 @{
     ViewBag.Title = "Quote Requests";
@@ -67,7 +68,7 @@
                 <td>@quote.FullName</td>
                 <td>@quote.Email</td>
                 <td><span class="admin-pill @PillClass(quote.Status)">@quote.Status</span></td>
-                <td>@quote.SubmittedAt</td>
+                <td>@(quote.SubmittedAt.ToVietnamTime()?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
                 <td>
                     <div class="admin-row-actions">
                         <a class="admin-icon-btn admin-icon-btn-view" asp-action="Details" asp-route-id="@quote.QuoteId" title="View">

@@ -34,7 +34,7 @@ namespace Pharmaceutical.Services
 
         public async Task<QuoteRequest> Create(QuoteRequest quoteRequest)
         {
-            quoteRequest.SubmittedAt = DateTime.Now;
+            quoteRequest.SubmittedAt = DateTime.UtcNow;
             quoteRequest.Status = "Pending";
 
             _db.QuoteRequests.Add(quoteRequest);

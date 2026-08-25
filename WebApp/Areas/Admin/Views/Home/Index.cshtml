@@ -1,3 +1,4 @@
+@using WebApp.Helpers
 @model WebApp.Dtos.DashboardStatsDto
 @{
     ViewData["Title"] = "Dashboard";
@@ -8,6 +9,16 @@
         var d = dt.Value.ToLocalTime();
         if (d.Date == DateTime.Today) return "Today, " + d.ToString("hh:mm tt");
         if (d.Date == DateTime.Today.AddDays(-1)) return "Yesterday";
+        return d.ToString("dd MMM yyyy");
+    }
+
+    string QuoteDateLabel(DateTime? dt)
+    {
+        if (dt == null) return "—";
+        var d = dt.ToVietnamTime()!.Value;
+        var today = DateTime.UtcNow.ToVietnamTime().Date;
+        if (d.Date == today) return "Today, " + d.ToString("HH:mm");
+        if (d.Date == today.AddDays(-1)) return "Yesterday";
         return d.ToString("dd MMM yyyy");
     }
 
@@ -95,7 +106,7 @@
                                             <tr style="border-bottom: 1px solid #f1f5f9;">
                                                 <td class="ps-4 py-3 fw-medium" style="font-size: 0.9rem;">@q.FullName</td>
                                                 <td class="py-3 text-muted" style="font-size: 0.85rem;">@(q.CompanyName ?? "—")</td>
-                                                <td class="py-3 text-muted" style="font-size: 0.85rem;">@DateLabel(q.SubmittedAt)</td>
+                                                <td class="py-3 text-muted" style="font-size: 0.85rem;">@QuoteDateLabel(q.SubmittedAt)</td>
                                                 <td class="py-3"><span class="badge @StatusBadge(q.Status) px-2 py-1">@(q.Status ?? "Pending")</span></td>
                                             </tr>
                                         }
