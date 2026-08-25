@@ -49,7 +49,7 @@ public class CandidateController : Controller
     }
 
 
-    // Lists the positions this candidate has applied to.
+    
     [HttpGet]
     public async Task<IActionResult> MyApplications()
     {
@@ -116,11 +116,7 @@ public class CandidateController : Controller
         if (!ModelState.IsValid)
             return View(request);
 
-        // The profile image is only mandatory the very first time the
-        // candidate sets up their profile. Once they already have one on
-        // file, later edits don't need to re-upload it (an <input type="file">
-        // can't be pre-filled, so forcing this every time would make it
-        // impossible to edit the form without also picking a new photo).
+        
         var existingProfile = await _profileService.GetProfile(GetToken());
         var hasProfileImage = existingProfile.Success && existingProfile.Data != null && existingProfile.Data.HasProfileImage;
 
@@ -161,7 +157,7 @@ public class CandidateController : Controller
             return View(request);
         }
 
-        // Photo and CV file are saved together with the rest of the form, only if one was picked.
+        
         if (request.ProfileImageFile != null && request.ProfileImageFile.Length > 0)
         {
             var imageResult = await _profileService.UploadProfileImage(GetToken(), request.ProfileImageFile);
@@ -186,9 +182,7 @@ public class CandidateController : Controller
         return RedirectToAction("Profile");
     }
 
-    // "Detail" link from the My Applications table — shows the applied
-    // position, its status, and a read-only snapshot of the candidate's
-    // profile (photo, contact info, CV file, education, work experience).
+    
     [HttpGet]
     public async Task<IActionResult> ApplicationDetail(int id)
     {
@@ -244,7 +238,7 @@ public class CandidateController : Controller
         return File(result.Content, result.ContentType ?? "application/octet-stream");
     }
 
-    // Called from the Careers page "Apply Now" button — creates a real Application row via the API.
+    
     [HttpPost]
     public async Task<IActionResult> Apply(int positionId)
     {
@@ -252,7 +246,16 @@ public class CandidateController : Controller
 
         if (!result.Success)
         {
-            TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not submit your application. Please try again.";
+            var errorMessage = result.ErrorMessage ?? "Could not submit your application. Please try again.";
+
+            if (result.RequiresProfileCompletion)
+            {
+                var updateResumeUrl = Url.Action("UpdateResume", "Candidate");
+                errorMessage += $" <a href=\"{updateResumeUrl}\" class=\"alert-link\">Update Profile Now</a>";
+                TempData["ErrorMessageHtml"] = true;
+            }
+
+            TempData["ErrorMessage"] = errorMessage;
             return RedirectToAction("Careers", "Page");
         }
 

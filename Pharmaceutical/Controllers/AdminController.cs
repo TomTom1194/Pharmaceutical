@@ -11,9 +11,7 @@ using Pharmaceutical.Services;
 
 namespace Pharmaceutical.Controllers
 {
-    // CV management for the Admin Portal. Role check relies on the "Role"
-    // claim minted at login (AuthController.Login), so only accounts with
-    // UserAccount.Role == "Admin" can reach any action here.
+    
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
@@ -37,8 +35,7 @@ namespace Pharmaceutical.Controllers
             return int.TryParse(sub, out var id) ? id : null;
         }
 
-        // One entry per position, with how many applications it has. Backs the
-        // Admin Portal "Applications" page's position filter buttons.
+        
         [HttpGet("positions")]
         public async Task<IActionResult> GetPositions()
         {
@@ -56,7 +53,7 @@ namespace Pharmaceutical.Controllers
             return Ok(positions);
         }
 
-        // The candidates who applied to a given position.
+        
         [HttpGet("positions/{id:int}/applications")]
         public async Task<IActionResult> GetPositionApplications(int id)
         {
@@ -68,9 +65,7 @@ namespace Pharmaceutical.Controllers
             return Ok(result);
         }
 
-        // All applications across every position, with optional filters.
-        // Backs the Admin Portal "Applications" page (position quick-filter,
-        // search box, and status dropdown).
+        
         [HttpGet("applications")]
         public async Task<IActionResult> GetApplications([FromQuery] int? positionId, [FromQuery] string? status, [FromQuery] string? keyword)
         {
@@ -86,8 +81,7 @@ namespace Pharmaceutical.Controllers
             return Ok(result);
         }
 
-        // Shared projection logic for both the per-position and the all-applications
-        // endpoints above, so they stay consistent.
+        
         private async Task<List<AdminPositionApplicationItem>> BuildApplicationItems(
             IQueryable<Application> applicationsQuery, string? keyword = null)
         {
@@ -189,11 +183,7 @@ namespace Pharmaceutical.Controllers
             return Ok(candidates.OrderByDescending(c => c.CreatedAt).ToList());
         }
 
-        // CV detail — Admin only. When positionId is supplied (i.e. this
-        // candidate is being viewed from a specific position's applications
-        // list), the Interview Invitation History is scoped to just that
-        // Application so invitations sent for a different position the same
-        // candidate applied to don't show up here.
+        
         [HttpGet("candidates/{id:int}")]
         public async Task<IActionResult> GetCandidateDetail(int id, [FromQuery] int? positionId)
         {
@@ -252,12 +242,7 @@ namespace Pharmaceutical.Controllers
                         .FirstOrDefaultAsync(p => p.PositionId == scopedApplication.PositionId);
                 }
 
-                // Scope to this one application's invitations. Older invitations
-                // sent before ApplicationId was tracked (application_id == null)
-                // are still included when they belong to this candidate's only/most
-                // recent application context isn't determinable, so they're left
-                // out here — they'll still show up when viewing without a
-                // positionId (e.g. from the candidate list).
+                
                 invitationsQuery = scopedApplication != null
                     ? invitationsQuery.Where(i => i.ApplicationId == scopedApplication.ApplicationId)
                     : invitationsQuery.Where(i => false);
@@ -328,10 +313,7 @@ namespace Pharmaceutical.Controllers
             return File(bytes, resume.MimeType ?? "application/octet-stream", resume.OriginalName ?? resume.StorageKey);
         }
 
-        // Same file as above, but without a filename on the response — no
-        // "attachment" Content-Disposition gets set, so the browser renders
-        // it inline (e.g. PDFs open in the browser's built-in viewer) instead
-        // of forcing a download. Used by the Admin Portal's "View CV" button.
+        
         [HttpGet("candidates/{id:int}/resume/view")]
         public async Task<IActionResult> ViewCandidateResume(int id)
         {
@@ -353,9 +335,7 @@ namespace Pharmaceutical.Controllers
             return File(bytes, resume.MimeType ?? "application/octet-stream");
         }
 
-        // Sends the recruitment/interview email and records it as an
-        // InterviewInvitation (D10), regardless of whether the send succeeded,
-        // so there is always an audit trail of what was attempted.
+        
         [HttpPost("candidates/{id:int}/invite")]
         public async Task<IActionResult> SendInvitation(int id, [FromQuery] int? positionId, SendInterviewInvitationRequest req)
         {
@@ -369,18 +349,13 @@ namespace Pharmaceutical.Controllers
             if (user == null || profile == null)
                 return NotFound(new { message = "Candidate not found" });
 
-            // Type picks which tab this was sent from and, in turn, which
-            // template is used when Subject/Body are left blank, and which
-            // status the application moves to on a successful send.
+            
             var type = NormalizeInvitationType(req.Type);
 
             var subject = string.IsNullOrWhiteSpace(req.Subject) ? DefaultSubjectFor(type) : req.Subject;
             var body = string.IsNullOrWhiteSpace(req.Body) ? DefaultBodyFor(type, profile.FullName) : req.Body;
 
-            // Resolve the specific application this invitation is being sent for
-            // (when known), so the invitation record can be scoped to it — a
-            // candidate who applied to several positions shouldn't have an
-            // invitation for one position show up in another position's history.
+            
             Application? application = null;
             if (positionId.HasValue)
             {
@@ -404,9 +379,7 @@ namespace Pharmaceutical.Controllers
 
             _db.InterviewInvitations.Add(invitation);
 
-            // On a successful send, move the specific application this email
-            // was sent from to the status matching the most recent email type,
-            // so the Applications page always reflects the latest email sent.
+            
             if (sent && application != null)
                 application.Status = ApplicationStatusFor(type);
 
@@ -434,8 +407,7 @@ namespace Pharmaceutical.Controllers
             KnownInvitationTypes.FirstOrDefault(t => string.Equals(t, type, StringComparison.OrdinalIgnoreCase))
             ?? "Interview";
 
-        // The Application.Status value that a successful send of this email
-        // type moves the application to.
+        
         private static string ApplicationStatusFor(string type) => type switch
         {
             "Offer" => "Offer",

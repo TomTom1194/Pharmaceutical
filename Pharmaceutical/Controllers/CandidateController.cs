@@ -295,7 +295,8 @@ namespace Pharmaceutical.Controllers
             {
                 return BadRequest(new
                 {
-                    message = $"Please complete your profile before applying. Missing: {string.Join(", ", missingFields)}."
+                    message = $"Please complete your profile before applying. Missing: {string.Join(", ", missingFields)}.",
+                    requiresProfileCompletion = true
                 });
             }
 
