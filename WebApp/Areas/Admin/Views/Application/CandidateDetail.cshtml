@@ -4,17 +4,34 @@
     ViewBag.Title = "CV Detail";
     ViewBag.Subtitle = Model.FullName ?? Model.Email;
     int? positionId = ViewBag.PositionId;
+
+    string StatusBadgeClass(string? status) => (status ?? "").ToLowerInvariant() switch
+    {
+        "applied" => "bg-secondary",
+        "reviewing" or "in review" or "shortlisted" => "bg-warning",
+        "sent" or "interview" or "interviewing" or "offer" or "offered" or "hired" or "accepted" => "bg-success",
+        "decline" or "declined" or "rejected" or "withdrawn" => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 
 <a asp-action="Index" asp-route-positionId="@positionId" class="btn btn-sm btn-link mb-3 ps-0" style="text-align: left">&larr; Back to applications</a>
 
-@if (TempData["SuccessMessage"] != null)
+
+
+@if (Model.PositionId.HasValue)
 {
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@(Model.PositionTitle ?? "Position")</h5>
+            <p class="mb-1"><strong>Department:</strong> @(Model.Department ?? "-")</p>
+            <p class="mb-1"><strong>Applied Date:</strong> @(Model.AppliedDate?.ToLocalTime().ToString("g") ?? "-")</p>
+            <p class="mb-0">
+                <strong>Status:</strong>
+                <span class="badge @StatusBadgeClass(Model.ApplicationStatus)">@(Model.ApplicationStatus ?? "-")</span>
+            </p>
+        </div>
+    </div>
 }
 
 <div class="card mb-4">

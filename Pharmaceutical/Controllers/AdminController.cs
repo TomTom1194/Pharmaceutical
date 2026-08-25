@@ -238,10 +238,19 @@ namespace Pharmaceutical.Controllers
 
             var invitationsQuery = _db.InterviewInvitations.Where(i => i.CandidateId == id);
 
+            Application? scopedApplication = null;
+            Position? scopedPosition = null;
+
             if (positionId.HasValue)
             {
-                var scopedApplication = await _db.Applications
+                scopedApplication = await _db.Applications
                     .FirstOrDefaultAsync(a => a.CandidateId == id && a.PositionId == positionId.Value);
+
+                if (scopedApplication != null)
+                {
+                    scopedPosition = await _db.Positions
+                        .FirstOrDefaultAsync(p => p.PositionId == scopedApplication.PositionId);
+                }
 
                 // Scope to this one application's invitations. Older invitations
                 // sent before ApplicationId was tracked (application_id == null)
@@ -288,7 +297,13 @@ namespace Pharmaceutical.Controllers
                     UploadedAt = resume.UploadedAt,
                     IsCurrent = resume.IsCurrent ?? false
                 },
-                Invitations = invitations
+                Invitations = invitations,
+                ApplicationId = scopedApplication?.ApplicationId,
+                PositionId = scopedApplication?.PositionId,
+                PositionTitle = scopedPosition?.Title,
+                Department = scopedPosition?.Department,
+                AppliedDate = scopedApplication?.AppliedDate,
+                ApplicationStatus = scopedApplication?.Status
             });
         }
 
