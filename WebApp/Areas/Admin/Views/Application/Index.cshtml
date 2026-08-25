@@ -20,8 +20,9 @@
     string ApplicationPillClass(string? s) => (s ?? "").ToLowerInvariant() switch
     {
         "applied" or "reviewing" or "in review" or "shortlisted" => "admin-pill-pending",
-        "sent" or "interview" or "interviewing" or "offered" or "hired" or "accepted" => "admin-pill-yes",
-        "rejected" or "withdrawn" => "admin-pill-no",
+        "sent" => "admin-pill-blue",
+        "interview" or "interviewing" or "offer" or "offered" or "hired" or "accepted" => "admin-pill-yes",
+        "decline" or "declined" or "rejected" or "withdrawn" => "admin-pill-no",
         _ => "admin-pill-category"
     };
 }
@@ -83,7 +84,7 @@
 
     <select name="status" class="admin-filter-select">
         <option value="">All statuses</option>
-        @foreach (var s in new[] { "Applied", "Sent" })
+        @foreach (var s in new[] { "Applied", "Sent", "Offer", "Decline" })
         {
             <option value="@s" selected="@(s == status)">@s</option>
         }
@@ -109,8 +110,8 @@
             <th>Position</th>
             <th>Account Status</th>
             <th>CV</th>
-            <th>Applied</th>
-            <th>Application Status</th>
+            <th>Applied Date</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>

@@ -38,9 +38,13 @@ public class AdminService : IAdminService
         return new AdminCandidatesResultDto { Success = true, Data = data };
     }
 
-    public async Task<AdminCandidateDetailResultDto> GetCandidateDetail(string token, int candidateId)
+    public async Task<AdminCandidateDetailResultDto> GetCandidateDetail(string token, int candidateId, int? positionId = null)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/candidates/{candidateId}");
+        var url = $"api/admin/candidates/{candidateId}";
+        if (positionId.HasValue)
+            url += $"?positionId={positionId.Value}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _httpClient.SendAsync(request);

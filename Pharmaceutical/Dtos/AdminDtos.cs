@@ -30,12 +30,17 @@ public class AdminCandidateDetailResponse
 }
 
 // Admin can leave Subject/Body blank to use the default recruitment template.
+// Type selects which tab this was sent from — "Interview" (default),
+// "Offer" or "Decline" — which decides the default template used when
+// Subject/Body are blank and what the parent Application's Status becomes.
 public class SendInterviewInvitationRequest
 {
     [MaxLength(255)]
     public string? Subject { get; set; }
 
     public string? Body { get; set; }
+
+    public string? Type { get; set; }
 }
 
 public class InterviewInvitationResponse
@@ -43,6 +48,7 @@ public class InterviewInvitationResponse
     public int InvitationId { get; set; }
     public int? CandidateId { get; set; }
     public string? Subject { get; set; }
+    public string? Type { get; set; }
     public string? Status { get; set; }
     public DateTime? SentAt { get; set; }
 }

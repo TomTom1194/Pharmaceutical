@@ -47,8 +47,7 @@ namespace Pharmaceutical.Controllers
             _env = env;
         }
 
-        // Candidate accounts share their primary key with UserAccount (see AuthController.Register),
-        // so the "sub" claim in the JWT is also the CandidateProfile.CandidateId.
+       
         private int? GetCandidateId()
         {
             var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
@@ -112,8 +111,7 @@ namespace Pharmaceutical.Controllers
             });
         }
 
-        // "Create Resume" in the candidate portal: fills in personal info and
-        // replaces the candidate's education / work-experience entries in one shot.
+        
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile(CandidateProfileUpdateRequest req)
         {
@@ -181,7 +179,7 @@ namespace Pharmaceutical.Controllers
             }
         }
 
-        // Skip rows the candidate left completely blank in the form.
+        
         private static bool IsEmpty(EducationInputDto e) =>
             string.IsNullOrWhiteSpace(e.Institution) &&
             string.IsNullOrWhiteSpace(e.Qualification) &&
@@ -229,7 +227,7 @@ namespace Pharmaceutical.Controllers
                 await profileImage.CopyToAsync(stream);
             }
 
-            // Remove the previous image file so old photos don't pile up in storage.
+            
             var oldStorageKey = profile.ProfileImage;
             profile.ProfileImage = storageKey;
             await _db.SaveChangesAsync();
@@ -275,7 +273,7 @@ namespace Pharmaceutical.Controllers
                 _ => "application/octet-stream"
             };
 
-        // Candidate applies to an open position from the Careers page.
+        
         [HttpPost("positions/{positionId:int}/apply")]
         public async Task<IActionResult> ApplyToPosition(int positionId)
         {
@@ -283,9 +281,23 @@ namespace Pharmaceutical.Controllers
             if (candidateId == null)
                 return Unauthorized();
 
-            var candidateExists = await _db.CandidateProfiles.AnyAsync(c => c.CandidateId == candidateId);
-            if (!candidateExists)
+            var candidateProfile = await _db.CandidateProfiles.FirstOrDefaultAsync(c => c.CandidateId == candidateId);
+            if (candidateProfile == null)
                 return NotFound(new { message = "Candidate profile not found" });
+
+            var missingFields = new List<string>();
+            if (string.IsNullOrWhiteSpace(candidateProfile.FullName)) missingFields.Add("full name");
+            if (string.IsNullOrWhiteSpace(candidateProfile.Phone)) missingFields.Add("phone");
+            if (string.IsNullOrWhiteSpace(candidateProfile.Address)) missingFields.Add("address");
+            if (string.IsNullOrEmpty(candidateProfile.ProfileImage)) missingFields.Add("profile photo");
+
+            if (missingFields.Count > 0)
+            {
+                return BadRequest(new
+                {
+                    message = $"Please complete your profile before applying. Missing: {string.Join(", ", missingFields)}."
+                });
+            }
 
             var position = await _db.Positions.FirstOrDefaultAsync(p => p.PositionId == positionId);
             if (position == null)
@@ -402,7 +414,7 @@ namespace Pharmaceutical.Controllers
             await using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                // Replace: any previously current resume for this candidate is superseded.
+                
                 var previous = await _db.ResumeFiles
                     .Where(r => r.CandidateId == candidateId && r.IsCurrent == true)
                     .ToListAsync();

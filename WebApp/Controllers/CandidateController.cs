@@ -116,6 +116,20 @@ public class CandidateController : Controller
         if (!ModelState.IsValid)
             return View(request);
 
+        // The profile image is only mandatory the very first time the
+        // candidate sets up their profile. Once they already have one on
+        // file, later edits don't need to re-upload it (an <input type="file">
+        // can't be pre-filled, so forcing this every time would make it
+        // impossible to edit the form without also picking a new photo).
+        var existingProfile = await _profileService.GetProfile(GetToken());
+        var hasProfileImage = existingProfile.Success && existingProfile.Data != null && existingProfile.Data.HasProfileImage;
+
+        if (!hasProfileImage && (request.ProfileImageFile == null || request.ProfileImageFile.Length == 0))
+        {
+            ModelState.AddModelError("", "Please upload a profile image.");
+            return View(request);
+        }
+
         if (request.ProfileImageFile != null && request.ProfileImageFile.Length > MaxImageSizeBytes)
         {
             ModelState.AddModelError("",
@@ -172,7 +186,53 @@ public class CandidateController : Controller
         return RedirectToAction("Profile");
     }
 
-    
+    // "Detail" link from the My Applications table — shows the applied
+    // position, its status, and a read-only snapshot of the candidate's
+    // profile (photo, contact info, CV file, education, work experience).
+    [HttpGet]
+    public async Task<IActionResult> ApplicationDetail(int id)
+    {
+        var token = GetToken();
+
+        var appsResult = await _applicationService.GetMyApplications(token);
+        var application = appsResult.Data?.FirstOrDefault(a => a.ApplicationId == id);
+
+        if (application == null)
+        {
+            TempData["ErrorMessage"] = appsResult.Success
+                ? "Application not found."
+                : (appsResult.ErrorMessage ?? "Could not load application.");
+            return RedirectToAction("MyApplications");
+        }
+
+        var profileResult = await _profileService.GetProfile(token);
+        var resumeResult = await _resumeService.GetCurrentResume(token);
+
+        var model = new ApplicationDetailViewModel
+        {
+            Application = application,
+            Profile = profileResult.Success ? profileResult.Data : null,
+            Resume = resumeResult.Success ? resumeResult.Data : null
+        };
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadResume(int id)
+    {
+        var result = await _resumeService.DownloadResume(GetToken(), id);
+
+        if (!result.Success || result.Content == null)
+        {
+            TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not download CV file.";
+            return RedirectToAction("MyApplications");
+        }
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream", result.FileName ?? "resume");
+    }
+
+
     [HttpGet]
     public async Task<IActionResult> ProfileImage()
     {
