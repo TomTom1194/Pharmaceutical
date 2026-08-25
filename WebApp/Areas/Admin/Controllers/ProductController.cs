@@ -87,6 +87,9 @@ public class ProductController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(Product product, IFormFile? mainImage, IFormFile? subImage1, IFormFile? subImage2)
     {
+        if (mainImage == null)
+            ModelState.AddModelError("MainImage", "Please select a main image");
+
         if (!ModelState.IsValid)
         {
             ViewBag.Categories = await _categoryService.GetAll();
@@ -112,8 +115,16 @@ public class ProductController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(int id, Product product, IFormFile? mainImage, IFormFile? subImage1, IFormFile? subImage2)
     {
+        var existing = await _service.GetById(id);
+        if (existing == null)
+            return NotFound();
+
+        if (mainImage == null && !existing.Images.Any(i => i.IsThumbnail == true))
+            ModelState.AddModelError("MainImage", "Please select a main image");
+
         if (!ModelState.IsValid)
         {
+            product.Images = existing.Images;
             ViewBag.Categories = await _categoryService.GetAll();
             ViewBag.ApiBaseUrl = _config["ApiBaseUrl"];
             return View(product);
