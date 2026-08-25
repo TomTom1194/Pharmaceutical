@@ -1,0 +1,1 @@
+﻿ALTER TABLE Article ADD IsEditorPick BIT NOT NULL DEFAULT 0;

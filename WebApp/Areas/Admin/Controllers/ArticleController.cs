@@ -134,5 +134,3 @@ public class ArticleController : Controller
         return RedirectToAction(nameof(Index));
     }
 }
-
-
