@@ -11,7 +11,7 @@
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-outline-primary px-3 rounded-pill fw-bold" id="btnToggleEditorsPick">
-                Editors' Picks
+                Featured Articles
             </button>
             <a asp-action="Create" class="btn btn-success px-4 rounded-pill fw-bold">
                 <i class="bi bi-plus-lg me-1"></i> New Article
@@ -21,7 +21,7 @@
 
         <form method="get" class="mb-3 d-flex gap-2" style="max-width: 500px;">
         <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search articles..." />
-        <select name="sort" class="form-select" style="width: 150px;">
+        <select name="sort" class="form-select" style="width: 150px;" onchange="this.form.submit()">
             <option value="newest" selected="@(ViewBag.Sort != "oldest")">Newest First</option>
             <option value="oldest" selected="@(ViewBag.Sort == "oldest")">Oldest First</option>
         </select>
@@ -78,7 +78,7 @@
                                         }
                                         @if (item.IsEditorPick)
                                         {
-                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 ms-1"><i class="bi bi-star-fill"></i> Pick</span>
+                                            <span class="admin-pill admin-pill-blue ms-1">Featured</span>
                                         }
                                     </td>
                                     <td class="text-muted small">
@@ -118,7 +118,7 @@
                 <div id="saveBar" class="d-none bg-light border-top p-3 d-flex justify-content-between align-items-center">
                     <span class="text-primary fw-bold" id="lblCount">0 selected (max 5)</span>
                     <button type="submit" class="btn btn-primary px-4 rounded-pill fw-bold" id="btnSavePicks">
-                        <i class="bi bi-check-lg me-1"></i> Save Editors' Picks
+                        <i class="bi bi-check-lg me-1"></i> Save Featured Articles
                     </button>
                 </div>
             </form>
@@ -203,6 +203,10 @@
         });
     </script>
 }
+
+
+
+
 
 
 
