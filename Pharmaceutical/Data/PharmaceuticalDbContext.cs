@@ -25,4 +25,5 @@ public class PharmaceuticalDbContext :DbContext
     public DbSet<ContentPage> ContentPages { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<Application> Applications { get; set; }
+    public DbSet<Article> Articles { get; set; }
 }

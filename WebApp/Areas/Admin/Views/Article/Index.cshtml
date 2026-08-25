@@ -1,0 +1,208 @@
+﻿@model List<WebApp.Models.ArticleAdminDto>
+@{
+    ViewData["Title"] = "Articles";
+}
+
+<div class="container-fluid py-2">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1" style="color: #212529;">Articles</h3>
+            <p class="text-muted mb-0 small">Manage news and blog articles</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-primary px-3 rounded-pill fw-bold" id="btnToggleEditorsPick">
+                Editors' Picks
+            </button>
+            <a asp-action="Create" class="btn btn-success px-4 rounded-pill fw-bold">
+                <i class="bi bi-plus-lg me-1"></i> New Article
+            </a>
+        </div>
+    </div>
+
+        <form method="get" class="mb-3 d-flex gap-2" style="max-width: 500px;">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search articles..." />
+        <select name="sort" class="form-select" style="width: 150px;">
+            <option value="newest" selected="@(ViewBag.Sort != "oldest")">Newest First</option>
+            <option value="oldest" selected="@(ViewBag.Sort == "oldest")">Oldest First</option>
+        </select>
+        <button type="submit" class="btn btn-outline-secondary px-3">
+            <i class="bi bi-search"></i>
+        </button>
+    </form>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <form id="formEditorsPick" action="/Admin/Article/UpdateEditorsPicks" method="post">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th class="ps-4" style="width: 60px;">STT</th>
+                                <th>Thumbnail</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th class="text-end pe-4" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int i = 1; }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 text-muted">@(i++)</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Thumbnail))
+                                        {
+                                            <img src="@item.Thumbnail" class="rounded object-fit-cover" style="width: 60px; height: 40px;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 40px;">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="fw-medium text-dark">@item.Title</div>
+                                        <small class="text-muted">/@item.Slug</small>
+                                    </td>
+                                    <td>
+                                        @if (item.Status == "Published")
+                                        {
+                                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">@item.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">@item.Status</span>
+                                        }
+                                        @if (item.IsEditorPick)
+                                        {
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 ms-1"><i class="bi bi-star-fill"></i> Pick</span>
+                                        }
+                                    </td>
+                                    <td class="text-muted small">
+                                        @(item.PublishedAt?.ToString("MMM dd, yyyy") ?? "N/A")
+                                    </td>
+                                    <td class="text-end pe-4 action-cell">
+                                        <!-- Normal Actions -->
+                                        <div class="btn-group btn-group-sm normal-actions">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(@item.Id, '@item.Title.Replace("'", "\\'")')" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Checkboxes (Hidden initially) -->
+                                        <div class="form-check editor-pick-checkbox d-none ms-auto" style="width: fit-content;">
+                                            <input class="form-check-input chk-pick" type="checkbox" name="ids" value="@item.Id" @(item.IsEditorPick ? "checked" : "") style="transform: scale(1.3);">
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-journal-x fs-1 d-block mb-2"></i>
+                                        No articles found.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Save bar (Hidden initially) -->
+                <div id="saveBar" class="d-none bg-light border-top p-3 d-flex justify-content-between align-items-center">
+                    <span class="text-primary fw-bold" id="lblCount">0 selected (max 5)</span>
+                    <button type="submit" class="btn btn-primary px-4 rounded-pill fw-bold" id="btnSavePicks">
+                        <i class="bi bi-check-lg me-1"></i> Save Editors' Picks
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="deleteForm" asp-action="Delete" method="post" style="display:none;">
+    <input type="hidden" name="id" id="deleteId" />
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, title) {
+            if (confirm('Are you sure you want to delete article: ' + title + '?')) {
+                document.getElementById('deleteId').value = id;
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        // Editors' Pick Manager Logic
+        const btnToggle = document.getElementById('btnToggleEditorsPick');
+        const saveBar = document.getElementById('saveBar');
+        const checkboxes = document.querySelectorAll('.editor-pick-checkbox');
+        const normalActions = document.querySelectorAll('.normal-actions');
+        const chks = document.querySelectorAll('.chk-pick');
+        const lblCount = document.getElementById('lblCount');
+        const btnSave = document.getElementById('btnSavePicks');
+        const form = document.getElementById('formEditorsPick');
+
+        let isEditingPicks = false;
+
+        function updateCount() {
+            const checked = document.querySelectorAll('.chk-pick:checked');
+            const count = checked.length;
+            lblCount.innerText = count + " selected (max 5)";
+            
+            if (count > 5) {
+                lblCount.classList.remove('text-primary');
+                lblCount.classList.add('text-danger');
+                btnSave.disabled = true;
+            } else {
+                lblCount.classList.remove('text-danger');
+                lblCount.classList.add('text-primary');
+                btnSave.disabled = false;
+            }
+            
+            // Disable unchecked boxes if we reached 5
+            chks.forEach(chk => {
+                if (!chk.checked) {
+                    chk.disabled = count >= 5;
+                }
+            });
+        }
+
+        btnToggle.addEventListener('click', () => {
+            isEditingPicks = !isEditingPicks;
+            if (isEditingPicks) {
+                btnToggle.classList.replace('btn-outline-primary', 'btn-primary');
+                saveBar.classList.remove('d-none');
+                checkboxes.forEach(x => x.classList.remove('d-none'));
+                normalActions.forEach(x => x.classList.add('d-none'));
+                updateCount();
+            } else {
+                btnToggle.classList.replace('btn-primary', 'btn-outline-primary');
+                saveBar.classList.add('d-none');
+                checkboxes.forEach(x => x.classList.add('d-none'));
+                normalActions.forEach(x => x.classList.remove('d-none'));
+            }
+        });
+
+        chks.forEach(chk => {
+            chk.addEventListener('change', updateCount);
+        });
+
+        form.addEventListener('submit', function(e) {
+            const count = document.querySelectorAll('.chk-pick:checked').length;
+            if (count > 5) {
+                e.preventDefault();
+                alert('Please select a maximum of 5 articles.');
+            }
+        });
+    </script>
+}
+
+
+

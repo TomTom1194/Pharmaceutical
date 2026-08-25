@@ -1,0 +1,76 @@
+﻿@model WebApp.Models.ArticleAdminDto
+@{
+    Layout = "_MarketingLayout";
+    Layout = "_MarketingLayout";
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="py-5" style="background-color:#f8fafc;">
+    <div class="container py-4" style="max-width:860px;">
+        <a asp-controller="News" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 mb-4">
+            <i class="bi bi-arrow-left me-1"></i> All Articles
+        </a>
+
+        @if (!string.IsNullOrEmpty(Model.Thumbnail))
+        {
+            <img src="@Model.Thumbnail" class="img-fluid rounded-4 w-100 mb-4 shadow-sm"
+                 style="max-height:420px;object-fit:cover;" alt="@Model.Title" />
+        }
+
+        <div class="d-flex align-items-center gap-3 text-muted small mb-3">
+            <span><i class="bi bi-person me-1"></i>@Model.AuthorName</span>
+            @if (Model.PublishedAt.HasValue)
+            {
+                <span><i class="bi bi-calendar3 me-1"></i>@Model.PublishedAt.Value.ToString("dd MMMM yyyy")</span>
+            }
+        </div>
+
+        <h1 class="fw-bold text-dark mb-3">@Model.Title</h1>
+
+        @if (!string.IsNullOrEmpty(Model.Summary))
+        {
+            <p class="fs-5 text-secondary mb-4" style="font-weight:300;">@Model.Summary</p>
+        }
+
+        <hr class="mb-4" />
+
+                <div class="content-body lh-lg fs-5" style="font-weight:300;">
+            @Html.Raw(Model.Content)
+        </div>
+
+        @{
+            var suggestions = ViewBag.Suggestions as List<WebApp.Models.ArticleAdminDto>;
+        }
+        @if (suggestions != null && suggestions.Any())
+        {
+            <div class="mt-5 pt-5 border-top">
+                <h3 class="fw-bold mb-4 text-success">Related Articles</h3>
+                <div class="row g-4">
+                    @foreach (var sug in suggestions)
+                    {
+                        <div class="col-md-4">
+                            <a asp-action="Detail" asp-route-slug="@sug.Slug" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    @if (!string.IsNullOrEmpty(sug.Thumbnail))
+                                    {
+                                        <img src="@sug.Thumbnail" class="card-img-top" style="height: 160px; object-fit: cover;" alt="@sug.Title" />
+                                    }
+                                    <div class="card-body">
+                                        <h5 class="card-title text-dark fw-bold mb-2" style="font-size: 1.05rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">@sug.Title</h5>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-calendar3 me-1"></i> @(sug.PublishedAt?.ToString("MMM dd, yyyy") ?? "")
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+
+
+

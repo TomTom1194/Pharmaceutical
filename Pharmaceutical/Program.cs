@@ -45,6 +45,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
 builder.Services.AddScoped<IContentPageService, ContentPageService>();
 builder.Services.AddScoped<IPositionService, PositionService>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
 
 var app = builder.Build();
 
