@@ -41,7 +41,7 @@
     <table class="admin-table">
         <thead>
         <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Name</th>
             <th>Description</th>
             <th>Status</th>
@@ -49,10 +49,11 @@
         </tr>
         </thead>
         <tbody>
+        @{ int stt = (page - 1) * pageSize + 1; }
         @foreach (var category in Model)
         {
             <tr>
-                <td>@category.CategoryId</td>
+                <td>@(stt++)</td>
                 <td>@category.Name</td>
                 <td>@category.Description</td>
                 <td>

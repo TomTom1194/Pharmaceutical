@@ -50,7 +50,7 @@
     <table class="admin-table">
         <thead>
         <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Full name</th>
             <th>Email</th>
             <th>Status</th>
@@ -59,10 +59,11 @@
         </tr>
         </thead>
         <tbody>
+        @{ int stt = (page - 1) * pageSize + 1; }
         @foreach (var quote in Model)
         {
             <tr>
-                <td>@quote.QuoteId</td>
+                <td>@(stt++)</td>
                 <td>@quote.FullName</td>
                 <td>@quote.Email</td>
                 <td><span class="admin-pill @PillClass(quote.Status)">@quote.Status</span></td>
