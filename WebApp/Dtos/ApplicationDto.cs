@@ -23,4 +23,8 @@ public class ApplyResultDto
 {
     public bool Success { get; set; }
     public string? ErrorMessage { get; set; }
+
+    // True when the apply failed because the candidate's profile is
+    // incomplete — lets the controller append an "Update Profile Now" link.
+    public bool RequiresProfileCompletion { get; set; }
 }
