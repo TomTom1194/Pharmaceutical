@@ -45,7 +45,7 @@ public class ApplicationController : Controller
     [HttpGet]
     public async Task<IActionResult> CandidateDetail(int id, int? positionId)
     {
-        var result = await _adminService.GetCandidateDetail(GetToken(), id);
+        var result = await _adminService.GetCandidateDetail(GetToken(), id, positionId);
 
         if (!result.Success || result.Data == null)
         {

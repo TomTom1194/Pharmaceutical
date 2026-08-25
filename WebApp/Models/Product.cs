@@ -6,6 +6,7 @@ public class Product
 {
     public int ProductId { get; set; }
 
+    [Required(ErrorMessage = "Please select a category")]
     public int? CategoryId { get; set; }
 
     [Required(ErrorMessage = "Enter product name")]

@@ -1,0 +1,158 @@
+@model WebApp.Dtos.ApplicationDetailViewModel
+
+@{
+    ViewBag.Title = "Application Detail";
+    ViewBag.Subtitle = Model.Application.PositionTitle;
+    Layout = "_CandidateLayout";
+
+    string StatusBadgeClass(string status) => (status ?? "").ToLowerInvariant() switch
+    {
+        "applied" => "bg-secondary",
+        "reviewing" or "in review" or "shortlisted" => "bg-warning",
+        "sent" or "interview" or "interviewing" or "offer" or "offered" or "hired" or "accepted" => "bg-success",
+        "decline" or "declined" or "rejected" or "withdrawn" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    var profile = Model.Profile;
+}
+
+<a asp-action="MyApplications" class="btn btn-sm btn-link mb-3 ps-0">&larr; Back to my applications</a>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Application.PositionTitle</h5>
+        <p class="mb-1"><strong>Department:</strong> @Model.Application.Department</p>
+        <p class="mb-1"><strong>Applied Date:</strong> @Model.Application.AppliedDate.ToLocalTime().ToString("g")</p>
+        <p class="mb-0">
+            <strong>Status:</strong>
+            <span class="badge @StatusBadgeClass(Model.Application.Status)">@Model.Application.Status</span>
+        </p>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Candidate Profile</h5>
+        @if (profile != null)
+        {
+            <div class="d-flex flex-column flex-sm-row gap-3 align-items-start">
+                @if (profile.HasProfileImage)
+                {
+                    <img src="@Url.Action("ProfileImage", "Candidate")" alt="Profile photo"
+                         class="rounded-circle flex-shrink-0" style="width:100px;height:100px;object-fit:cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center flex-shrink-0 text-muted"
+                         style="width:100px;height:100px;">No photo</div>
+                }
+                <div class="w-100">
+                    <p class="mb-1"><strong>Full Name:</strong> @(profile.FullName ?? "-")</p>
+                    <p class="mb-1"><strong>Email:</strong> @profile.Email</p>
+                    <p class="mb-1"><strong>Phone:</strong> @(profile.Phone ?? "-")</p>
+                    <p class="mb-1"><strong>Address:</strong> @(profile.Address ?? "-")</p>
+                    <p class="mb-0"><strong>Summary:</strong> @(profile.Summary ?? "-")</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="mb-0 text-muted">Profile information is not available.</p>
+        }
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">CV File</h5>
+        @if (Model.Resume != null)
+        {
+            <p class="mb-1"><strong>File name:</strong> @Model.Resume.OriginalName</p>
+            <p class="mb-1"><strong>Uploaded at:</strong> @(Model.Resume.UploadedAt?.ToLocalTime().ToString("g") ?? "-")</p>
+            <p class="mb-2"><strong>Size:</strong> @((Model.Resume.Size ?? 0) / 1024) KB</p>
+            <a asp-action="DownloadResume" asp-route-id="@Model.Resume.ResumeId" class="btn btn-outline-primary">Download CV File</a>
+        }
+        else
+        {
+            <p class="mb-0 text-muted">No CV file on file.</p>
+        }
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Education</h5>
+        @if (profile != null && profile.Educations.Any())
+        {
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Institution</th>
+                    <th>Qualification</th>
+                    <th>Field</th>
+                    <th>Start</th>
+                    <th>End</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var e in profile.Educations)
+                {
+                    <tr>
+                        <td>@e.Institution</td>
+                        <td>@e.Qualification</td>
+                        <td>@e.Field</td>
+                        <td>@(e.StartDate?.ToString("MM/yyyy") ?? "-")</td>
+                        <td>@(e.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="mb-0 text-muted">No education records.</p>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Work Experience</h5>
+        @if (profile != null && profile.WorkExperiences.Any())
+        {
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Employer</th>
+                    <th>Title</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var w in profile.WorkExperiences)
+                {
+                    <tr>
+                        <td>@w.Employer</td>
+                        <td>@w.Title</td>
+                        <td>@(w.StartDate?.ToString("MM/yyyy") ?? "-")</td>
+                        <td>@(w.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                        <td>@w.Description</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="mb-0 text-muted">No work experience records.</p>
+        }
+    </div>
+</div>

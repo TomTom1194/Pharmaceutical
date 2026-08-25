@@ -26,7 +26,7 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Personal Photo</h5>
+            <h5 class="card-title">Personal Photo <span class="text-danger">*</span></h5>
             <div class="d-flex gap-3 align-items-center">
                 @if (ViewBag.HasProfileImage == true)
                 {
@@ -70,19 +70,19 @@
     </div>
 
     <div class="mb-3">
-        <label>Full Name</label>
+        <label>Full Name <span class="text-danger">*</span></label>
         <input asp-for="FullName" class="form-control" />
         <span asp-validation-for="FullName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label>Phone</label>
+        <label>Phone <span class="text-danger">*</span></label>
         <input asp-for="Phone" class="form-control" />
         <span asp-validation-for="Phone" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label>Address</label>
+        <label>Address <span class="text-danger">*</span></label>
         <input asp-for="Address" class="form-control" />
         <span asp-validation-for="Address" class="text-danger"></span>
     </div>

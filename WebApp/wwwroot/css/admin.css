@@ -393,6 +393,11 @@
   color: #e0304a;
 }
 
+.admin-pill-blue {
+  background: #e8f1fd;
+  color: #1a63d4;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -730,4 +735,9 @@ body {
   .admin-detail-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.required-mark {
+  color: #dc3545;
+  margin-left: 2px;
 }

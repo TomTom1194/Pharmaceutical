@@ -5,7 +5,7 @@ namespace WebApp.Services;
 public interface IAdminService
 {
     Task<AdminCandidatesResultDto> GetCandidates(string token);
-    Task<AdminCandidateDetailResultDto> GetCandidateDetail(string token, int candidateId);
+    Task<AdminCandidateDetailResultDto> GetCandidateDetail(string token, int candidateId, int? positionId = null);
     Task<InterviewInvitationResultDto> SendInvitation(string token, int candidateId, int? positionId, SendInterviewInvitationRequestDto request);
     Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId);
     Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId);

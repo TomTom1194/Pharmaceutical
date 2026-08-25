@@ -28,7 +28,7 @@ public class QuoteRequestController : Controller
                 q.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
                 q.Email.Contains(keyword, StringComparison.OrdinalIgnoreCase));
 
-        var filteredList = quotes.OrderByDescending(q => q.QuoteId).ToList();
+        var filteredList = quotes.OrderByDescending(q => q.SubmittedAt).ToList();
         var totalCount = filteredList.Count;
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
 
