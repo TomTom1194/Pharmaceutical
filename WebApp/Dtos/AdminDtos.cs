@@ -25,6 +25,14 @@ public class AdminCandidateDetailDto
     public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
     public ResumeResponseDto? Resume { get; set; }
     public List<InterviewInvitationDto> Invitations { get; set; } = new();
+
+    
+    public int? ApplicationId { get; set; }
+    public int? PositionId { get; set; }
+    public string? PositionTitle { get; set; }
+    public string? Department { get; set; }
+    public DateTime? AppliedDate { get; set; }
+    public string? ApplicationStatus { get; set; }
 }
 
 public class InterviewInvitationDto

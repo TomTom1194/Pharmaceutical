@@ -27,6 +27,16 @@ public class AdminCandidateDetailResponse
     public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
     public ResumeResponse? Resume { get; set; }
     public List<InterviewInvitationResponse> Invitations { get; set; } = new();
+
+    // Populated only when the detail is requested with a positionId (i.e.
+    // viewed from a specific position's applications list) — the candidate's
+    // application to that one position.
+    public int? ApplicationId { get; set; }
+    public int? PositionId { get; set; }
+    public string? PositionTitle { get; set; }
+    public string? Department { get; set; }
+    public DateTime? AppliedDate { get; set; }
+    public string? ApplicationStatus { get; set; }
 }
 
 // Admin can leave Subject/Body blank to use the default recruitment template.
