@@ -4,17 +4,34 @@
     ViewBag.Title = "CV Detail";
     ViewBag.Subtitle = Model.FullName ?? Model.Email;
     int? positionId = ViewBag.PositionId;
+
+    string StatusBadgeClass(string? status) => (status ?? "").ToLowerInvariant() switch
+    {
+        "applied" => "bg-secondary",
+        "reviewing" or "in review" or "shortlisted" => "bg-warning",
+        "sent" or "interview" or "interviewing" or "offer" or "offered" or "hired" or "accepted" => "bg-success",
+        "decline" or "declined" or "rejected" or "withdrawn" => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 
-<a asp-action="Index" asp-route-positionId="@positionId" class="btn btn-sm btn-link mb-3 ps-0">&larr; Back to applications</a>
+<a asp-action="Index" asp-route-positionId="@positionId" class="btn btn-sm btn-link mb-3 ps-0" style="text-align: left">&larr; Back to applications</a>
 
-@if (TempData["SuccessMessage"] != null)
+
+
+@if (Model.PositionId.HasValue)
 {
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@(Model.PositionTitle ?? "Position")</h5>
+            <p class="mb-1"><strong>Department:</strong> @(Model.Department ?? "-")</p>
+            <p class="mb-1"><strong>Applied Date:</strong> @(Model.AppliedDate?.ToLocalTime().ToString("g") ?? "-")</p>
+            <p class="mb-0">
+                <strong>Status:</strong>
+                <span class="badge @StatusBadgeClass(Model.ApplicationStatus)">@(Model.ApplicationStatus ?? "-")</span>
+            </p>
+        </div>
+    </div>
 }
 
 <div class="card mb-4">
@@ -127,6 +144,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                 <tr>
+                    <th>Type</th>
                     <th>Subject</th>
                     <th>Status</th>
                     <th>Sent At</th>
@@ -136,6 +154,17 @@
                 @foreach (var inv in Model.Invitations)
                 {
                     <tr>
+                        <td>
+                            @{
+                                var typeBadgeClass = inv.Type switch
+                                {
+                                    "Offer" => "bg-success",
+                                    "Decline" => "bg-danger",
+                                    _ => "bg-info text-dark"
+                                };
+                            }
+                            <span class="badge @typeBadgeClass">@(inv.Type ?? "Interview")</span>
+                        </td>
                         <td>@inv.Subject</td>
                         <td>
                             @if (inv.Status == "Sent")
@@ -162,27 +191,106 @@
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Send Interview Invitation</h5>
-        @if (positionId.HasValue)
-        {
-            <p class="text-muted small mb-2">Sending will also mark this candidate's application for this position as <strong>Sent</strong>.</p>
-        }
-        <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
-            <div class="mb-3">
-                <label class="form-label">Subject</label>
-                <input type="text" name="Subject" class="form-control" value="Interview Invitation" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Body</label>
-                <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),
+        <div id="sendEmailToggleWrap">
+            <button type="button" id="showSendEmailBtn" class="btn btn-primary">
+                <i class="bi bi-envelope-plus me-1"></i> Send email to this candidate
+            </button>
+        </div>
 
-We were impressed with your application and would like to invite you for an interview. Our recruitment team will contact you shortly to arrange a time.
+        <div id="sendEmailPanel" style="display:none;">
+            <h5 class="card-title mb-3">Send Email</h5>
+            @if (positionId.HasValue)
+            {
+                <p class="text-muted small mb-3">Sending will also update this candidate's application status for this position.</p>
+            }
 
-Best regards,
+            <ul class="nav nav-tabs" id="sendEmailTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-interview-btn" data-bs-toggle="tab" data-bs-target="#tab-interview" type="button" role="tab">Send Interview Invitation</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-offer-btn" data-bs-toggle="tab" data-bs-target="#tab-offer" type="button" role="tab">Send Offer Letter</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-decline-btn" data-bs-toggle="tab" data-bs-target="#tab-decline" type="button" role="tab">Send Decline Letter</button>
+                </li>
+            </ul>
+
+            <div class="tab-content border border-top-0 rounded-bottom p-3" id="sendEmailTabsContent">
+                <div class="tab-pane fade show active" id="tab-interview" role="tabpanel">
+                    <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
+                        <input type="hidden" name="Type" value="Interview" />
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" name="Subject" class="form-control" value="Interview Invitation" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Body</label>
+                            <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
+
+We were impressed with your application and would like to invite you for an interview. Our recruitment team will contact you shortly to arrange a time.<br><br>
+
+Best regards,<br><br>
 Recruitment Team</textarea>
-                <div class="form-text">Leave as-is to use this default message, or customize it before sending.</div>
+                            <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Sent</strong>.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Interview Invitation</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="tab-offer" role="tabpanel">
+                    <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
+                        <input type="hidden" name="Type" value="Offer" />
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" name="Subject" class="form-control" value="Job Offer" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Body</label>
+                            <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
+
+Congratulations! We are pleased to offer you the position. Our recruitment team will reach out shortly with the offer details and next steps.<br><br>
+
+Best regards,<br><br>
+Recruitment Team</textarea>
+                            <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Offer</strong>.</div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Send Offer Letter</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="tab-decline" role="tabpanel">
+                    <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
+                        <input type="hidden" name="Type" value="Decline" />
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" name="Subject" class="form-control" value="Application Response" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Body</label>
+                            <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
+
+Thank you for taking the time to apply and for your interest in joining our team. After careful consideration, we have decided not to move forward with your application at this time.<br><br>
+
+We wish you the best in your future endeavors.<br><br>
+
+Best regards,<br><br>
+Recruitment Team</textarea>
+                            <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Decline</strong>.</div>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Send Decline Letter</button>
+                    </form>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Send Invitation Email</button>
-        </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('showSendEmailBtn').addEventListener('click', function () {
+            document.getElementById('sendEmailPanel').style.display = 'block';
+            document.getElementById('sendEmailToggleWrap').style.display = 'none';
+        });
+    </script>
+}

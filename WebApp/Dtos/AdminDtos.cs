@@ -25,6 +25,14 @@ public class AdminCandidateDetailDto
     public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
     public ResumeResponseDto? Resume { get; set; }
     public List<InterviewInvitationDto> Invitations { get; set; } = new();
+
+    
+    public int? ApplicationId { get; set; }
+    public int? PositionId { get; set; }
+    public string? PositionTitle { get; set; }
+    public string? Department { get; set; }
+    public DateTime? AppliedDate { get; set; }
+    public string? ApplicationStatus { get; set; }
 }
 
 public class InterviewInvitationDto
@@ -32,15 +40,18 @@ public class InterviewInvitationDto
     public int InvitationId { get; set; }
     public int? CandidateId { get; set; }
     public string? Subject { get; set; }
+    public string? Type { get; set; }
     public string? Status { get; set; }
     public DateTime? SentAt { get; set; }
 }
+
 
 
 public class SendInterviewInvitationRequestDto
 {
     public string? Subject { get; set; }
     public string? Body { get; set; }
+    public string? Type { get; set; }
 }
 
 public class AdminCandidatesResultDto

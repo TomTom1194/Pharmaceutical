@@ -9,8 +9,8 @@
     {
         "applied" => "bg-secondary",
         "reviewing" or "in review" or "shortlisted" => "bg-warning",
-        "sent" or "interview" or "interviewing" or "offered" or "hired" or "accepted" => "bg-success",
-        "rejected" or "withdrawn" => "bg-danger",
+        "sent" or "interview" or "interviewing" or "offer" or "offered" or "hired" or "accepted" => "bg-success",
+        "decline" or "declined" or "rejected" or "withdrawn" => "bg-danger",
         _ => "bg-secondary"
     };
 }
@@ -31,6 +31,7 @@
                     <th>Department</th>
                     <th>Applied Date</th>
                     <th>Status</th>
+                    <th>Detail</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,6 +42,9 @@
                         <td>@app.Department</td>
                         <td>@app.AppliedDate.ToLocalTime().ToString("g")</td>
                         <td><span class="badge @StatusBadgeClass(app.Status)">@app.Status</span></td>
+                        <td>
+                            <a asp-action="ApplicationDetail" asp-route-id="@app.ApplicationId" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
                     </tr>
                 }
                 </tbody>
