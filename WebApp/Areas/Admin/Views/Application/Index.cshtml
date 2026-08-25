@@ -1,14 +1,11 @@
 @model List<WebApp.Dtos.AdminPositionApplicationItemDto>
-
 @{
     ViewBag.Title = "Applications";
     ViewBag.Subtitle = "All candidates who have applied to your open positions.";
-
     var positions = ViewBag.Positions as List<WebApp.Dtos.AdminPositionSummaryDto> ?? new();
     int? selectedPositionId = ViewBag.SelectedPositionId;
     string? status = ViewBag.Status;
     string? keyword = ViewBag.Keyword;
-
     string AccountPillClass(string? s) => (s ?? "").ToLowerInvariant() switch
     {
         "active" => "admin-pill-yes",
@@ -16,7 +13,6 @@
         "inactive" => "admin-pill-no",
         _ => "admin-pill-category"
     };
-
     string ApplicationPillClass(string? s) => (s ?? "").ToLowerInvariant() switch
     {
         "applied" or "reviewing" or "in review" or "shortlisted" => "admin-pill-pending",
@@ -26,14 +22,12 @@
         _ => "admin-pill-category"
     };
 }
-
 <div class="admin-page-header">
     <div>
         <h1>Applications</h1>
         <p>All candidates who have applied to your open positions</p>
     </div>
 </div>
-
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -46,7 +40,6 @@
 {
     <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
 }
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Positions</h5>
@@ -74,14 +67,11 @@
         }
     </div>
 </div>
-
 <form method="get" asp-action="Index" class="admin-filter-bar">
     <input type="hidden" name="positionId" value="@selectedPositionId"/>
-
     <div class="admin-filter-search">
         <input type="text" name="keyword" placeholder="Search by name/email..." value="@keyword"/>
     </div>
-
     <select name="status" class="admin-filter-select">
         <option value="">All statuses</option>
         @foreach (var s in new[] { "Applied", "Sent", "Offer", "Decline" })
@@ -89,7 +79,6 @@
             <option value="@s" selected="@(s == status)">@s</option>
         }
     </select>
-
     <button type="submit" class="admin-btn-filter">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
         Filter
@@ -99,7 +88,6 @@
         Clear filter
     </a>
 </form>
-
 <div class="admin-table-card">
     <table class="admin-table">
         <thead>

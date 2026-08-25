@@ -1,10 +1,8 @@
 @model WebApp.Dtos.AdminCandidateDetailDto
-
 @{
     ViewBag.Title = "CV Detail";
     ViewBag.Subtitle = Model.FullName ?? Model.Email;
     int? positionId = ViewBag.PositionId;
-
     string StatusBadgeClass(string? status) => (status ?? "").ToLowerInvariant() switch
     {
         "applied" => "bg-secondary",
@@ -14,11 +12,7 @@
         _ => "bg-secondary"
     };
 }
-
 <a asp-action="Index" asp-route-positionId="@positionId" class="btn btn-sm btn-link mb-3 ps-0" style="text-align: left">&larr; Back to applications</a>
-
-
-
 @if (Model.PositionId.HasValue)
 {
     <div class="card mb-4">
@@ -33,7 +27,6 @@
         </div>
     </div>
 }
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">@(Model.FullName ?? "(No name provided)")</h5>
@@ -45,7 +38,6 @@
         <p class="mb-0"><strong>Registered:</strong> @(Model.CreatedAt?.ToLocalTime().ToString("d") ?? "-")</p>
     </div>
 </div>
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">CV File</h5>
@@ -63,7 +55,6 @@
         }
     </div>
 </div>
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Education</h5>
@@ -99,7 +90,6 @@
         }
     </div>
 </div>
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Work Experience</h5>
@@ -135,7 +125,6 @@
         }
     </div>
 </div>
-
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Interview Invitation History</h5>
@@ -188,7 +177,6 @@
         }
     </div>
 </div>
-
 <div class="card">
     <div class="card-body">
         <div id="sendEmailToggleWrap">
@@ -196,14 +184,12 @@
                 <i class="bi bi-envelope-plus me-1"></i> Send email to this candidate
             </button>
         </div>
-
         <div id="sendEmailPanel" style="display:none;">
             <h5 class="card-title mb-3">Send Email</h5>
             @if (positionId.HasValue)
             {
                 <p class="text-muted small mb-3">Sending will also update this candidate's application status for this position.</p>
             }
-
             <ul class="nav nav-tabs" id="sendEmailTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="tab-interview-btn" data-bs-toggle="tab" data-bs-target="#tab-interview" type="button" role="tab">Send Interview Invitation</button>
@@ -215,7 +201,6 @@
                     <button class="nav-link" id="tab-decline-btn" data-bs-toggle="tab" data-bs-target="#tab-decline" type="button" role="tab">Send Decline Letter</button>
                 </li>
             </ul>
-
             <div class="tab-content border border-top-0 rounded-bottom p-3" id="sendEmailTabsContent">
                 <div class="tab-pane fade show active" id="tab-interview" role="tabpanel">
                     <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
@@ -227,9 +212,7 @@
                         <div class="mb-3">
                             <label class="form-label">Body</label>
                             <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
-
 We were impressed with your application and would like to invite you for an interview. Our recruitment team will contact you shortly to arrange a time.<br><br>
-
 Best regards,<br><br>
 Recruitment Team</textarea>
                             <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Sent</strong>.</div>
@@ -237,7 +220,6 @@ Recruitment Team</textarea>
                         <button type="submit" class="btn btn-primary">Send Interview Invitation</button>
                     </form>
                 </div>
-
                 <div class="tab-pane fade" id="tab-offer" role="tabpanel">
                     <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
                         <input type="hidden" name="Type" value="Offer" />
@@ -248,9 +230,7 @@ Recruitment Team</textarea>
                         <div class="mb-3">
                             <label class="form-label">Body</label>
                             <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
-
 Congratulations! We are pleased to offer you the position. Our recruitment team will reach out shortly with the offer details and next steps.<br><br>
-
 Best regards,<br><br>
 Recruitment Team</textarea>
                             <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Offer</strong>.</div>
@@ -258,7 +238,6 @@ Recruitment Team</textarea>
                         <button type="submit" class="btn btn-success">Send Offer Letter</button>
                     </form>
                 </div>
-
                 <div class="tab-pane fade" id="tab-decline" role="tabpanel">
                     <form asp-action="SendInvitation" asp-route-id="@Model.CandidateId" asp-route-positionId="@positionId" method="post">
                         <input type="hidden" name="Type" value="Decline" />
@@ -269,11 +248,8 @@ Recruitment Team</textarea>
                         <div class="mb-3">
                             <label class="form-label">Body</label>
                             <textarea name="Body" class="form-control" rows="6">Dear @(Model.FullName ?? "Candidate"),<br><br>
-
 Thank you for taking the time to apply and for your interest in joining our team. After careful consideration, we have decided not to move forward with your application at this time.<br><br>
-
 We wish you the best in your future endeavors.<br><br>
-
 Best regards,<br><br>
 Recruitment Team</textarea>
                             <div class="form-text">Leave as-is to use this default message, or customize it before sending. Sets the application status to <strong>Decline</strong>.</div>
@@ -285,7 +261,6 @@ Recruitment Team</textarea>
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script>
         document.getElementById('showSendEmailBtn').addEventListener('click', function () {

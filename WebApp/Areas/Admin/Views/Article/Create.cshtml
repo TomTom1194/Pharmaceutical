@@ -1,11 +1,10 @@
-﻿@section Styles {
+@section Styles {
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 }
 @model WebApp.Models.SaveArticleViewModel
 @{
     ViewData["Title"] = "New Article";
 }
-
 <div class="container-fluid py-2">
     <div class="d-flex align-items-center mb-4 gap-3">
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -13,7 +12,6 @@
         </a>
         <h4 class="fw-bold mb-0">New Article</h4>
     </div>
-
     <div class="card border-0 shadow-sm rounded-3">
         <div class="card-body p-4">
             <form asp-action="Create" method="post">
@@ -61,7 +59,6 @@
                         </div>
                                                                         <div class="mb-3">
                             <label class="form-label fw-medium">Thumbnail Image (1 File Only)</label>
-                            
                             <div class="mb-2">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="ThumbOption" id="optUpload" value="upload" checked>
@@ -72,12 +69,10 @@
                                     <label class="form-check-label" for="optUrl">Paste External URL</label>
                                 </div>
                             </div>
-
                             <div class="input-group mb-2" id="divUpload">
                                 <span class="input-group-text"><i class="bi bi-upload"></i></span>
                                 <input type="file" name="ThumbnailFile" id="ThumbnailFile" class="form-control" accept="image/*" />
                             </div>
-
                             <div class="input-group" id="divUrl" style="display:none;">
                                 <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
                                 <input asp-for="Thumbnail" id="ThumbnailUrl" class="form-control" placeholder="https://..." />
@@ -93,7 +88,6 @@
           </div>
       </div>
   </div>
-  
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
     <script>
@@ -118,7 +112,6 @@
         const divUrl = document.getElementById('divUrl');
         const fileInput = document.getElementById('ThumbnailFile');
         const urlInput = document.getElementById('ThumbnailUrl');
-
         function toggleThumbMode() {
             if (optUpload.checked) {
                 divUpload.style.display = 'flex';
@@ -130,9 +123,7 @@
                 fileInput.value = '';
             }
         }
-
         optUpload.addEventListener('change', toggleThumbMode);
         optUrl.addEventListener('change', toggleThumbMode);
     </script>
 }
-

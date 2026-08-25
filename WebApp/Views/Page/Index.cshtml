@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = Model.Title;
 }
-
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
@@ -12,9 +11,7 @@
                     <img src="@Model.BannerImageUrl" alt="@Model.Title" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;" />
                 </div>
             }
-            
             <h1 class="display-5 fw-bold mb-4 text-success">@Model.Title</h1>
-            
             <div class="content-body" style="font-size: 1.1rem; line-height: 1.8;">
                 @Html.Raw(Model.Body)
             </div>

@@ -1,22 +1,19 @@
-﻿@model WebApp.Models.ArticleAdminDto
+@model WebApp.Models.ArticleAdminDto
 @{
     Layout = "_MarketingLayout";
     Layout = "_MarketingLayout";
     ViewData["Title"] = Model.Title;
 }
-
 <section class="py-5" style="background-color:#f8fafc;">
     <div class="container py-4" style="max-width:860px;">
         <a asp-controller="News" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 mb-4">
             <i class="bi bi-arrow-left me-1"></i> All Articles
         </a>
-
         @if (!string.IsNullOrEmpty(Model.Thumbnail))
         {
             <img src="@Model.Thumbnail" class="img-fluid rounded-4 w-100 mb-4 shadow-sm"
                  style="max-height:420px;object-fit:cover;" alt="@Model.Title" />
         }
-
         <div class="d-flex align-items-center gap-3 text-muted small mb-3">
             <span><i class="bi bi-person me-1"></i>@Model.AuthorName</span>
             @if (Model.PublishedAt.HasValue)
@@ -24,20 +21,15 @@
                 <span><i class="bi bi-calendar3 me-1"></i>@Model.PublishedAt.Value.ToString("dd MMMM yyyy")</span>
             }
         </div>
-
         <h1 class="fw-bold text-dark mb-3">@Model.Title</h1>
-
         @if (!string.IsNullOrEmpty(Model.Summary))
         {
             <p class="fs-5 text-secondary mb-4" style="font-weight:300;">@Model.Summary</p>
         }
-
         <hr class="mb-4" />
-
                 <div class="content-body lh-lg fs-5" style="font-weight:300;">
             @Html.Raw(Model.Content)
         </div>
-
         @{
             var suggestions = ViewBag.Suggestions as List<WebApp.Models.ArticleAdminDto>;
         }
@@ -70,7 +62,3 @@
         }
     </div>
 </section>
-
-
-
-

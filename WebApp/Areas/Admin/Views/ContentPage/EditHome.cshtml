@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Edit Homepage";
 }
-
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -10,7 +9,6 @@
             <h2 class="fw-bold mb-0 mt-1">Edit Homepage Content</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
@@ -20,17 +18,13 @@
                         <input type="hidden" asp-for="PageId" />
                         <input type="hidden" asp-for="Slug" />
                         <input type="hidden" asp-for="Title" value="Homepage" />
-
                         <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
-
                         <div class="mb-3">
                             <label class="form-label fw-medium">Page URL (Slug)</label>
                             <input class="form-control bg-light" value="/@Model.Slug" readonly disabled />
                         </div>
-                        
                         <hr class="my-4" />
                         <h4 class="mb-3 text-primary">Main Banner</h4>
-
                         <div class="mb-4">
                             <label class="form-label fw-medium">Slider Images (Carousel)</label>
                             @if (Model.ExistingSliderImages != null && Model.ExistingSliderImages.Any())
@@ -49,30 +43,24 @@
                             <input asp-for="SliderImageUploads" type="file" class="form-control" accept="image/*" multiple />
                             <div class="form-text">Select one or multiple images to add to the automatic slider.</div>
                         </div>
-
                         <div class="mb-3">
                             <label asp-for="HeroTitle" class="form-label fw-medium">Main Title</label>
                             <input asp-for="HeroTitle" class="form-control" placeholder="e.g. XYZ Pharmaceuticals Equipment" />
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="HeroSubtitle" class="form-label fw-medium">Short Description</label>
                             <textarea asp-for="HeroSubtitle" class="form-control" rows="3"></textarea>
                         </div>
-
                         <hr class="my-4" />
                         <h4 class="mb-3 text-primary">About Us Snippet</h4>
-
                         <div class="mb-3">
                             <label asp-for="AboutTitle" class="form-label fw-medium">Section Title</label>
                             <input asp-for="AboutTitle" class="form-control" placeholder="e.g. About XYZ Pharmaceuticals" />
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="AboutDescription" class="form-label fw-medium">Description</label>
                             <textarea asp-for="AboutDescription" class="form-control" rows="4"></textarea>
                         </div>
-                        
                         <div class="mb-4">
                             <label asp-for="Status" class="form-label fw-medium">Status</label>
                             <select asp-for="Status" class="form-select">
@@ -80,7 +68,6 @@
                                 <option value="Draft">Draft</option>
                             </select>
                         </div>
-
                         <div class="d-flex gap-2 pt-2">
                             <button type="submit" class="btn btn-primary px-4 fw-medium">Save Changes</button>
                             <a asp-action="Index" class="btn btn-light px-4">Cancel</a>
@@ -89,7 +76,6 @@
                 </div>
             </div>
         </div>
-        
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm bg-light">
                 <div class="card-body p-4">
@@ -106,7 +92,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

@@ -2,31 +2,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pharmaceutical.Models;
 using WebApp.Services;
-
 namespace WebApp.Areas.Admin.Controllers;
-
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
 public class PositionController : Controller
 {
     private readonly PositionApiService _api;
-
     public PositionController(PositionApiService api)
     {
         _api = api;
     }
-
     public async Task<IActionResult> Index()
     {
         var positions = await _api.GetAllAsync();
         return View(positions);
     }
-
     public IActionResult Create()
     {
         return View(new Position());
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Position position)
@@ -47,20 +41,17 @@ public class PositionController : Controller
         }
         return View(position);
     }
-
     public async Task<IActionResult> Edit(int id)
     {
         var position = await _api.GetByIdAsync(id);
         if (position == null) return NotFound();
         return View(position);
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Position position)
     {
         if (id != position.PositionId) return BadRequest();
-
         if (ModelState.IsValid)
         {
             var token = User.Claims.FirstOrDefault(c => c.Type == "JwtToken")?.Value;
@@ -77,7 +68,6 @@ public class PositionController : Controller
         }
         return View(position);
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)

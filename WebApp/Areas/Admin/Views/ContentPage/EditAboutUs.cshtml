@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Edit About Us Page";
 }
-
 <div class="container-fluid py-3">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -13,32 +12,26 @@
             <i class="bi bi-arrow-left me-2"></i>Back to Pages
         </a>
     </div>
-
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4 p-lg-5">
             <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="PageId" />
                 <input type="hidden" asp-for="Slug" />
                 <input type="hidden" asp-for="Title" />
-
                 <div class="row g-5">
                     <div class="col-lg-8">
                         <h5 class="fw-bold text-success mb-4 border-bottom pb-2">Main Content</h5>
-
                         <div class="mb-4">
                             <label asp-for="AboutTitle" class="form-label fw-semibold">Heading Title</label>
                             <input asp-for="AboutTitle" class="form-control form-control-lg bg-light" placeholder="e.g. Empowering Healthcare Through Innovation" />
                             <span asp-validation-for="AboutTitle" class="text-danger small"></span>
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="Body" class="form-label fw-semibold">Our Heritage Text</label>
                             <textarea asp-for="Body" class="form-control" rows="15"></textarea>
                         </div>
-
                         <h5 class="fw-bold text-success mt-5 mb-4 border-bottom pb-2">Core Values</h5>
                         <p class="text-muted small">Add up to 3 core values to display beautifully on the About Us page.</p>
-
                         <div id="coreValuesContainer">
                             @for (int i = 0; i < Math.Max(1, Model.CoreValues.Count); i++)
                             {
@@ -61,15 +54,12 @@
                                 </div>
                             }
                         </div>
-                        
                         <button type="button" id="btnAddCoreValue" class="btn btn-outline-success btn-sm fw-medium mt-2">
                             <i class="bi bi-plus-lg me-1"></i> Add Core Value
                         </button>
                     </div>
-                    
                     <div class="col-lg-4 border-start">
                         <h5 class="fw-bold text-dark mb-4">Publishing</h5>
-                        
                         <div class="mb-4 p-3 bg-light rounded-3">
                             <label asp-for="Status" class="form-label fw-semibold">Page Status</label>
                             <select asp-for="Status" class="form-select">
@@ -78,7 +68,6 @@
                             </select>
                             <span asp-validation-for="Status" class="text-danger small"></span>
                         </div>
-
                         <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm">
                             <i class="bi bi-save me-2"></i> Save Changes
                         </button>
@@ -88,7 +77,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
@@ -100,11 +88,9 @@
             plugins: ['advlist', 'autolink', 'lists', 'link', 'wordcount'],
             toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat'
         });
-
         document.addEventListener("DOMContentLoaded", function() {
             const container = document.getElementById("coreValuesContainer");
             const btnAdd = document.getElementById("btnAddCoreValue");
-
             function updateIndices() {
                 const items = container.querySelectorAll('.core-value-item');
                 items.forEach((item, index) => {
@@ -118,14 +104,12 @@
                     });
                 });
             }
-
             container.addEventListener("click", function(e) {
                 if (e.target.closest('.btn-remove-value')) {
                     e.target.closest('.core-value-item').remove();
                     updateIndices();
                 }
             });
-
             btnAdd.addEventListener("click", function() {
                 const index = container.querySelectorAll('.core-value-item').length;
                 const html = `

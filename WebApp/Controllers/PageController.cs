@@ -1,25 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 using WebApp.Services;
-
 namespace WebApp.Controllers;
-
 public class PageController : Controller
 {
     private readonly ContentPageApiService _api;
     private readonly PositionApiService _positionApi;
-
     public PageController(ContentPageApiService api, PositionApiService positionApi)
     {
         _api = api;
         _positionApi = positionApi;
     }
-
-    // Careers no longer depends on the CMS ContentPage table for its job list -
-    // that always comes straight from Positions. But the hero/quote copy above
-    // the job board is still editable from Admin > Content Pages (slug "careers"),
-    // so we try to load it here and fall back to static defaults if that row
-    // doesn't exist yet (e.g. on a fresh DB) or hasn't been filled in.
     [Route("careers")]
     public async Task<IActionResult> Careers()
     {
@@ -30,7 +21,6 @@ public class PageController : Controller
             AboutTitle = "Why Join Us",
             AboutDescription = "We are committed to innovation, uncompromising quality, and empowering every employee to achieve their absolute best."
         };
-
         var page = await _api.GetBySlug("careers");
         if (page != null)
         {
@@ -49,7 +39,6 @@ public class PageController : Controller
                 }
                 catch
                 {
-                    // Ignore malformed JSON and keep the static defaults above.
                 }
             }
             if (!string.IsNullOrEmpty(page.BannerImageUrl))
@@ -57,28 +46,23 @@ public class PageController : Controller
                 ViewData["BannerImageUrl"] = page.BannerImageUrl;
             }
         }
-
         ViewData["Title"] = "Careers";
-        ViewBag.Positions = await _positionApi.GetAllAsync(true); // Fetch active jobs
+        ViewBag.Positions = await _positionApi.GetAllAsync(true); 
         return View("Careers", model);
     }
-
     [Route("page/{slug}")]
     public async Task<IActionResult> Index(string slug)
     {
         var page = await _api.GetBySlug(slug);
-
         if (page == null)
         {
             return NotFound();
         }
-
         bool isPreview = Request.Query["preview"] == "true" && User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin");
         if (page.Status != "Published" && !isPreview)
         {
             return View("DraftMaintenance");
         }
-
         return View(page);
     }
 }

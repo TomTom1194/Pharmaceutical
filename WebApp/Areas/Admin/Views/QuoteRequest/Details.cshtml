@@ -2,7 +2,6 @@
 @model QuoteRequest
 @{
     ViewBag.Title = "Quote request detail";
-
     string PillClass(string? s) => s switch
     {
         "Done" => "admin-pill-yes",
@@ -10,7 +9,6 @@
         _ => "admin-pill-pending"
     };
 }
-
 <div class="admin-page-header">
     <div>
         <h1>Quote request detail</h1>
@@ -21,7 +19,6 @@
         Back to list
     </a>
 </div>
-
 <div class="admin-detail-card">
     <div class="admin-detail-grid">
         <div class="admin-detail-item">
@@ -73,7 +70,6 @@
             <div>@(Model.Comments ?? "-")</div>
         </div>
     </div>
-
     @if (Model.Status is "Pending")
     {
         <div class="admin-detail-actions">

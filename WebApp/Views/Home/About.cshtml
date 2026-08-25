@@ -2,16 +2,12 @@
 @{
     ViewData["Title"] = "About Us";
 }
-
-<!-- Hero Banner Section -->
 <section class="hero-section position-relative d-flex align-items-center" style="background: linear-gradient(rgba(6, 74, 46, 0.82), rgba(6, 74, 46, 0.82)), url('/images/about-banner.jpg') center/cover no-repeat; min-height: 400px;">
     <div class="container text-center text-white">
         <h1 class="display-4 fw-bold mb-3">About XYZ Pharmaceutical</h1>
         <p class="lead mb-0">Pioneering the future of pharmaceutical manufacturing equipment since 2005.</p>
     </div>
 </section>
-
-<!-- Our Story Section -->
 <section class="py-5 my-lg-5 overflow-hidden">
     <div class="container py-4">
         <div class="row align-items-center g-5">
@@ -33,7 +29,6 @@
                         We understand that in the healthcare sector, precision and reliability are not just goals—they are lifelines. That is why our mission has always been to provide state-of-the-art machinery that exceeds international GMP and FDA standards.
                     </p>
                 }
-                
                 <div class="row g-4 mt-2">
                     <div class="col-sm-6">
                         <div class="p-4 rounded-4" style="background-color: #f8fafc; border-left: 4px solid #16a34a;">
@@ -49,15 +44,11 @@
                     </div>
                 </div>
             </div>
-            
             <div class="col-lg-6">
                 <div class="position-relative ps-lg-5">
-                    <!-- Main Image -->
                     <div class="rounded-5 overflow-hidden shadow-lg position-relative">
                         <img src="https://images.unsplash.com/photo-1587483166702-bf9aa66bd791?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Laboratory Equipment" class="img-fluid w-100" style="object-fit: cover; height: 550px; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
                     </div>
-                    
-                    <!-- Floating Glassmorphism Badge -->
                     <div class="position-absolute bottom-0 start-0 translate-middle-x p-4 rounded-4 shadow-lg d-none d-md-flex align-items-center" 
                          style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); margin-bottom: 40px; margin-left: 40px;">
                         <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 56px; height: 56px;">
@@ -73,8 +64,6 @@
         </div>
     </div>
 </section>
-
-<!-- Core Values Section - Typographic Breakout -->
 <section class="py-5 py-lg-5" style="background-color: #ffffff;">
     <div class="container py-4">
         <div class="row mb-5 align-items-end">
@@ -86,7 +75,6 @@
                 <p class="text-secondary fs-5 mb-0" style="font-weight: 300;">The standards that guide every machine we build and every relationship we forge.</p>
             </div>
         </div>
-        
         <div class="border-top pt-5" style="border-color: #e2e8f0 !important; border-width: 2px !important;">
             @if (Model?.CoreValues != null && Model.CoreValues.Any())
             {
@@ -110,7 +98,6 @@
             }
             else
             {
-                <!-- Fallback Value 1 -->
                 <div class="row align-items-center mb-5 pb-5 border-bottom" style="border-color: #f1f5f9 !important;">
                     <div class="col-md-2">
                         <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">01</span>
@@ -122,8 +109,6 @@
                         <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">Every piece of equipment is rigorously tested to ensure 100% compliance with strict GMP and FDA regulations, leaving zero room for error.</p>
                     </div>
                 </div>
-                
-                <!-- Fallback Value 2 -->
                 <div class="row align-items-center mb-5 pb-5 border-bottom" style="border-color: #f1f5f9 !important;">
                     <div class="col-md-2">
                         <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">02</span>
@@ -135,8 +120,6 @@
                         <p class="text-muted fs-5 mb-0 lh-lg" style="font-weight: 300;">We continuously invest in R&D to bring smart, automated, and highly efficient solutions to your production line, keeping you ahead of the curve.</p>
                     </div>
                 </div>
-                
-                <!-- Fallback Value 3 -->
                 <div class="row align-items-center mb-2">
                     <div class="col-md-2">
                         <span class="display-1 fw-bold text-success" style="opacity: 0.15; letter-spacing: -3px;">03</span>
@@ -152,8 +135,6 @@
         </div>
     </div>
 </section>
-
-<!-- Call to Action Section -->
 <section class="py-5 bg-success text-white text-center">
     <div class="container py-lg-5">
         <h2 class="fw-bold mb-4">Ready to upgrade your production capabilities?</h2>

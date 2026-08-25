@@ -2,14 +2,11 @@
 @{
     ViewData["Title"] = "Content Pages";
 }
-
 <div class="container-fluid py-2">
-    <!-- Header -->
     <div class="mb-4">
         <h3 class="fw-bold mb-1" style="color: #212529;">Content Pages</h3>
         <p class="text-muted mb-0 small">Manage static website pages</p>
     </div>
-
     <div class="card border-0 shadow-sm rounded-3">
         <div class="card-body p-0">
             @if (!Model.Any())
@@ -80,9 +77,6 @@
             }
         </div>
     </div>
-
-
-    <!-- Live Preview Section -->
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold text-dark mb-0"><i class="bi bi-laptop me-2"></i>Live Preview</h5>
@@ -95,18 +89,15 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const previewBtns = document.querySelectorAll('.preview-btn');
             const previewFrame = document.getElementById('previewFrame');
             const previewUrlLabel = document.getElementById('previewUrlLabel');
-
             previewBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     let slug = this.getAttribute('data-slug');
-                    
                     let url = '';
                     if (slug === 'home' || slug === '/') {
                         url = '/?preview=true';
@@ -119,24 +110,17 @@
                     } else {
                         url = '/page/' + slug.replace(/^\/+/, '') + '?preview=true';
                     }
-                    
-                    // Update iframe and label
                     previewFrame.src = url;
                     previewUrlLabel.textContent = url.replace('?preview=true', '');
-                    
-                    // Scroll to preview smoothly
                     previewFrame.parentElement.parentElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 });
             });
-
-            // Auto-trigger preview if previewSlug is in URL
             const urlParams = new URLSearchParams(window.location.search);
             const previewSlug = urlParams.get('previewSlug');
             if (previewSlug) {
                 const autoBtn = document.querySelector(`.preview-btn[data-slug="${previewSlug}"]`);
                 if (autoBtn) {
                     autoBtn.click();
-                    // Clean up URL so it doesn't trigger again on normal refresh
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }

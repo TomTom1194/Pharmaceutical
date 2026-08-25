@@ -3,8 +3,6 @@
     var banner = ViewData["BannerImageUrl"] as string ?? "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
     var title = ViewData["Title"] as string ?? "Careers";
 }
-
-<!-- Split-screen Hero Section -->
 <section class="container-fluid p-0 position-relative">
     <div class="row g-0" style="min-height: 600px;">
         <div class="col-lg-5 d-flex align-items-center position-relative z-1" style="background: linear-gradient(135deg, #064A2E 0%, #0a5c3b 100%);">
@@ -18,13 +16,10 @@
         </div>
         <div class="col-lg-7 d-none d-lg-block position-relative">
             <div class="h-100 w-100" style="background: url('@banner') center/cover no-repeat; min-height: 600px;"></div>
-            <!-- Overlay to blend the image with the green -->
             <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, #0a5c3b 0%, transparent 15%);"></div>
         </div>
     </div>
 </section>
-
-<!-- Inspiring Blockquote Section (Overlapping) -->
 <section class="position-relative" style="margin-top: -80px; z-index: 10;">
     <div class="container">
         <div class="row justify-content-center">
@@ -44,8 +39,6 @@
         </div>
     </div>
 </section>
-
-<!-- Job Board List -->
 <section class="py-5" style="background-color: #f8fafc; padding-top: 6rem !important;">
     <div class="container pb-lg-5">
         @{
@@ -63,7 +56,6 @@
                 }
             </div>
         </div>
-        
         @if (positions != null && positions.Any())
         {
             <div class="row g-4">
@@ -76,7 +68,6 @@
                                     <h4 class="fw-bold text-dark mb-3">@job.Title</h4>
                                     <div class="d-flex flex-wrap gap-2 gap-md-4 text-muted small mb-3 fw-medium">
                                         <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-diagram-3 text-success me-2"></i> @job.Department</span>
-
                                         <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-clock text-primary me-2"></i> @job.Type</span>
                                         @if(!string.IsNullOrEmpty(job.SalaryRange))
                                         {
@@ -108,8 +99,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Job Details Modal -->
                     <div class="modal fade" id="jobModal-@job.PositionId" tabindex="-1" aria-labelledby="jobModalLabel-@job.PositionId" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                             <div class="modal-content rounded-4 border-0 shadow-lg">
@@ -126,12 +115,10 @@
                                             <span class="d-flex align-items-center bg-light px-3 py-1 rounded-pill"><i class="bi bi-currency-dollar text-warning me-1"></i> @job.SalaryRange</span>
                                         }
                                     </div>
-                                    
                                     <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Job Description</h6>
                                     <div class="text-secondary mb-4" style="line-height: 1.8;">
                                         @Html.Raw(job.Description.Replace("\n", "<br/>"))
                                     </div>
-
                                     <h6 class="fw-bold text-dark text-uppercase mb-3" style="letter-spacing: 1px;">Requirements</h6>
                                     <div class="text-secondary mb-2" style="line-height: 1.8;">
                                         @Html.Raw(job.Requirements.Replace("\n", "<br/>"))
@@ -173,7 +160,6 @@
         }
     </div>
 </section>
-
 <style>
     .hover-shadow-lg:hover {
         transform: translateY(-3px);

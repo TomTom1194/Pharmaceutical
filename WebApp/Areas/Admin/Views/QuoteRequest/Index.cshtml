@@ -8,7 +8,6 @@
     int pageSize = ViewBag.PageSize;
     int totalCount = ViewBag.TotalCount;
     int totalPages = ViewBag.TotalPages;
-
     string PillClass(string? s) => s switch
     {
         "Done" => "admin-pill-yes",
@@ -16,19 +15,16 @@
         _ => "admin-pill-pending"
     };
 }
-
 <div class="admin-page-header">
     <div>
         <h1>Quote Requests</h1>
         <p>List of quote requests submitted by customers from the product page</p>
     </div>
 </div>
-
 <form method="get" asp-action="Index" class="admin-filter-bar">
     <div class="admin-filter-search">
         <input type="text" name="keyword" placeholder="Search by name/email..." value="@keyword"/>
     </div>
-
     <select name="status" class="admin-filter-select">
         <option value="">All statuses</option>
         @foreach (var s in new[] { "Pending", "Done", "Rejected" })
@@ -36,7 +32,6 @@
             <option value="@s" selected="@(s == status)">@s</option>
         }
     </select>
-
     <button type="submit" class="admin-btn-filter">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
         Filter
@@ -46,7 +41,6 @@
         Clear filter
     </a>
 </form>
-
 <div class="admin-table-card">
     <table class="admin-table">
         <thead>
@@ -91,7 +85,6 @@
         }
         </tbody>
     </table>
-
     @await Html.PartialAsync("_Pager", new PagerViewModel
     {
         Action = "Index",

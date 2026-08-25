@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Edit Page: " + Model.Title;
 }
-
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -10,7 +9,6 @@
             <h2 class="fw-bold mb-0 mt-1">Edit Page</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
@@ -19,19 +17,16 @@
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="PageId" />
                         <input type="hidden" asp-for="Slug" />
-
                         <div class="mb-3">
                             <label class="form-label fw-medium">Page URL (Slug)</label>
                             <input class="form-control bg-light" value="/@Model.Slug" readonly disabled />
                             <div class="form-text">The URL slug cannot be changed.</div>
                         </div>
-
                         <div class="mb-3">
                             <label asp-for="Title" class="form-label fw-medium">Page Title</label>
                             <input asp-for="Title" class="form-control" />
                             <span asp-validation-for="Title" class="text-danger small"></span>
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="BannerImageUpload" class="form-label fw-medium">Banner Image (Optional)</label>
                             @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
@@ -44,12 +39,10 @@
                             <div class="form-text">Upload a new banner image to replace the current one.</div>
                             <input type="hidden" asp-for="BannerImageUrl" />
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="Body" class="form-label fw-medium">Page Content</label>
                             <textarea asp-for="Body" class="form-control" rows="15"></textarea>
                         </div>
-
                         <div class="mb-4">
                             <label asp-for="Status" class="form-label fw-medium">Visibility Status</label>
                             <select asp-for="Status" class="form-select">
@@ -57,9 +50,7 @@
                                 <option value="Draft">Draft (Hidden)</option>
                             </select>
                         </div>
-
                         <hr class="my-4" />
-
                         <div class="d-flex gap-3">
                             <button type="submit" class="btn btn-primary px-4">Save Changes</button>
                             <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancel</a>
@@ -83,10 +74,8 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <!-- TinyMCE Rich Text Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
     <script>
         tinymce.init({

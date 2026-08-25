@@ -3,28 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using WebApp.Dtos;
 using WebApp.Models;
 using WebApp.Services;
-
 namespace WebApp.Areas.Admin.Controllers;
-
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
 public class ContentPageController : Controller
 {
     private readonly ContentPageApiService _api;
-
     public ContentPageController(ContentPageApiService api) => _api = api;
-
     public async Task<IActionResult> Index()
     {
         var list = await _api.GetAll();
         return View(list);
     }
-
     public async Task<IActionResult> Edit(int id)
     {
         var dto = await _api.GetById(id);
         if (dto is null) return NotFound();
-
         var model = new ContentPageFormModel
         {
             PageId = dto.PageId,
@@ -34,7 +28,6 @@ public class ContentPageController : Controller
             BannerImageUrl = dto.BannerImageUrl,
             Status = dto.Status ?? "Draft"
         };
-
         if (dto.Slug == "home")
         {
             if (!string.IsNullOrEmpty(dto.Body))
@@ -51,7 +44,7 @@ public class ContentPageController : Controller
                         model.ExistingSliderImages = json.SliderImages ?? new();
                     }
                 }
-                catch { } // Ignore JSON parsing errors
+                catch { } 
             }
             return View("EditHome", model);
         }
@@ -71,7 +64,7 @@ public class ContentPageController : Controller
                         model.JobOpenings = json.JobOpenings ?? new();
                     }
                 }
-                catch { } // Ignore JSON parsing errors
+                catch { } 
             }
             return View("EditCareers", model);
         }
@@ -90,7 +83,7 @@ public class ContentPageController : Controller
                         model.QuotePhone = json.QuotePhone;
                     }
                 }
-                catch { } // Ignore JSON parsing errors
+                catch { } 
             }
             return View("EditQuote", model);
         }
@@ -106,22 +99,18 @@ public class ContentPageController : Controller
                         model.AboutTitle = json.AboutTitle;
                         model.AboutDescription = json.AboutDescription;
                         model.CoreValues = json.CoreValues ?? new();
-                        
                         model.Body = json.AboutDescription;
                     }
                 }
                 catch 
                 { 
-                    
                     model.Body = dto.Body;
                 }
             }
             return View("EditAboutUs", model);
         }
-
         return View(model);
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ContentPageFormModel form)
@@ -136,7 +125,6 @@ public class ContentPageController : Controller
             form.Title = "Careers";
             ModelState.Remove("Title");
         }
-
         if (!ModelState.IsValid) 
         {
             if (form.Slug == "home") return View("EditHome", form);
@@ -145,34 +133,26 @@ public class ContentPageController : Controller
             if (form.Slug == "about-us") return View("EditAboutUs", form);
             return View(form);
         }
-
-        
         if (form.BannerImageUpload != null && form.BannerImageUpload.Length > 0)
         {
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "uploads");
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
-
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + form.BannerImageUpload.FileName;
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await form.BannerImageUpload.CopyToAsync(fileStream);
             }
-
             form.BannerImageUrl = "/images/uploads/" + uniqueFileName;
         }
-
         if (form.Slug == "home")
         {
             var finalSliderImages = new List<string>(form.ExistingSliderImages ?? new List<string>());
-
             if (form.SliderImageUploads != null && form.SliderImageUploads.Count > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "uploads");
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
                 foreach (var file in form.SliderImageUploads)
                 {
                     if (file.Length > 0)
@@ -187,7 +167,6 @@ public class ContentPageController : Controller
                     }
                 }
             }
-
             var jsonModel = new HomePageContentModel
             {
                 HeroTitle = form.HeroTitle,
@@ -231,7 +210,6 @@ public class ContentPageController : Controller
             };
             form.Body = System.Text.Json.JsonSerializer.Serialize(jsonModel);
         }
-
         var dto = new ContentPageDto
         {
             Title = form.Title,
@@ -239,14 +217,12 @@ public class ContentPageController : Controller
             BannerImageUrl = form.BannerImageUrl,
             Status = form.Status
         };
-
         var result = await _api.Update(form.PageId, dto);
         if (result.Success)
         {
             TempData["SuccessMessage"] = "Page content updated successfully.";
             return RedirectToAction(nameof(Index), new { previewSlug = form.Slug });
         }
-
         ModelState.AddModelError("", $"Failed to update page content via API. Details: {result.Error}");
         if (form.Slug == "home") return View("EditHome", form);
         if (form.Slug == "careers") return View("EditCareers", form);

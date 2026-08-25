@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using WebApp.Models;
-
 namespace WebApp.Areas.Admin.Controllers;
-
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
 public class ArticleController : Controller
@@ -14,14 +12,12 @@ public class ArticleController : Controller
     private readonly HttpClient _http;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IWebHostEnvironment _env;
-
     public ArticleController(IHttpClientFactory factory, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
     {
         _http = factory.CreateClient("PharmaApi");
         _httpContextAccessor = httpContextAccessor;
         _env = env;
     }
-
     private void AttachToken()
     {
         var token = _httpContextAccessor.HttpContext?.User.FindFirst("JwtToken")?.Value;
@@ -30,7 +26,6 @@ public class ArticleController : Controller
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }
-
     public async Task<IActionResult> Index(string? search, string? sort)
     {
         AttachToken();
@@ -43,9 +38,7 @@ public class ArticleController : Controller
         var list = JsonSerializer.Deserialize<List<ArticleAdminDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
         return View(list);
     }
-
     public IActionResult Create() => View(new SaveArticleViewModel());
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaveArticleViewModel model)
@@ -67,7 +60,6 @@ public class ArticleController : Controller
         ModelState.AddModelError("", "Failed to create article. Slug may already exist.");
         return View(model);
     }
-
     public async Task<IActionResult> Edit(int id)
     {
         AttachToken();
@@ -91,7 +83,6 @@ public class ArticleController : Controller
         ViewBag.ArticleId = id;
         return View(model);
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, SaveArticleViewModel model)
@@ -114,7 +105,6 @@ public class ArticleController : Controller
         ViewBag.ArticleId = id;
         return View(model);
     }
-
     [HttpPost]
     public async Task<IActionResult> UpdateEditorsPicks(List<int> ids)
     {
@@ -125,7 +115,6 @@ public class ArticleController : Controller
         var res = await _http.PostAsync("api/articles/update-editors-picks", new StringContent(payload, Encoding.UTF8, "application/json"));
         return RedirectToAction(nameof(Index));
     }
-
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
@@ -134,7 +123,3 @@ public class ArticleController : Controller
         return RedirectToAction(nameof(Index));
     }
 }
-
-
-
-
