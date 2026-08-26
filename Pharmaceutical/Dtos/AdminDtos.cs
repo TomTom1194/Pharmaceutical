@@ -23,6 +23,7 @@ public class AdminCandidateDetailResponse
     public string? Address { get; set; }
     public string? Summary { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public bool HasProfileImage { get; set; }
     public List<EducationItemDto> Educations { get; set; } = new();
     public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
     public ResumeResponse? Resume { get; set; }

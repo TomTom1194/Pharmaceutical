@@ -17,7 +17,7 @@
 
 <a asp-action="Index" asp-route-positionId="@positionId" class="btn btn-sm btn-link mb-3 ps-0" style="text-align: left">&larr; Back to applications</a>
 
-
+@* Success/Error alerts are already rendered globally by _AdminLayout.cshtml — no need to repeat them here. *@
 
 @if (Model.PositionId.HasValue)
 {
@@ -36,13 +36,27 @@
 
 <div class="card mb-4">
     <div class="card-body">
-        <h5 class="card-title">@(Model.FullName ?? "(No name provided)")</h5>
-        <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
-        <p class="mb-1"><strong>Phone:</strong> @(Model.Phone ?? "-")</p>
-        <p class="mb-1"><strong>Address:</strong> @(Model.Address ?? "-")</p>
-        <p class="mb-1"><strong>Summary:</strong> @(Model.Summary ?? "-")</p>
-        <p class="mb-1"><strong>Account status:</strong> @(Model.Status ?? "-")</p>
-        <p class="mb-0"><strong>Registered:</strong> @(Model.CreatedAt?.ToLocalTime().ToString("d") ?? "-")</p>
+        <div class="d-flex flex-column flex-sm-row gap-3 align-items-start">
+            @if (Model.HasProfileImage)
+            {
+                <img src="@Url.Action("ProfileImage", "Application", new { id = Model.CandidateId, applicationId = Model.ApplicationId })" alt="Profile photo"
+                     class="rounded-circle flex-shrink-0" style="width:100px;height:100px;object-fit:cover;" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center flex-shrink-0 text-muted"
+                     style="width:100px;height:100px;">No photo</div>
+            }
+            <div class="w-100">
+                <h5 class="card-title">@(Model.FullName ?? "(No name provided)")</h5>
+                <p class="mb-1"><strong>Email:</strong> @Model.Email</p>
+                <p class="mb-1"><strong>Phone:</strong> @(Model.Phone ?? "-")</p>
+                <p class="mb-1"><strong>Address:</strong> @(Model.Address ?? "-")</p>
+                <p class="mb-1"><strong>Summary:</strong> @(Model.Summary ?? "-")</p>
+                <p class="mb-1"><strong>Account status:</strong> @(Model.Status ?? "-")</p>
+                <p class="mb-0"><strong>Registered:</strong> @(Model.CreatedAt?.ToLocalTime().ToString("d") ?? "-")</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -54,8 +68,8 @@
             <p class="mb-1"><strong>File name:</strong> @Model.Resume.OriginalName</p>
             <p class="mb-1"><strong>Uploaded at:</strong> @(Model.Resume.UploadedAt?.ToLocalTime().ToString("g") ?? "-")</p>
             <p class="mb-2"><strong>Size:</strong> @((Model.Resume.Size ?? 0) / 1024) KB</p>
-            <a asp-action="ViewResume" asp-route-id="@Model.CandidateId" class="btn btn-outline-secondary me-2" target="_blank">View CV File</a>
-            <a asp-action="DownloadResume" asp-route-id="@Model.CandidateId" class="btn btn-outline-primary">Download CV File</a>
+            <a asp-action="ViewResume" asp-route-id="@Model.CandidateId" asp-route-resumeId="@(Model.Resume.ResumeId > 0 ? Model.Resume.ResumeId : (int?)null)" asp-route-positionId="@positionId" class="btn btn-outline-secondary me-2" target="_blank">View CV File</a>
+            <a asp-action="DownloadResume" asp-route-id="@Model.CandidateId" asp-route-resumeId="@(Model.Resume.ResumeId > 0 ? Model.Resume.ResumeId : (int?)null)" asp-route-positionId="@positionId" class="btn btn-outline-primary">Download CV File</a>
         }
         else
         {

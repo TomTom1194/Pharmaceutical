@@ -98,9 +98,13 @@ public class AdminService : IAdminService
         return new InterviewInvitationResultDto { Success = true, Data = data };
     }
 
-    public async Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId)
+    public async Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId, int? resumeId = null)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/candidates/{candidateId}/resume/download");
+        var url = $"api/admin/candidates/{candidateId}/resume/download";
+        if (resumeId.HasValue)
+            url += $"?resumeId={resumeId.Value}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _httpClient.SendAsync(request);
@@ -131,9 +135,13 @@ public class AdminService : IAdminService
         };
     }
 
-    public async Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId)
+    public async Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId, int? resumeId = null)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/candidates/{candidateId}/resume/view");
+        var url = $"api/admin/candidates/{candidateId}/resume/view";
+        if (resumeId.HasValue)
+            url += $"?resumeId={resumeId.Value}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _httpClient.SendAsync(request);
@@ -158,6 +166,26 @@ public class AdminService : IAdminService
             Content = bytes,
             ContentType = contentType
         };
+    }
+
+    public async Task<ProfileImageDownloadResult> GetProfileImage(string token, int candidateId, int? applicationId = null)
+    {
+        var url = $"api/admin/candidates/{candidateId}/profile-image";
+        if (applicationId.HasValue)
+            url += $"?applicationId={applicationId.Value}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+            return new ProfileImageDownloadResult { Success = false };
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+        return new ProfileImageDownloadResult { Success = true, Content = bytes, ContentType = contentType };
     }
 
     public async Task<AdminPositionsResultDto> GetPositions(string token)

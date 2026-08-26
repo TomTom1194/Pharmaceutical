@@ -30,6 +30,9 @@ public class CandidateController : Controller
         if (!result.Success)
             ViewBag.ErrorMessage = result.ErrorMessage;
 
+        var resumeResult = await _resumeService.GetCurrentResume(GetToken());
+        ViewBag.CurrentResume = resumeResult.Success ? resumeResult.Data : null;
+
         return View(result.Data);
     }
 
@@ -199,14 +202,17 @@ public class CandidateController : Controller
             return RedirectToAction("MyApplications");
         }
 
-        var profileResult = await _profileService.GetProfile(token);
-        var resumeResult = await _resumeService.GetCurrentResume(token);
+        // Profile/education/work-experience/resume exactly as they were at the
+        // moment this application was submitted, not the candidate's current,
+        // possibly since-edited, live profile (see ApplicationLog on the API).
+        var snapshotResult = await _applicationService.GetApplicationDetail(token, id);
 
         var model = new ApplicationDetailViewModel
         {
             Application = application,
-            Profile = profileResult.Success ? profileResult.Data : null,
-            Resume = resumeResult.Success ? resumeResult.Data : null
+            Profile = snapshotResult.Success ? snapshotResult.Data : null,
+            Resume = snapshotResult.Success ? snapshotResult.Data?.Resume : null,
+            ApplicationId = id
         };
 
         return View(model);
@@ -226,11 +232,42 @@ public class CandidateController : Controller
         return File(result.Content, result.ContentType ?? "application/octet-stream", result.FileName ?? "resume");
     }
 
+    // No filename passed to File(...) here, so no "attachment" Content-Disposition
+    // header gets set — the browser opens the file inline (e.g. its built-in PDF
+    // viewer) in the new tab this link targets, instead of downloading it.
+    [HttpGet]
+    public async Task<IActionResult> ViewResume(int id)
+    {
+        var result = await _resumeService.ViewResume(GetToken(), id);
+
+        if (!result.Success || result.Content == null)
+        {
+            TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not load CV file.";
+            return RedirectToAction("Profile");
+        }
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream");
+    }
+
 
     [HttpGet]
     public async Task<IActionResult> ProfileImage()
     {
         var result = await _profileService.GetProfileImage(GetToken());
+
+        if (!result.Success || result.Content == null)
+            return NotFound();
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream");
+    }
+
+    // Serves the photo on file at the moment the given application was
+    // submitted (ApplicationLog), not the candidate's current photo. Used by
+    // ApplicationDetail.cshtml instead of the plain ProfileImage action.
+    [HttpGet]
+    public async Task<IActionResult> ApplicationProfileImage(int applicationId)
+    {
+        var result = await _applicationService.GetApplicationProfileImage(GetToken(), applicationId);
 
         if (!result.Success || result.Content == null)
             return NotFound();

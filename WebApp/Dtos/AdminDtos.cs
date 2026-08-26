@@ -21,12 +21,14 @@ public class AdminCandidateDetailDto
     public string? Address { get; set; }
     public string? Summary { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public bool HasProfileImage { get; set; }
     public List<EducationItemDto> Educations { get; set; } = new();
     public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
     public ResumeResponseDto? Resume { get; set; }
     public List<InterviewInvitationDto> Invitations { get; set; } = new();
 
-    
+    // Populated only when the detail is requested with a positionId — the
+    // candidate's application to that one position.
     public int? ApplicationId { get; set; }
     public int? PositionId { get; set; }
     public string? PositionTitle { get; set; }

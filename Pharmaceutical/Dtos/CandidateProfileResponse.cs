@@ -33,3 +33,22 @@ public class WorkExperienceItemDto
     public DateOnly? EndDate { get; set; }
     public string? Description { get; set; }
 }
+
+// Same shape as CandidateProfileResponse plus the resume — returned by
+// GET api/candidate/applications/{id}/detail, which serves the candidate's
+// profile/education/work-experience/resume as they were AT THE MOMENT this
+// application was submitted (from ApplicationLog), not the live profile.
+public class CandidateApplicationDetailResponse
+{
+    public int CandidateId { get; set; }
+    public string Email { get; set; } = null!;
+    public string? FullName { get; set; }
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+    public string? Summary { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public bool HasProfileImage { get; set; }
+    public List<EducationItemDto> Educations { get; set; } = new();
+    public List<WorkExperienceItemDto> WorkExperiences { get; set; } = new();
+    public ResumeResponse? Resume { get; set; }
+}

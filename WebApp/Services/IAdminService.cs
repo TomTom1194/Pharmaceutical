@@ -7,8 +7,9 @@ public interface IAdminService
     Task<AdminCandidatesResultDto> GetCandidates(string token);
     Task<AdminCandidateDetailResultDto> GetCandidateDetail(string token, int candidateId, int? positionId = null);
     Task<InterviewInvitationResultDto> SendInvitation(string token, int candidateId, int? positionId, SendInterviewInvitationRequestDto request);
-    Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId);
-    Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId);
+    Task<AdminResumeDownloadResult> DownloadResume(string token, int candidateId, int? resumeId = null);
+    Task<AdminResumeDownloadResult> ViewResume(string token, int candidateId, int? resumeId = null);
+    Task<ProfileImageDownloadResult> GetProfileImage(string token, int candidateId, int? applicationId = null);
     Task<AdminPositionsResultDto> GetPositions(string token);
     Task<AdminPositionApplicationsResultDto> GetPositionApplications(string token, int positionId);
     Task<AdminPositionApplicationsResultDto> GetApplications(string token, int? positionId, string? status, string? keyword);
