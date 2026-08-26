@@ -58,30 +58,41 @@ public class ApplicationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> DownloadResume(int id)
+    public async Task<IActionResult> DownloadResume(int id, int? resumeId, int? positionId)
     {
-        var result = await _adminService.DownloadResume(GetToken(), id);
+        var result = await _adminService.DownloadResume(GetToken(), id, resumeId);
 
         if (!result.Success || result.Content == null)
         {
             TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not download resume.";
-            return RedirectToAction("CandidateDetail", new { id });
+            return RedirectToAction("CandidateDetail", new { id, positionId });
         }
 
         return File(result.Content, result.ContentType ?? "application/octet-stream", result.FileName ?? "resume");
     }
 
-    
+
     [HttpGet]
-    public async Task<IActionResult> ViewResume(int id)
+    public async Task<IActionResult> ViewResume(int id, int? resumeId, int? positionId)
     {
-        var result = await _adminService.ViewResume(GetToken(), id);
+        var result = await _adminService.ViewResume(GetToken(), id, resumeId);
 
         if (!result.Success || result.Content == null)
         {
             TempData["ErrorMessage"] = result.ErrorMessage ?? "Could not load resume.";
-            return RedirectToAction("CandidateDetail", new { id });
+            return RedirectToAction("CandidateDetail", new { id, positionId });
         }
+
+        return File(result.Content, result.ContentType ?? "application/octet-stream");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ProfileImage(int id, int? applicationId)
+    {
+        var result = await _adminService.GetProfileImage(GetToken(), id, applicationId);
+
+        if (!result.Success || result.Content == null)
+            return NotFound();
 
         return File(result.Content, result.ContentType ?? "application/octet-stream");
     }

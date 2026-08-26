@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -228,16 +229,8 @@ namespace Pharmaceutical.Controllers
             }
 
             
-            var oldStorageKey = profile.ProfileImage;
             profile.ProfileImage = storageKey;
             await _db.SaveChangesAsync();
-
-            if (!string.IsNullOrEmpty(oldStorageKey))
-            {
-                var oldFilePath = Path.Combine(storageRoot, oldStorageKey);
-                if (System.IO.File.Exists(oldFilePath))
-                    System.IO.File.Delete(oldFilePath);
-            }
 
             return Ok(new { message = "Profile image updated" });
         }
@@ -321,6 +314,60 @@ namespace Pharmaceutical.Controllers
             };
 
             _db.Applications.Add(application);
+
+            // Freeze a snapshot of the candidate's profile right now, so that
+            // editing the profile later (UpdateProfile, resume replacement,
+            // etc.) never silently changes what this application shows a
+            // recruiter — the loophole this table exists to close.
+            var educationSnapshot = await _db.EducationRecords
+                .Where(e => e.CandidateId == candidateId)
+                .Select(e => new EducationSnapshotDto
+                {
+                    Institution = e.Institution,
+                    Qualification = e.Qualification,
+                    Field = e.Field,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate
+                })
+                .ToListAsync();
+
+            var workExperienceSnapshot = await _db.WorkExperiences
+                .Where(w => w.CandidateId == candidateId)
+                .Select(w => new WorkExperienceSnapshotDto
+                {
+                    Employer = w.Employer,
+                    Title = w.Title,
+                    StartDate = w.StartDate,
+                    EndDate = w.EndDate,
+                    Description = w.Description
+                })
+                .ToListAsync();
+
+            var currentResume = await _db.ResumeFiles
+                .Where(r => r.CandidateId == candidateId && r.IsCurrent == true)
+                .OrderByDescending(r => r.UploadedAt)
+                .FirstOrDefaultAsync();
+
+            var log = new ApplicationLog
+            {
+                Application = application,
+                FullName = candidateProfile.FullName,
+                Phone = candidateProfile.Phone,
+                Address = candidateProfile.Address,
+                Summary = candidateProfile.Summary,
+                ProfileImage = candidateProfile.ProfileImage,
+                EducationsJson = JsonSerializer.Serialize(educationSnapshot),
+                WorkExperiencesJson = JsonSerializer.Serialize(workExperienceSnapshot),
+                ResumeOriginalName = currentResume?.OriginalName,
+                ResumeStorageKey = currentResume?.StorageKey,
+                ResumeMimeType = currentResume?.MimeType,
+                ResumeSize = currentResume?.Size,
+                ResumeUploadedAt = currentResume?.UploadedAt,
+                LoggedAt = DateTime.UtcNow
+            };
+
+            _db.ApplicationLogs.Add(log);
+
             await _db.SaveChangesAsync();
 
             return Ok(new ApplicationResponse
@@ -359,6 +406,171 @@ namespace Pharmaceutical.Controllers
                 .ToListAsync();
 
             return Ok(applications);
+        }
+
+        
+        [HttpGet("applications/{id:int}/detail")]
+        public async Task<IActionResult> GetApplicationDetail(int id)
+        {
+            var candidateId = GetCandidateId();
+            if (candidateId == null)
+                return Unauthorized();
+
+            var application = await _db.Applications
+                .FirstOrDefaultAsync(a => a.ApplicationId == id && a.CandidateId == candidateId);
+            if (application == null)
+                return NotFound(new { message = "Application not found" });
+
+            var user = await _db.UserAccounts.FirstOrDefaultAsync(u => u.UserId == candidateId);
+            var profile = await _db.CandidateProfiles.FirstOrDefaultAsync(c => c.CandidateId == candidateId);
+            if (user == null || profile == null)
+                return NotFound(new { message = "Candidate profile not found" });
+
+            var log = await _db.ApplicationLogs.FirstOrDefaultAsync(l => l.ApplicationId == id);
+
+            string? fullName, phone, address, summary, profileImageKey;
+            List<EducationItemDto> educations;
+            List<WorkExperienceItemDto> workExperiences;
+            ResumeFile? resume;
+
+            if (log != null)
+            {
+                fullName = log.FullName;
+                phone = log.Phone;
+                address = log.Address;
+                summary = log.Summary;
+                profileImageKey = log.ProfileImage;
+
+                educations = string.IsNullOrEmpty(log.EducationsJson)
+                    ? new List<EducationItemDto>()
+                    : (JsonSerializer.Deserialize<List<EducationSnapshotDto>>(log.EducationsJson) ?? new())
+                        .Select(e => new EducationItemDto
+                        {
+                            Institution = e.Institution,
+                            Qualification = e.Qualification,
+                            Field = e.Field,
+                            StartDate = e.StartDate,
+                            EndDate = e.EndDate
+                        })
+                        .ToList();
+
+                workExperiences = string.IsNullOrEmpty(log.WorkExperiencesJson)
+                    ? new List<WorkExperienceItemDto>()
+                    : (JsonSerializer.Deserialize<List<WorkExperienceSnapshotDto>>(log.WorkExperiencesJson) ?? new())
+                        .Select(w => new WorkExperienceItemDto
+                        {
+                            Employer = w.Employer,
+                            Title = w.Title,
+                            StartDate = w.StartDate,
+                            EndDate = w.EndDate,
+                            Description = w.Description
+                        })
+                        .ToList();
+
+                
+                resume = string.IsNullOrEmpty(log.ResumeStorageKey)
+                    ? null
+                    : await _db.ResumeFiles.FirstOrDefaultAsync(r => r.CandidateId == candidateId && r.StorageKey == log.ResumeStorageKey);
+            }
+            else
+            {
+                fullName = profile.FullName;
+                phone = profile.Phone;
+                address = profile.Address;
+                summary = profile.Summary;
+                profileImageKey = profile.ProfileImage;
+
+                educations = await _db.EducationRecords
+                    .Where(e => e.CandidateId == candidateId)
+                    .OrderByDescending(e => e.StartDate)
+                    .Select(e => new EducationItemDto
+                    {
+                        EducationId = e.EducationId,
+                        Institution = e.Institution,
+                        Qualification = e.Qualification,
+                        Field = e.Field,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate
+                    })
+                    .ToListAsync();
+
+                workExperiences = await _db.WorkExperiences
+                    .Where(w => w.CandidateId == candidateId)
+                    .OrderByDescending(w => w.StartDate)
+                    .Select(w => new WorkExperienceItemDto
+                    {
+                        ExperienceId = w.ExperienceId,
+                        Employer = w.Employer,
+                        Title = w.Title,
+                        StartDate = w.StartDate,
+                        EndDate = w.EndDate,
+                        Description = w.Description
+                    })
+                    .ToListAsync();
+
+                resume = await _db.ResumeFiles
+                    .Where(r => r.CandidateId == candidateId && r.IsCurrent == true)
+                    .OrderByDescending(r => r.UploadedAt)
+                    .FirstOrDefaultAsync();
+            }
+
+            return Ok(new CandidateApplicationDetailResponse
+            {
+                CandidateId = candidateId.Value,
+                Email = user.Email!,
+                FullName = fullName,
+                Phone = phone,
+                Address = address,
+                Summary = summary,
+                CreatedAt = profile.CreatedAt,
+                HasProfileImage = !string.IsNullOrEmpty(profileImageKey),
+                Educations = educations,
+                WorkExperiences = workExperiences,
+                Resume = resume == null ? null : new ResumeResponse
+                {
+                    ResumeId = resume.ResumeId,
+                    OriginalName = resume.OriginalName ?? resume.StorageKey,
+                    MimeType = resume.MimeType,
+                    Size = resume.Size,
+                    UploadedAt = resume.UploadedAt,
+                    IsCurrent = resume.IsCurrent ?? false
+                }
+            });
+        }
+
+        
+        [HttpGet("applications/{id:int}/profile-image")]
+        public async Task<IActionResult> GetApplicationProfileImage(int id)
+        {
+            var candidateId = GetCandidateId();
+            if (candidateId == null)
+                return Unauthorized();
+
+            var application = await _db.Applications
+                .FirstOrDefaultAsync(a => a.ApplicationId == id && a.CandidateId == candidateId);
+            if (application == null)
+                return NotFound();
+
+            var log = await _db.ApplicationLogs.FirstOrDefaultAsync(l => l.ApplicationId == id);
+            var storageKey = log?.ProfileImage;
+
+            if (string.IsNullOrEmpty(storageKey))
+            {
+                var profile = await _db.CandidateProfiles.FirstOrDefaultAsync(c => c.CandidateId == candidateId);
+                storageKey = profile?.ProfileImage;
+            }
+
+            if (string.IsNullOrEmpty(storageKey))
+                return NotFound(new { message = "No profile image on file" });
+
+            var storageRoot = Path.Combine(_env.ContentRootPath, "Storage", "ProfileImages");
+            var filePath = Path.Combine(storageRoot, storageKey);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound(new { message = "Image is missing from storage" });
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(bytes, GetImageContentType(storageKey));
         }
 
         [HttpGet("current")]
@@ -470,6 +682,30 @@ namespace Pharmaceutical.Controllers
 
             var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
             return File(bytes, resume.MimeType ?? "application/octet-stream", resume.OriginalName ?? resume.StorageKey);
+        }
+
+        
+        [HttpGet("view/{id:int}")]
+        public async Task<IActionResult> View(int id)
+        {
+            var candidateId = GetCandidateId();
+            if (candidateId == null)
+                return Unauthorized();
+
+            var resume = await _db.ResumeFiles
+                .FirstOrDefaultAsync(r => r.ResumeId == id && r.CandidateId == candidateId);
+
+            if (resume == null)
+                return NotFound();
+
+            var storageRoot = Path.Combine(_env.ContentRootPath, "Storage", "Resumes");
+            var filePath = Path.Combine(storageRoot, resume.StorageKey);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound(new { message = "File is missing from storage" });
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(bytes, resume.MimeType ?? "application/octet-stream");
         }
 
         private static ResumeResponse ToDto(ResumeFile r) => new()

@@ -107,6 +107,35 @@ public class ResumeService : IResumeService
         };
     }
 
+    public async Task<ResumeDownloadResultDto> ViewResume(string token, int resumeId)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/candidate/view/{resumeId}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorJson = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("ViewResume fail: {StatusCode}", response.StatusCode);
+            return new ResumeDownloadResultDto
+            {
+                Success = false,
+                ErrorMessage = ExtractMessage(errorJson) ?? "Could not load the CV file."
+            };
+        }
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+        return new ResumeDownloadResultDto
+        {
+            Success = true,
+            Content = bytes,
+            ContentType = contentType
+        };
+    }
+
     private static string? ExtractMessage(string json)
     {
         try

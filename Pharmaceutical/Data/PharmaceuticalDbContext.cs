@@ -23,7 +23,8 @@ public class PharmaceuticalDbContext :DbContext
     public DbSet<LiquidFillingSpecification> LiquidFillingSpecifications { get; set; }
     public DbSet<QuoteRequest> QuoteRequests { get; set; }
     public DbSet<ContentPage> ContentPages { get; set; }
+    public DbSet<Article> Articles { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<Application> Applications { get; set; }
-    public DbSet<Article> Articles { get; set; }
+    public DbSet<ApplicationLog> ApplicationLogs { get; set; }
 }
